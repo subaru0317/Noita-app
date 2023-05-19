@@ -3,6 +3,7 @@ import { ChakraProvider } from '@chakra-ui/react';
 import { extendTheme } from '@chakra-ui/react';
 import ReactDOM from 'react-dom/client'
 import Root from './routes/root';
+import MyPage from './routes/mypage';
 import ErrorPage from "./error-page";
 import {
   createBrowserRouter,
@@ -11,7 +12,8 @@ import {
   RouterProvider,
 } from "react-router-dom"
 import './index.css'
-
+// import Footer from "./components/Footer";
+// import Header from "./components/Header";
 
 const colors = {
   brand: {
@@ -31,16 +33,11 @@ const router = createBrowserRouter(
         element={<Root />}
         errorElement={<ErrorPage />}
       />
-      {/* <Route
-        path='/registerform'
-        element={<RegisterForm />}
+      <Route
+        path='/mypage/:usrid' // テキトー書いてるので注意
+        element={<MyPage />}
         errorElement={<ErrorPage />}
-      /> */}
-      {/* <Route
-        path='/login'
-        element={<Login />}
-        errorElement={<ErrorPage />}
-      /> */}
+      />
     </>
   )
 )
@@ -49,6 +46,13 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <ChakraProvider theme={theme}>
       <RouterProvider router={router} />
+      {/* <RouterProvider router={router}>
+        <Header />
+        <React.Suspense fallback={<div>Loading...</div>}>
+          <Root />
+        </React.Suspense>
+        <Footer />
+      </RouterProvider> */}
     </ChakraProvider>
   </React.StrictMode>,
 )

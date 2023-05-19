@@ -1,7 +1,8 @@
 import { storage } from '../firebase';
 import { ref, getDownloadURL, listAll } from 'firebase/storage';
-import { Grid, GridItem, Spinner } from "@chakra-ui/react";
+import { Grid, GridItem, Spinner, IconButton } from "@chakra-ui/react";
 import React, { useEffect, useState } from 'react';
+import LikeButton from "./LikeButton";
 
 function VideoList() {
   const [imageUrls, setImageUrls] = useState([]);
@@ -36,7 +37,8 @@ function VideoList() {
       <Grid templateColumns="repeat(2, 1fr)" gap={6}>
         {imageUrls.map((url, index) => (
           <GridItem key={index}>
-            <img src={url} alt={`Image ${index}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }}/>
+            <img src={url} alt={`Image ${index}`} style={{ width: '80%', height: '80%', objectFit: 'cover' }}/>
+            <LikeButton />
           </GridItem>
         ))}
       </Grid>

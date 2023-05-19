@@ -1,13 +1,15 @@
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import VideoList from '../components/VideoList';
-import SortModal from '../components/SortModal';
+import FilterModal from '../components/FilterModal';
+import ImageUploader from '../components/ImageUploader';
 
 export default function Root() {
   return (
     <>
       <Header />
-      <SortModal />
+      <ImageUploader />
+      <FilterModal />
       <VideoList />
       <Footer />
     </>

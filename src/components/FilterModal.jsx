@@ -9,6 +9,7 @@ import {
   ModalCloseButton,
 } from '@chakra-ui/react'
 import { useState } from 'react';
+import { addDocument } from "../firebase/firestore";
 
 function getFileName(path) {
   const parts = path.split('/');
@@ -30,7 +31,7 @@ export default function SortSelect() {
   const SpellIconButton = ({spellpath}) => {
     const spellKey = getFileName(spellpath);
 
-    const handleButtonClick = () => {
+    const handleSpellButtonClick = () => {
       setClicked((prevState) => ({
         ...prevState,
         [spellKey]: !prevState[spellKey]
@@ -49,10 +50,15 @@ export default function SortSelect() {
           alt='spell'
           style={{ borderRadius: '2px' }}
         />}
-        onClick={handleButtonClick}
+        onClick={handleSpellButtonClick}
       />
     );
   }
+
+  const handleFilter = () => {
+    console.log("handleFilter pushed");
+    addDocument();
+  };
 
   return (
     <Box textAlign='right'>
@@ -61,7 +67,7 @@ export default function SortSelect() {
           setOverlay(<Overlay />)
           onOpen()
         }} colorScheme='blue' size='md'>
-        Sort
+        Filter
       </Button>
       <Modal isCentered isOpen={isOpen} onClose={onClose}>
         {overlay}
@@ -467,7 +473,7 @@ export default function SortSelect() {
           </ModalBody>
           <ModalFooter>
             <Button variant='ghost' mr={3} onClick={onClose}>Close</Button>
-            <Button colorScheme='blue' mr={3} onClick={onClose}>Search</Button>
+            <Button colorScheme='blue' mr={3} onClick={handleFilter}>Filter</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
