@@ -7,6 +7,7 @@
 import { db } from "../firebase";
 import { collection, addDoc } from "firebase/firestore";
 
+// sample
 const addDocument = async () => {
   console.log("addDocument called");
   try {
@@ -20,6 +21,9 @@ const addDocument = async () => {
     console.error("Error adding document: ", e);
   }
 }
+
+// 3
+// const setVideoDoc(doc(db, ))
 
 export { addDocument };
 
