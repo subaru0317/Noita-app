@@ -1,13 +1,28 @@
-import React, {useState} from 'react';
-import {DndContext} from '@dnd-kit/core';
-
-import {Droppable} from './Droppable';
-import {Draggable} from './Draggable';
+import React, { useState } from 'react';
+import { DndContext, useDraggable } from '@dnd-kit/core';
+import { Image } from '@chakra-ui/react';
+import { Droppable } from './Droppable';
+import { Draggable } from './Draggable';
 
 export default function SetWand() {
   const [isDropped, setIsDropped] = useState(false);
+
+  const { attributes, listeners, setNodeRef } = useDraggable({
+    id: 'draggable',
+  });
+
   const draggableMarkup = (
-    <Draggable>Drag me</Draggable>
+    <Draggable {...listeners} {...attributes} nodeRef={setNodeRef}>
+      <Image
+        boxSize="100px"
+        bg="#4f4f4f"
+        _hover={{ bg: "gray.900" }}
+        border="2px solid #931527"
+        src="/spells/Spell_bomb.webp"
+        alt='spell'
+        style={{ borderRadius: '2px' }}
+      />
+    </Draggable>
   );
   
   return (
