@@ -33,6 +33,7 @@ const ImageUploader = () => {
       const fileInfo = {
         filename: fileName,
         // 他の関連するデータも必要に応じて追加できます
+        
       };
 
       try {

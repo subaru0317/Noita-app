@@ -33,6 +33,11 @@ const router = createBrowserRouter(
         element={<Root />}
         errorElement={<ErrorPage />}
       />
+      {/* <Route
+        path='/test'
+        element={<test />}
+        errorElement={<ErrorPage />}
+      /> */}
       <Route
         path='/mypage/:usrid' // テキトー書いてるので注意
         element={<MyPage />}
