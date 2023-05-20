@@ -25,11 +25,25 @@ export default function SetWand() {
     </Draggable>
   );
   
+  const cloneMarkup = (
+    <Draggable>
+      <Image
+        boxSize="100px"
+        bg="#4f4f4f"
+        _hover={{ bg: "gray.900" }}
+        border="2px solid #931527"
+        src="/spells/Spell_bomb.webp"
+        alt='spell'
+        style={{ borderRadius: '2px', opacity: 0.5 }}
+      />
+    </Draggable>
+  );
+
   return (
     <DndContext onDragEnd={handleDragEnd}>
       {!isDropped ? draggableMarkup : null}
       <Droppable>
-        {isDropped ? draggableMarkup : 'Drop here'}
+        {isDropped ? cloneMarkup : 'Drop here'}
       </Droppable>
     </DndContext>
   );
