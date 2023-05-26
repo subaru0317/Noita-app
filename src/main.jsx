@@ -10,6 +10,8 @@ import MyVideos from './routes/myvideospage';
 import ErrorPage from "./error-page";
 import Header from './components/Header';
 import Footer from "./components/Footer";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 import {
   createBrowserRouter,
   createRoutesFromElements,
@@ -83,14 +85,9 @@ const router = createBrowserRouter(
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <ChakraProvider theme={theme}>
-      <RouterProvider router={router} />
-      {/* <RouterProvider router={router}>
-        <Header />
-        <React.Suspense fallback={<div>Loading...</div>}>
-          <Root />
-        </React.Suspense>
-        <Footer />
-      </RouterProvider> */}
+      <DndProvider backend={HTML5Backend}>
+        <RouterProvider router={router} />
+      </DndProvider>
     </ChakraProvider>
   </React.StrictMode>,
 )

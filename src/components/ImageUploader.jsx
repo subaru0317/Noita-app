@@ -1,45 +1,16 @@
-import { Button, Image } from "@chakra-ui/react";
+import { Button } from "@chakra-ui/react";
 import React, { useState } from "react";
 import "./ImageUpload.css";
 // import { storage, functions } from "./firebase"
 import { storage, db } from "../firebase"
 import { ref, uploadBytesResumable } from "firebase/storage";
 import { collection, addDoc } from "firebase/firestore";
-
-
-const SelectedFilePreview = ({ onFileSelected }) => {
-  const [previewSrc, setPreviewSrc] = useState(null);
-  const previewFile = (e) => {
-    const file = e.target.files[0];
-    onFileSelected(file);
-    const reader = new FileReader();
-
-    reader.addEventListener("load", function () {
-      // Convert image file to a base64 string
-      setPreviewSrc(reader.result);
-    }, false);
-
-    if (file) {
-      reader.readAsDataURL(file);
-    }
-  }
-
-  return (
-    <>
-      <input type="file" onChange={previewFile} />
-      <Image src={previewSrc} width="480px" height="270px"/>
-    </>
-  )
-}
-
-
+import SelectedFilePreview from "./SelectedFilePreview";
 
 const ImageUploader = () => {
-  // const [selectedVideo, setSelectedImage] = useState(null);
   const [fileSelected, onFileSelected] = useState(null);
   const [loading, setLoading] = useState(false);
   const [isUploaded, setUploaded] = useState(false);
-
 
   // const convertGifToMp4 = functions.httpsCallable("convertGifToMp4");
   const OnFileUploadToFirebase = async (e) => {
