@@ -1,4 +1,4 @@
-import { Button } from "@chakra-ui/react";
+import { Button, Image, Input } from "@chakra-ui/react";
 import React, { useState } from "react";
 import ImageLogo from "./image.svg";
 import "./ImageUpload.css";
@@ -9,9 +9,24 @@ import { collection, addDoc } from "firebase/firestore";
 
 
 const ImageUploader = () => {
+  // const [selectedVideo, setSelectedImage] = useState(null);
   const [loading, setLoading] = useState(false);
   const [isUploaded, setUploaded] = useState(false);
-  
+  const [previewSrc, setPreviewSrc] = useState(null);
+
+  const previewFile = (event) => {
+    const file = event.target.files[0];
+    const reader = new FileReader();
+
+    reader.addEventListener("load", function () {
+      // Convert image file to a base64 string
+      setPreviewSrc(reader.result);
+    }, false);
+
+    if (file) {
+      reader.readAsDataURL(file);
+    }
+  }
   // const convertGifToMp4 = functions.httpsCallable("convertGifToMp4");
   const OnFileUploadToFirebase = async (e) => {
     const file = e.target.files[0];
@@ -71,25 +86,31 @@ const ImageUploader = () => {
                 name="imageURL"
                 type="file"
                 accept=".gif"
-                onChange={OnFileUploadToFirebase}
+                // onChange={handleChooseFile}
               />
             </div>
             <p>or</p>
-            <Button variant="contained">
+            <Button>
               Please select files
               <input
                 className="imageUploadInput"
                 type="file"
                 accept=".gif"
-                onChange={OnFileUploadToFirebase}
+                // onChange={handleChooseFile}
               />
+            </Button>
+            <div>
+              <Input type="file" onChange={previewFile} /><br />
+              <Image boxSize="200px" src={previewSrc} alt="Preview" />
+            </div>
+            <Button colorScheme='teal' variant='solid' onClick={OnFileUploadToFirebase}>
+              Upload Video!
             </Button>
           </div>
           )}
         </>
       )}
     </>
-
   );
 };
 

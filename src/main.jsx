@@ -2,9 +2,11 @@ import React from 'react'
 import { ChakraProvider } from '@chakra-ui/react';
 import { extendTheme } from '@chakra-ui/react';
 import ReactDOM from 'react-dom/client'
-import Root from './routes/root';
+import VideoPage from './routes/videopage';
 import MyPage from './routes/mypage';
-import UploadVideo from './routes/uploadvideo';
+import UploadVideo from './routes/uploadvideopage';
+import Favorite from './routes/favoritepage';
+import MyVideos from './routes/myvideospage';
 import ErrorPage from "./error-page";
 import Header from './components/Header';
 import Footer from "./components/Footer";
@@ -45,7 +47,7 @@ const router = createBrowserRouter(
       <Route path='/' element={<PageFrame />}>
         <Route
           path='list'
-          element={<Root />}
+          element={<VideoPage />}
           errorElement={<ErrorPage />}
         />
         {/* <Route
@@ -59,8 +61,18 @@ const router = createBrowserRouter(
           errorElement={<ErrorPage />}
         />
         <Route
-          path='mypage/uploadvideo'
+          path='uploadvideo'
           element={<UploadVideo />}
+          errorElement={<ErrorPage />}
+        />
+        <Route
+          path='myvideos'
+          element={<MyVideos />}
+          errorElement={<ErrorPage />}
+        />
+        <Route
+          path='favorite'
+          element={<Favorite />}
           errorElement={<ErrorPage />}
         />
       </Route>

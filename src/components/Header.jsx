@@ -19,7 +19,7 @@ export default function Header() {
       width='100%'
     >
       <Heading as='h1' size='md' cursor="none">
-        <Link to='/'>Noita - Your Only Wand</Link>
+        <Link to='/list'>Noita - Your Only Wand</Link>
       </Heading>
       <AuthButton />
     </Flex>

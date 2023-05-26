@@ -3,3 +3,7 @@ Cloud FIrestoreの権限の設定をテストから戻すのをわすれない�
 https://console.firebase.google.com/u/0/project/noita-app-e5f1b/firestore/rules?hl=ja
 https://firebase.google.com/docs/firestore/quickstart?authuser=0&hl=ja#test-mode
 
+
+追放機能
+・Noita以外の動画がアップロードされている場合に報告するアイコンを動画につける
+・一定以上追放された場合はその人物が挙げている動画を一旦すべてストップする．

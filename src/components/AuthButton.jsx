@@ -7,15 +7,19 @@ import { GiFairyWand } from "react-icons/gi";
 import { MdFavorite } from "react-icons/md";
 import { RiLogoutBoxRLine } from "react-icons/ri";
 import { RiAccountCircleLine } from "react-icons/ri";
+import { MdFolderSpecial } from "react-icons/md";
+import { Link } from 'react-router-dom';
 const provider = new GoogleAuthProvider();
 
 function UserMenu() {
-  const IconText = ({icon, color, text}) => {
+  const IconText = ({icon, color, text, path}) => {
     return (
-      <div style={{ display: 'flex', alignItems: 'center' }}>
-        <Icon as={icon} boxSize={5} color={color} style={{ verticalAlign: 'middle' }}/>
-        <span style={{ marginLeft: '0.4rem', verticalAlign: 'middle', marginTop: '-3px' }}>{text}</span>
-      </div>
+      <Link to={path}>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <Icon as={icon} boxSize={5} color={color} style={{ verticalAlign: 'middle' }}/>
+          <span style={{ marginLeft: '0.4rem', verticalAlign: 'middle', marginTop: '-3px' }}>{text}</span>
+        </div>
+      </Link>
     );
   }
   return (
@@ -38,6 +42,7 @@ function UserMenu() {
               icon={RiAccountCircleLine}
               color="black"
               text="My Account"
+              path="/mypage"
             />
           </MenuItem>
           <MenuDivider />
@@ -45,7 +50,16 @@ function UserMenu() {
             <IconText
               icon={GiFairyWand}
               color="blue.500"
-              text="Upload GIF"
+              text="Upload Video"
+              path="/uploadvideo"
+            />
+          </MenuItem>
+          <MenuItem>
+            <IconText
+              icon={MdFolderSpecial}
+              color="green"
+              text="My Videos"
+              path="/myvideos"
             />
           </MenuItem>
           <MenuItem>
@@ -53,6 +67,7 @@ function UserMenu() {
               icon={MdFavorite}
               color="red"
               text="Favorite"
+              path="/favorite"
             />
           </MenuItem>
           <MenuDivider />
