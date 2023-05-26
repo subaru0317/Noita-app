@@ -4,10 +4,14 @@ import { extendTheme } from '@chakra-ui/react';
 import ReactDOM from 'react-dom/client'
 import Root from './routes/root';
 import MyPage from './routes/mypage';
+import UploadVideo from './routes/uploadvideo';
 import ErrorPage from "./error-page";
+import Header from './components/Header';
+import Footer from "./components/Footer";
 import {
   createBrowserRouter,
   createRoutesFromElements,
+  Outlet,
   Route,
   RouterProvider,
 } from "react-router-dom"
@@ -25,24 +29,41 @@ const colors = {
 
 const theme = extendTheme({ colors })
 
+function PageFrame() {
+  return (
+    <>
+      <Header />
+      <Outlet />
+      <Footer />
+    </>
+  );
+}
+
 const router = createBrowserRouter(
   createRoutesFromElements(
     <>
-      <Route
-        path='/'
-        element={<Root />}
-        errorElement={<ErrorPage />}
-      />
-      {/* <Route
-        path='/test'
-        element={<test />}
-        errorElement={<ErrorPage />}
-      /> */}
-      <Route
-        path='/mypage/:usrid' // テキトー書いてるので注意
-        element={<MyPage />}
-        errorElement={<ErrorPage />}
-      />
+      <Route path='/' element={<PageFrame />}>
+        <Route
+          path='list'
+          element={<Root />}
+          errorElement={<ErrorPage />}
+        />
+        {/* <Route
+          path='/test'
+          element={<test />}
+          errorElement={<ErrorPage />}
+        /> */}
+        <Route
+          path='mypage/:usrid' // テキトー書いてるので注意
+          element={<MyPage />}
+          errorElement={<ErrorPage />}
+        />
+        <Route
+          path='mypage/uploadvideo'
+          element={<UploadVideo />}
+          errorElement={<ErrorPage />}
+        />
+      </Route>
     </>
   )
 )

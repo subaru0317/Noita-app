@@ -56,9 +56,10 @@ export default function SortSelect() {
     );
   }
 
+  // まだ作ってないよ
   const handleFilter = () => {
     console.log("handleFilter pushed");
-    addDocument();
+    // addDocument();
   };
 
   return (
