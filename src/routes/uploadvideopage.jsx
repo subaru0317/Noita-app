@@ -5,12 +5,12 @@ import SelectedFilePreview from "../components/SelectedFilePreview";
 
 export default function myPage() {
   const [fileSelected, setFileSelected] = useState(null);
-
+  const [additionalInfo, setAdditionalInfo] = useState([]);
   return (
     <>
-      <SelectedFilePreview onFileSelected={setFileSelected} />
-      <ImageUploader fileSelected={fileSelected}/>
-      <DragDrop />
+      <SelectedFilePreview setFileSelected={setFileSelected} />
+      <DragDrop setAdditionalInfo={setAdditionalInfo}/>
+      <ImageUploader fileSelected={fileSelected} additionalInfo={additionalInfo}/>
     </>
   );
 }

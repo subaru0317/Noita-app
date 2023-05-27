@@ -25,7 +25,7 @@ const SpellList = [
   },
 ]
 
-export default function DragDrop() {
+export default function DragDrop({setAdditionalInfo}) {
   const [boarditems, setBoard] = useState([]);
   const [{ isOver }, drop] = useDrop(() => ({
     accept: "image",
@@ -51,7 +51,11 @@ export default function DragDrop() {
 
   const addImageToBoard = (item) => {
     const cloneSpell = {...item, id: uuidv4()};
-    setBoard((prevboard) => ([...prevboard, cloneSpell]));
+    setBoard((prevboard) => {
+      const updatedBoard = [...prevboard, cloneSpell];
+      setAdditionalInfo(updatedBoard);
+      return updatedBoard;
+    });
   };
 
   const handleSort = useCallback((dragIndex, hoverIndex) => {

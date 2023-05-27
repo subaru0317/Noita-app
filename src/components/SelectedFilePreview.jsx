@@ -1,11 +1,11 @@
 import { Image } from "@chakra-ui/react";
 import { useState } from "react";
 
-export default function SelectedFilePreview({ onFileSelected }) {
+export default function SelectedFilePreview({ setFileSelected }) {
   const [previewSrc, setPreviewSrc] = useState(null);
   const previewFile = (e) => {
     const file = e.target.files[0];
-    onFileSelected(file);
+    setFileSelected(file);
     const reader = new FileReader();
 
     reader.addEventListener("load", function () {
