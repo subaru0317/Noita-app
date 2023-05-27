@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import DraggableSpell from "./DraggableSpell";
 import { useDrop } from "react-dnd";
 import { v4 as uuidv4 } from "uuid";
@@ -26,7 +26,7 @@ const SpellList = [
 ]
 
 export default function DragDrop({setAdditionalInfo}) {
-  const [boarditems, setBoard] = useState([]);
+  const [boardItems, setBoard] = useState([]);
   const [{ isOver }, drop] = useDrop(() => ({
     accept: "image",
     // item はドロップされたアイテムの情報
@@ -34,14 +34,8 @@ export default function DragDrop({setAdditionalInfo}) {
     drop: (item) => {
       // IDがSpellListのものと一致する場合
       // 新しくBoardに複製して追加
-      if (SpellList.some(spell => spell.id === item.id))
+      if (SpellList.some(spell => spell.id === item.id)) {
         addImageToBoard(item);
-      // 並び替え
-      // else if (boarditems.some(spell => spell.id === item.id)) {
-      //   return ;
-      // }
-      else {
-        return ;
       }
     },
     collect: (monitor) => ({
@@ -49,14 +43,13 @@ export default function DragDrop({setAdditionalInfo}) {
     }),
   }));
 
-  const addImageToBoard = (item) => {
-    const cloneSpell = {...item, id: uuidv4()};
-    setBoard((prevboard) => {
-      const updatedBoard = [...prevboard, cloneSpell];
-      setAdditionalInfo(updatedBoard);
-      return updatedBoard;
-    });
-  };
+  const addImageToBoard = useCallback((item) => {
+      const cloneSpell = {...item, id: uuidv4()};
+      setBoard((prevboard) => {
+        return [...prevboard, cloneSpell];
+      });
+      setAdditionalInfo(prevboard => [...prevboard, cloneSpell]);
+    }, [setAdditionalInfo]);
 
   const handleSort = useCallback((dragIndex, hoverIndex) => {
     setBoard((prevColumns) =>
@@ -69,16 +62,20 @@ export default function DragDrop({setAdditionalInfo}) {
     );
   }, []);
 
-  console.log(boarditems);
+  const handleAddToBoard = useCallback((item) => {
+    addImageToBoard(item);
+  }, [addImageToBoard]);
+  console.log(boardItems);
+
   return (
     <>
       <div className="Pictures">
         {SpellList.map((spell) => {
-          return <DraggableSpell spell={spell} key={uuidv4()} />;
+          return <DraggableSpell spell={spell} key={uuidv4()} onAddToBoard={handleAddToBoard} />;
         })}
       </div>
       <div className="Board" ref={drop}>
-        {boarditems.map((spell, index) => (
+        {boardItems.map((spell, index) => (
           <DraggableSpell spell={spell} key={uuidv4()} onSortEnd={handleSort} index={index}/>
         ))}
       </div>

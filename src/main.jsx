@@ -4,7 +4,7 @@ import { extendTheme } from '@chakra-ui/react';
 import ReactDOM from 'react-dom/client'
 import VideoPage from './routes/videopage';
 import MyPage from './routes/mypage';
-import UploadVideo from './routes/uploadvideopage';
+import UploadVideoPage from './routes/uploadvideopage';
 import Favorite from './routes/favoritepage';
 import MyVideos from './routes/myvideospage';
 import ErrorPage from "./error-page";
@@ -64,7 +64,7 @@ const router = createBrowserRouter(
         />
         <Route
           path='uploadvideo'
-          element={<UploadVideo />}
+          element={<UploadVideoPage />}
           errorElement={<ErrorPage />}
         />
         <Route
