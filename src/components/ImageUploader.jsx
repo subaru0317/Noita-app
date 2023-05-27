@@ -7,8 +7,7 @@ import { ref, uploadBytesResumable } from "firebase/storage";
 import { collection, addDoc } from "firebase/firestore";
 import SelectedFilePreview from "./SelectedFilePreview";
 
-const ImageUploader = () => {
-  const [fileSelected, onFileSelected] = useState(null);
+const ImageUploader = ({fileSelected}) => {
   const [loading, setLoading] = useState(false);
   const [isUploaded, setUploaded] = useState(false);
 
@@ -48,7 +47,6 @@ const ImageUploader = () => {
   };
   return (
     <div className="outerBox">
-      <SelectedFilePreview onFileSelected={onFileSelected} />
       <Button colorScheme='teal' variant='solid' onClick={OnFileUploadToFirebase}>
         Upload Video!
       </Button>
