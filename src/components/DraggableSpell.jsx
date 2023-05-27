@@ -62,7 +62,7 @@ function Spell({ spell, index, onSortEnd, onAddToBoard }) {
       src={spell.path}
       alt={spell.name}
       style={{ borderRadius: '2px' }}
-      onClick={() => onAddToBoard(spell)}
+      onClick={() => { if (onAddToBoard) onAddToBoard(spell) }}
     />
   );
 }

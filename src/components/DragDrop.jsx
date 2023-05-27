@@ -44,12 +44,16 @@ export default function DragDrop({setAdditionalInfo}) {
   }));
 
   const addImageToBoard = useCallback((item) => {
+    if (boardItems.length < 26) {
       const cloneSpell = {...item, id: uuidv4()};
       setBoard((prevboard) => {
         return [...prevboard, cloneSpell];
       });
       setAdditionalInfo(prevboard => [...prevboard, cloneSpell]);
-    }, [setAdditionalInfo]);
+    } else {
+      console.log("You can only have 26 spells on the board");
+    }
+    }, [setAdditionalInfo, boardItems]);
 
   const handleSort = useCallback((dragIndex, hoverIndex) => {
     setBoard((prevColumns) =>
