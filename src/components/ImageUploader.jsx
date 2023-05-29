@@ -1,5 +1,5 @@
 import { Button } from "@chakra-ui/react";
-import React, { useState } from "react";
+import React, { useState, memo } from "react";
 import "./ImageUpload.css";
 // import { storage, functions } from "./firebase"
 import { storage, db } from "../firebase"
@@ -7,7 +7,7 @@ import { ref, uploadBytesResumable } from "firebase/storage";
 import { collection, addDoc } from "firebase/firestore";
 import SelectedFilePreview from "./SelectedFilePreview";
 
-const ImageUploader = ({fileSelected, additionalInfo, videoDescription}) => {
+const ImageUploader = memo(({fileSelected, additionalInfo, videoDescription}) => {
   const [loading, setLoading] = useState(false);
   const [isUploaded, setUploaded] = useState(false);
 
@@ -62,6 +62,6 @@ const ImageUploader = ({fileSelected, additionalInfo, videoDescription}) => {
       </Button>
     </div>
   );
-};
+});
 
 export default ImageUploader;

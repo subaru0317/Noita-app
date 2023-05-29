@@ -27,3 +27,5 @@ dist-ssr
 src/firebase.js
 # Rules
 storage.rules
+# memo
+memo

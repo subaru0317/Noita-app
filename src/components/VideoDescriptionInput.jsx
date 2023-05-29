@@ -1,6 +1,7 @@
+import { memo } from "react";
 import { Textarea } from "@chakra-ui/react";
 
-export default function VideoDescriptionInput({setVideoDescription, videoDescription}) {
+const VideoDescriptionInput = memo(({setVideoDescription, videoDescription}) => {
   const handleInputChange = (e) => {
     setVideoDescription(e.target.value);
   }
@@ -14,4 +15,6 @@ export default function VideoDescriptionInput({setVideoDescription, videoDescrip
       />
     </>
   )
-}
+});
+
+export default VideoDescriptionInput;

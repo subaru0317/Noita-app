@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, memo } from "react";
 import DraggableSpell from "./DraggableSpell";
 import { useDrop } from "react-dnd";
 import { v4 as uuidv4 } from "uuid";
@@ -25,7 +25,7 @@ import "./App.css";
 //   },
 // ]
 
-export default function DragDrop({setAdditionalInfo}) {
+const DragDrop = memo(({setAdditionalInfo}) => {
   const [boardItems, setBoard] = useState([]);
   const [{ isOver }, drop] = useDrop(() => ({
     accept: "image",
@@ -85,4 +85,6 @@ export default function DragDrop({setAdditionalInfo}) {
       </div>
     </>
   );
-}
+});
+
+export default DragDrop;

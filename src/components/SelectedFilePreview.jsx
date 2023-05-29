@@ -1,7 +1,7 @@
 import { Image } from "@chakra-ui/react";
-import { useState } from "react";
+import { useState, memo } from "react";
 
-export default function SelectedFilePreview({ setFileSelected }) {
+const SelectedFilePreview = memo(({ setFileSelected }) => {
   const [previewSrc, setPreviewSrc] = useState(null);
   const previewFile = (e) => {
     const file = e.target.files[0];
@@ -24,4 +24,6 @@ export default function SelectedFilePreview({ setFileSelected }) {
       <Image src={previewSrc} width="480px" height="270px"/>
     </>
   )
-}
+});
+
+export default SelectedFilePreview;
