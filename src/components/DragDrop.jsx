@@ -3,27 +3,27 @@ import DraggableSpell from "./DraggableSpell";
 import { useDrop } from "react-dnd";
 import { v4 as uuidv4 } from "uuid";
 import update from "immutability-helper";
-// import SpellList from "./SpellList";
+import SpellList from "./SpellList";
 import "./App.css";
 
 
-const SpellList = [
-  {
-    id: 1,
-    name: "accelerating_shot",
-    path: "/spells/Spell_accelerating_shot.webp"
-  },
-  {
-    id: 2,
-    name: "worm_rain",
-    path: "/spells/Spell_worm_rain.webp"
-  },
-  {
-    id: 3,
-    name: "x_ray",
-    path: "/spells/Spell_x_ray.webp"
-  },
-]
+// const SpellList = [
+//   {
+//     id: 1,
+//     name: "accelerating_shot",
+//     path: "/spells/Spell_accelerating_shot.webp"
+//   },
+//   {
+//     id: 2,
+//     name: "worm_rain",
+//     path: "/spells/Spell_worm_rain.webp"
+//   },
+//   {
+//     id: 3,
+//     name: "x_ray",
+//     path: "/spells/Spell_x_ray.webp"
+//   },
+// ]
 
 export default function DragDrop({setAdditionalInfo}) {
   const [boardItems, setBoard] = useState([]);
@@ -73,7 +73,7 @@ export default function DragDrop({setAdditionalInfo}) {
 
   return (
     <>
-      <div className="Pictures">
+      <div className="DraggableSpellList">
         {SpellList.map((spell) => {
           return <DraggableSpell spell={spell} key={uuidv4()} onAddToBoard={handleAddToBoard} />;
         })}

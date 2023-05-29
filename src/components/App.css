@@ -4,9 +4,18 @@
   height: 100vh;
 }
 
-.Pictures {
-  margin: 10px;
+.DraggableSpellList {
+  display: grid;
+  grid-template-columns: repeat(12, 35px);
+  grid-auto-rows: auto;
+  justify-items: center;
 }
+
+.DraggableSpellList > div {
+  grid-column-end: span 1;
+}
+
+
 /* これを消したら隙間がなくなった． */
 /* img {
   margin: 5px;
@@ -14,9 +23,8 @@
 .Board {
   display: flex;
   justify-content: start;
-  width: 1000px;
-  height: 50px;
+  width: 913px;
+  height: 39px;
   border: 2px solid black;
 }
-
 
