@@ -15,11 +15,6 @@
   grid-column-end: span 1;
 }
 
-
-/* これを消したら隙間がなくなった． */
-/* img {
-  margin: 5px;
-} */
 .Board {
   display: flex;
   justify-content: start;

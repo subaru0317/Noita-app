@@ -7,7 +7,7 @@ import { ref, uploadBytesResumable } from "firebase/storage";
 import { collection, addDoc } from "firebase/firestore";
 import SelectedFilePreview from "./SelectedFilePreview";
 
-const ImageUploader = ({fileSelected, additionalInfo}) => {
+const ImageUploader = ({fileSelected, additionalInfo, videoDescription}) => {
   const [loading, setLoading] = useState(false);
   const [isUploaded, setUploaded] = useState(false);
 
@@ -41,6 +41,7 @@ const ImageUploader = ({fileSelected, additionalInfo}) => {
           // spell
           // いいね数: 0
           additionalInfo: filteredAdditionalInfo,
+          description: videoDescription,
         };
         console.log("addtionalInfo: ",  additionalInfo);
         try {
