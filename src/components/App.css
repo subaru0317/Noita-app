@@ -48,3 +48,16 @@
   transform: scale(0.5);
   transition: opacity 500ms, transform 500ms;
 }
+
+.board-container {
+  width: 100%;
+  height: 39px;
+  overflow: auto;
+}
+
+.board-items {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  height: 100%;
+}
