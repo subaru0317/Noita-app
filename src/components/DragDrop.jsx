@@ -44,16 +44,17 @@ const DragDrop = memo(({setAdditionalInfo}) => {
   }));
 
   const addImageToBoard = useCallback((item) => {
-    if (boardItems.length < 26) {
-      const cloneSpell = {...item, id: uuidv4()};
-      setBoard((prevboard) => {
+    setBoard((prevboard) => {
+      if (prevboard.length < 26) {
+        const cloneSpell = {...item, id: uuidv4()};
         return [...prevboard, cloneSpell];
-      });
-      setAdditionalInfo(prevboard => [...prevboard, cloneSpell]);
-    } else {
-      console.log("You can only have 26 spells on the board");
-    }
-    }, [setAdditionalInfo, boardItems]);
+      } else {
+        console.log("You can only have 26 spells on the board");
+        return prevboard;
+      }
+    })
+    setAdditionalInfo(prevboard => [...prevboard, {...item, id:uuidv4()}]);
+  }, [setAdditionalInfo]);
 
   const handleSort = useCallback((dragIndex, hoverIndex) => {
     setBoard((prevColumns) =>
@@ -69,7 +70,6 @@ const DragDrop = memo(({setAdditionalInfo}) => {
   const handleAddToBoard = useCallback((item) => {
     addImageToBoard(item);
   }, [addImageToBoard]);
-  // console.log(boardItems);
 
   return (
     <>
@@ -79,9 +79,10 @@ const DragDrop = memo(({setAdditionalInfo}) => {
         })}
       </div>
       <div className="Board" ref={drop}>
-        {boardItems.map((spell, index) => (
-          <DraggableSpell spell={spell} key={spell.id} onSortEnd={handleSort} index={index}/>
-        ))}
+        {boardItems.map((spell, index) => {
+          console.log(boardItems);
+          return <DraggableSpell spell={spell} key={spell.id} onSortEnd={handleSort} index={index}/>
+        })}
       </div>
     </>
   );

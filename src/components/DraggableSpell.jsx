@@ -1,8 +1,8 @@
+import React, { useRef, memo } from "react";
 import { useDrag, useDrop } from "react-dnd";
-import React, { useRef } from "react";
 import { Image } from '@chakra-ui/react';
 
-function DraggableSpell({ spell, index, onSortEnd, onAddToBoard }) {
+const DraggableSpell = memo(({ spell, index, onSortEnd, onAddToBoard }) => {
   console.log("DraggableSpell")
   const ref = useRef(null);
 
@@ -66,6 +66,6 @@ function DraggableSpell({ spell, index, onSortEnd, onAddToBoard }) {
       onClick={() => { if (onAddToBoard) onAddToBoard(spell) }}
     />
   );
-}
+});
 
 export default DraggableSpell;
