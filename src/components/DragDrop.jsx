@@ -69,18 +69,18 @@ const DragDrop = memo(({setAdditionalInfo}) => {
   const handleAddToBoard = useCallback((item) => {
     addImageToBoard(item);
   }, [addImageToBoard]);
-  console.log(boardItems);
+  // console.log(boardItems);
 
   return (
     <>
       <div className="DraggableSpellList">
         {SpellList.map((spell) => {
-          return <DraggableSpell spell={spell} key={uuidv4()} onAddToBoard={handleAddToBoard} />;
+          return <DraggableSpell spell={spell} key={spell.id} onAddToBoard={handleAddToBoard} />;
         })}
       </div>
       <div className="Board" ref={drop}>
         {boardItems.map((spell, index) => (
-          <DraggableSpell spell={spell} key={uuidv4()} onSortEnd={handleSort} index={index}/>
+          <DraggableSpell spell={spell} key={spell.id} onSortEnd={handleSort} index={index}/>
         ))}
       </div>
     </>

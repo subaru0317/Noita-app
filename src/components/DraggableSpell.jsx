@@ -2,7 +2,8 @@ import { useDrag, useDrop } from "react-dnd";
 import React, { useRef } from "react";
 import { Image } from '@chakra-ui/react';
 
-function Spell({ spell, index, onSortEnd, onAddToBoard }) {
+function DraggableSpell({ spell, index, onSortEnd, onAddToBoard }) {
+  console.log("DraggableSpell")
   const ref = useRef(null);
 
   const [{ isDragging }, drag] = useDrag(() => ({
@@ -67,4 +68,4 @@ function Spell({ spell, index, onSortEnd, onAddToBoard }) {
   );
 }
 
-export default Spell;
+export default DraggableSpell;

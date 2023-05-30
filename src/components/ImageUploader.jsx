@@ -5,7 +5,6 @@ import "./ImageUpload.css";
 import { storage, db } from "../firebase"
 import { ref, uploadBytesResumable } from "firebase/storage";
 import { collection, addDoc } from "firebase/firestore";
-import SelectedFilePreview from "./SelectedFilePreview";
 
 const ImageUploader = memo(({fileSelected, additionalInfo, videoDescription}) => {
   const [loading, setLoading] = useState(false);

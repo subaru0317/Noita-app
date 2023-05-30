@@ -18,6 +18,7 @@ function getFileName(path) {
 }
 
 export default function SortSelect() {
+  console.log("Filter Modal");
   const Overlay = () => (
     <ModalOverlay
       bg='blockAlpha.300'
