@@ -8,38 +8,6 @@ import "./App.css";
 import { TransitionGroup, CSSTransition } from "react-transition-group";
 import { Button } from "@chakra-ui/react";
 
-const DroppableBoard = memo(({ boardItems }) => {
-  const handleSort = useCallback((dragIndex, hoverIndex) => {
-    setBoard((prevBoard) => {
-      const draggedItem = prevBoard[dragIndex];
-      return update(prevBoard, {
-        $splice: [
-          [dragIndex, 1],
-          [hoverIndex, 0, draggedItem]
-        ],
-      });
-    });
-  }, []);
-
-  return (
-    <div className="board-container">
-      <TransitionGroup className="board-transition-group">
-      {boardItems.map((spell, index) => {
-        return (
-          <CSSTransition
-            key={spell.id}
-            timeout={500}
-            classNames="item"
-          >
-            <DraggableSpell spell={spell} onSortEnd={handleSort} index={index}/>
-          </CSSTransition>
-        );
-      })}
-      </TransitionGroup>
-    </div>
-  );
-});
-
 const DragDrop = memo(({setAdditionalInfo}) => {
   const [boardItems, setBoard] = useState([]);
   const [{ isOver }, drop] = useDrop(() => ({
@@ -71,8 +39,20 @@ const DragDrop = memo(({setAdditionalInfo}) => {
     setAdditionalInfo(prevboard => [...prevboard, {...item, id:uuidv4()}]);
   }, [setAdditionalInfo]);
 
-
+  const handleSort = useCallback((dragIndex, hoverIndex) => {
+    console.log("handleSort");
+    setBoard((prevBoard) => {
+      const draggedItem = prevBoard[dragIndex];
+      return update(prevBoard, {
+        $splice: [
+          [dragIndex, 1],
+          [hoverIndex, 0, draggedItem]
+        ],
+      });
+    });
+  }, []);
   
+
   const handleAddToBoard = useCallback((item) => {
     addImageToBoard(item);
   }, [addImageToBoard]);
@@ -89,7 +69,20 @@ const DragDrop = memo(({setAdditionalInfo}) => {
         })}
       </div>
       <div className="Board" ref={drop}>
-        <DroppableBoard boardItems={boardItems}/>
+        <TransitionGroup className="board-transition-group">
+          {boardItems.map((spell, index) => {
+            console.log(boardItems);
+            return (
+              <CSSTransition
+                key={spell.id}
+                timeout={500}
+                classNames="item"
+              >
+                <DraggableSpell spell={spell} key={spell.id} onSortEnd={handleSort} index={index}/>
+              </CSSTransition>
+            )
+          })}
+        </TransitionGroup>
       </div>
       <Button onClick={handleReset}>
         Wand Reset
