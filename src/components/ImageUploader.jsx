@@ -9,10 +9,17 @@ import { collection, addDoc } from "firebase/firestore";
 const ImageUploader = memo(({fileSelected, additionalInfo, videoDescription}) => {
   const [loading, setLoading] = useState(false);
   const [isUploaded, setUploaded] = useState(false);
-
+  console.log(additionalInfo);
   // const convertGifToMp4 = functions.httpsCallable("convertGifToMp4");
   const OnFileUploadToFirebase = async (e) => {
-    console.log("AAAA: ", additionalInfo);
+    console.log("A")
+    if (!fileSelected) {
+      alert("Oops! It looks like the video is not selected...")
+      return ;
+    }
+    if (!videoDescription) {
+      alert("Oops! It looks like the wand edit has not been done...")
+    }
     // const file = e.target.files[0];
     const file = fileSelected;
     // ファイル名を一意にするためにタイムスタンプを追加
@@ -42,7 +49,6 @@ const ImageUploader = memo(({fileSelected, additionalInfo, videoDescription}) =>
           additionalInfo: filteredAdditionalInfo,
           description: videoDescription,
         };
-        console.log("addtionalInfo: ",  additionalInfo);
         try {
           await addDoc(collection(db, "images"), fileInfo);
           // Firestoreのコレクション "files" に fileInfo を追加

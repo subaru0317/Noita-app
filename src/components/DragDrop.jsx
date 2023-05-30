@@ -1,4 +1,4 @@
-import React, { useState, useCallback, memo } from "react";
+import React, { useState, useCallback, memo, useRef } from "react";
 import DraggableSpell from "./DraggableSpell";
 import { useDrop } from "react-dnd";
 import { v4 as uuidv4 } from "uuid";
@@ -7,25 +7,6 @@ import SpellList from "./SpellList";
 import "./App.css";
 import { TransitionGroup, CSSTransition } from "react-transition-group";
 import { Button } from "@chakra-ui/react";
-
-
-// const SpellList = [
-//   {
-//     id: 1,
-//     name: "accelerating_shot",
-//     path: "/spells/Spell_accelerating_shot.webp"
-//   },
-//   {
-//     id: 2,
-//     name: "worm_rain",
-//     path: "/spells/Spell_worm_rain.webp"
-//   },
-//   {
-//     id: 3,
-//     name: "x_ray",
-//     path: "/spells/Spell_x_ray.webp"
-//   },
-// ]
 
 const DragDrop = memo(({setAdditionalInfo}) => {
   const [boardItems, setBoard] = useState([]);
