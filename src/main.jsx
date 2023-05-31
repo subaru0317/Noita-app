@@ -58,7 +58,8 @@ const router = createBrowserRouter(
           errorElement={<ErrorPage />}
         /> */}
         <Route
-          path='mypage/:usrid' // テキトー書いてるので注意
+          // path='mypage/:usrid' // テキトー書いてるので注意
+          path='mypage'
           element={<MyPage />}
           errorElement={<ErrorPage />}
         />

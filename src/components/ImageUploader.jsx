@@ -2,17 +2,17 @@ import { Button } from "@chakra-ui/react";
 import React, { useState, memo } from "react";
 import "./ImageUpload.css";
 // import { storage, functions } from "./firebase"
-import { storage, db } from "../firebase"
+import { storage, db, auth } from "../firebase"
 import { ref, uploadBytesResumable } from "firebase/storage";
-import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc, setDoc, serverTimestamp, doc } from "firebase/firestore";
 
 const ImageUploader = memo(({fileSelected, additionalInfo, videoDescription}) => {
   const [loading, setLoading] = useState(false);
   const [isUploaded, setUploaded] = useState(false);
-  console.log(additionalInfo);
   // const convertGifToMp4 = functions.httpsCallable("convertGifToMp4");
   const OnFileUploadToFirebase = async (e) => {
-    console.log("A")
+    console.log("additionalInfo");
+    console.log(additionalInfo);
     if (!fileSelected) {
       alert("Oops! It looks like the video is not selected...")
       return ;
@@ -22,7 +22,7 @@ const ImageUploader = memo(({fileSelected, additionalInfo, videoDescription}) =>
     }
     // const file = e.target.files[0];
     const file = fileSelected;
-    // ファイル名を一意にするためにタイムスタンプを追加
+    // ファイル名を一意にするためにタイムスタンプを追加 いるんかこれ？ dbの方は問題ないけど，storageの方でないと問題が発生する．はず．
     const fileName = Date.now() + "_" + file.name;
     const storageRef = ref(storage, "images/" + fileName);
     const uploadImage = uploadBytesResumable(storageRef, file);
@@ -40,18 +40,23 @@ const ImageUploader = memo(({fileSelected, additionalInfo, videoDescription}) =>
         const filteredAdditionalInfo = additionalInfo.map(({ name, path }) => {
           return { name, path };
         });
+        const userId = auth.currentUser.uid
+        const userInfo = {
+          userId: userId,
+          userName: auth.currentUser.displayName,
+        }
         const fileInfo = {
-          filename: fileName,
-          // 他の関連するデータも必要に応じて追加できます
-          // useid
-          // spell
-          // いいね数: 0
+          fileName: fileName,
           additionalInfo: filteredAdditionalInfo,
           description: videoDescription,
+          likeCount: 0,
+          timestamp: serverTimestamp(),
         };
         try {
-          await addDoc(collection(db, "images"), fileInfo);
-          // Firestoreのコレクション "files" に fileInfo を追加
+          const userDocRef = doc(db, "users", userId);
+          await setDoc(userDocRef, userInfo);
+          const imagesDocRef = doc(collection(userDocRef, "images"));
+          await setDoc(imagesDocRef, fileInfo);
         } catch (error) {
           console.error("Error adding document: ", error);
         }

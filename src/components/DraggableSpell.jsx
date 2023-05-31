@@ -33,7 +33,7 @@ const DraggableSpell = memo(({ spell, index, onSortEnd, onAddToBoard }) => {
         return;
       }
 
-      const hoverBoundingRect = ref.current.getBoundingClientRect();
+      const hoverBoundingRect = ref.current?.getBoundingClientRect();
       const hoverMiddleX =
         (hoverBoundingRect.right - hoverBoundingRect.left) / 2;
       const clientOffset = monitor.getClientOffset();
@@ -46,9 +46,12 @@ const DraggableSpell = memo(({ spell, index, onSortEnd, onAddToBoard }) => {
       if (dragIndex > hoverIndex && hoverClientX > hoverMiddleX) {
         return;
       }
-      if (typeof dragIndex !== "undefined" && typeof hoverIndex !== "undefined")
+      if (typeof dragIndex !== "undefined" && typeof hoverIndex !== "undefined") {
+        console.log("dragIndex: ", dragIndex);
+        console.log("hoverIndex: ", hoverIndex);
         onSortEnd(dragIndex, hoverIndex);
-      item.index = hoverIndex;
+      }
+      // item.index = hoverIndex;
     }
   });
 

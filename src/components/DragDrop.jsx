@@ -40,25 +40,23 @@ const DragDrop = memo(({setAdditionalInfo}) => {
   }, [setAdditionalInfo]);
 
   const handleSort = useCallback((dragIndex, hoverIndex) => {
-    console.log("handleSort");
-    setBoard((prevBoard) => {
-      const draggedItem = prevBoard[dragIndex];
-      return update(prevBoard, {
+    setBoard((prevBoard) => 
+      update(prevBoard, {
         $splice: [
           [dragIndex, 1],
-          [hoverIndex, 0, draggedItem]
+          [hoverIndex, 0, prevBoard[dragIndex]],
         ],
-      });
-    });
+      }),
+    );
   }, []);
   
-
   const handleAddToBoard = useCallback((item) => {
     addImageToBoard(item);
   }, [addImageToBoard]);
 
   const handleReset = () => {
     setBoard([]);
+    setAdditionalInfo([]);
   }
 
   return (
@@ -71,7 +69,7 @@ const DragDrop = memo(({setAdditionalInfo}) => {
       <div className="Board" ref={drop}>
         <TransitionGroup className="board-transition-group">
           {boardItems.map((spell, index) => {
-            console.log(boardItems);
+            // console.log(boardItems);
             return (
               <CSSTransition
                 key={spell.id}
