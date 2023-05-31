@@ -8,23 +8,16 @@ import {
   ModalBody,
   ModalCloseButton,
 } from '@chakra-ui/react'
-import { useState, useCallback, useReducer, memo } from 'react';
+import { useState, useCallback, useReducer, memo, useMemo } from 'react';
 import { addDocument } from "../firebase/firestore";
 import SpellList from "./SpellList";
 
-function getFileName(path) {
-  const parts = path.split('/');
-  return parts[parts.length - 1];
-}
-
-const clickedReducer = (state, action) => {
-  switch (action.type) {
-    case "TOGGLE_SPELL":
-      return { ...state, [action.spellKey]: !state[action.spellKey]}
-    default:
-      return state;
-  }
-};
+const Overlay = () => (
+  <ModalOverlay
+    bg='blockAlpha.300'
+    backdropFilter='blur(10px) hue-rotate(90deg)'
+  />
+)
 
 const FilterModal = () => {
   const Overlay = () => (
@@ -34,34 +27,36 @@ const FilterModal = () => {
     />
   )
 
+  const overlay = <Overlay />
+  // const [overlay, setOverlay] = useState(<Overlay />);
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [overlay, setOverlay] = useState(<Overlay />);
-  // const [clicked, setClicked] = useState(false);
-  const [clicked, dispatch] = useReducer(clickedReducer, {});
   
-  const SpellIconButton = memo(({spellpath}) => {
-    const spellKey = getFileName(spellpath);
+  const SpellIcon = memo(({ spellpath }) => {
+    return (
+      <img 
+        src={spellpath}
+        alt='spell'
+        style={{ borderRadius: '2px' }}
+      />
+    );
+  });
+
+  const SpellIconButton = memo(({spellpath, id}) => {
+    const [isClicked, setIsClicked] = useState(false);
 
     const handleSpellButtonClick = useCallback(() => {
-      dispatch({ type: 'TOGGLE_SPELL', spellKey });
-      // setClicked((prevState) => ({
-      //   ...prevState,
-      //   [spellKey]: !prevState[spellKey]
-      // }));
-    }, [spellKey]);
+      setIsClicked(prev => !prev);
+    }, []);
 
-    const bgColor = clicked[spellKey] ? "red" : "#4f4f4f";
+    const bgColor = isClicked ? "red" : "#4f4f4f";
+
     console.log("IconButton");
     return (
       <IconButton
         bg={bgColor}
         _hover={{ bg: "gray.900" }}
         border="2px solid #931527"
-        icon={<img 
-          src={spellpath}
-          alt='spell'
-          style={{ borderRadius: '2px' }}
-        />}
+        icon={<SpellIcon spellpath={spellpath} />}
         onClick={handleSpellButtonClick}
       />
     );
@@ -69,17 +64,13 @@ const FilterModal = () => {
 
   // まだ作ってないよ
   const handleFilter = () => {
-    console.log("handleFilter pushed");
+    // console.log("handleFilter pushed");
     // addDocument();
   };
 
   return (
     <Box textAlign='right'>
-      <Button 
-        onClick={() => {
-          setOverlay(<Overlay />)
-          onOpen()
-        }} colorScheme='blue' size='md'>
+      <Button onClick={onOpen} colorScheme='blue' size='md'>
         Filter
       </Button>
       <Modal isCentered isOpen={isOpen} onClose={onClose}>
@@ -89,7 +80,7 @@ const FilterModal = () => {
           <ModalCloseButton />
           <ModalBody>
             {SpellList.map((spell) => (
-              <SpellIconButton spellpath={spell.path} key={spell.id} />
+              <SpellIconButton spellpath={spell.path} id={spell.id} key={spell.id} />
             ))}
           </ModalBody>
           <ModalFooter>
