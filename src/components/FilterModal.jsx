@@ -8,7 +8,7 @@ import {
   ModalBody,
   ModalCloseButton,
 } from '@chakra-ui/react'
-import { useState } from 'react';
+import { useState, useCallback, useReducer, memo } from 'react';
 import { addDocument } from "../firebase/firestore";
 import SpellList from "./SpellList";
 
@@ -17,8 +17,16 @@ function getFileName(path) {
   return parts[parts.length - 1];
 }
 
-export default function SortSelect() {
-  console.log("Filter Modal");
+const clickedReducer = (state, action) => {
+  switch (action.type) {
+    case "TOGGLE_SPELL":
+      return { ...state, [action.spellKey]: !state[action.spellKey]}
+    default:
+      return state;
+  }
+};
+
+const FilterModal = () => {
   const Overlay = () => (
     <ModalOverlay
       bg='blockAlpha.300'
@@ -28,20 +36,22 @@ export default function SortSelect() {
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [overlay, setOverlay] = useState(<Overlay />);
-  const [clicked, setClicked] = useState(false);
+  // const [clicked, setClicked] = useState(false);
+  const [clicked, dispatch] = useReducer(clickedReducer, {});
   
-  const SpellIconButton = ({spellpath}) => {
+  const SpellIconButton = memo(({spellpath}) => {
     const spellKey = getFileName(spellpath);
 
-    const handleSpellButtonClick = () => {
-      setClicked((prevState) => ({
-        ...prevState,
-        [spellKey]: !prevState[spellKey]
-      }));
-    };
+    const handleSpellButtonClick = useCallback(() => {
+      dispatch({ type: 'TOGGLE_SPELL', spellKey });
+      // setClicked((prevState) => ({
+      //   ...prevState,
+      //   [spellKey]: !prevState[spellKey]
+      // }));
+    }, [spellKey]);
 
     const bgColor = clicked[spellKey] ? "red" : "#4f4f4f";
-
+    console.log("IconButton");
     return (
       <IconButton
         bg={bgColor}
@@ -55,7 +65,7 @@ export default function SortSelect() {
         onClick={handleSpellButtonClick}
       />
     );
-  }
+  });
 
   // まだ作ってないよ
   const handleFilter = () => {
@@ -91,3 +101,5 @@ export default function SortSelect() {
     </Box>
   );
 }
+
+export default FilterModal;
