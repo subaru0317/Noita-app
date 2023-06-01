@@ -8,7 +8,7 @@ import {
   ModalBody,
   ModalCloseButton,
 } from '@chakra-ui/react'
-import { useState, useCallback, memo } from 'react';
+import { useState, useCallback, memo, useEffect } from 'react';
 import { addDocument } from "../firebase/firestore";
 import SpellList from "./SpellList";
 import { darken } from "polished";
@@ -30,17 +30,24 @@ const SpellIcon = memo(({ spellpath }) => {
   );
 });
 
-const SpellIconButton = memo(({spellpath, id}) => {
+const SpellIconButton = memo(({spellpath, id, setSelectedSpells}) => {
   const [isClicked, setIsClicked] = useState(false);
 
   const handleSpellButtonClick = useCallback(() => {
     setIsClicked(prev => !prev);
   }, []);
 
+  useEffect(() => {
+    if (isClicked) {
+      setSelectedSpells((prev) => [...prev, id]);
+    } else {
+      setSelectedSpells((prev) => prev.filter((spellId) => spellId !== id));
+    }
+  }, [isClicked, setSelectedSpells, id]);
+
   const bgColor = isClicked ? "red" : "#4f4f4f";
   const hoverColor = darken(0.2, bgColor);
 
-  // console.log("IconButton");
   return (
     <IconButton
       bg={bgColor}
@@ -54,13 +61,14 @@ const SpellIconButton = memo(({spellpath, id}) => {
 
 
 const SpellButtonBoard = () => {
-  console.log("SpellButtonBoard")
+  const [selectedSpells, setSelectedSpells] = useState([]);
+  console.log(selectedSpells);
   return (
     SpellList.map((spell) => (
-      <SpellIconButton spellpath={spell.path} id={spell.id} key={spell.id} />
+      <SpellIconButton spellpath={spell.path} id={spell.id} key={spell.id} setSelectedSpells={setSelectedSpells}/>
     ))
   )
-}
+};
 
 const FilterModal = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
