@@ -32,6 +32,7 @@ const UserMenu = () => {
           borderRadius='full'
           boxSize='40px'
           src={auth.currentUser.photoURL}
+          referrerPolicy="no-referrer" // https://stackoverflow.com/questions/56242788/http-403-on-images-loaded-from-googleusercontent-com
           alt='UserIcon'
           />
         {/* <p>{auth.currentUser.displayName}</p> */}

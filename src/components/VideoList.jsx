@@ -4,7 +4,8 @@ import { Grid, GridItem, Spinner, IconButton } from "@chakra-ui/react";
 import React, { useEffect, useState } from 'react';
 import LikeButton from "./LikeButton";
 
-const VideoList = ({selectedSpells}) => {
+const VideoList = ({selectedSpells, filterApplied}) => {
+  console.log("VideoList")
   const [imageUrls, setImageUrls] = useState([]);
   const [loading, setLoading] = useState(true);
 

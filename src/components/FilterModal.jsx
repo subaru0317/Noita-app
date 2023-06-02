@@ -30,7 +30,7 @@ const SpellIcon = memo(({ spellpath }) => {
   );
 });
 
-const SpellIconButton = memo(({spellpath, id, setSelectedSpells}) => {
+const SpellIconButton = memo(({spellpath, id, setSpells}) => {
   const [isClicked, setIsClicked] = useState(false);
 
   const handleSpellButtonClick = useCallback(() => {
@@ -39,11 +39,11 @@ const SpellIconButton = memo(({spellpath, id, setSelectedSpells}) => {
 
   useEffect(() => {
     if (isClicked) {
-      setSelectedSpells((prev) => [...prev, id]);
+      setSpells((prev) => [...prev, id]);
     } else {
-      setSelectedSpells((prev) => prev.filter((spellId) => spellId !== id));
+      setSpells((prev) => prev.filter((spellId) => spellId !== id));
     }
-  }, [isClicked, setSelectedSpells, id]);
+  }, [isClicked, setSpells, id]);
 
   const bgColor = isClicked ? "red" : "#4f4f4f";
   const hoverColor = darken(0.2, bgColor);
@@ -60,23 +60,26 @@ const SpellIconButton = memo(({spellpath, id, setSelectedSpells}) => {
 });
 
 
-const SpellButtonBoard = ({setSelectedSpells}) => {
+const SpellButtonBoard = ({setSpells}) => {
   return (
     SpellList.map((spell) => (
-      <SpellIconButton spellpath={spell.path} id={spell.id} key={spell.id} setSelectedSpells={setSelectedSpells}/>
+      <SpellIconButton spellpath={spell.path} id={spell.id} key={spell.id} setSpells={setSpells}/>
     ))
   )
 };
     
 
-const FilterModal = ({setSelectedSpells}) => {
+const FilterModal = ({setSelectedSpells, setFilterApplied}) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  // まだ作ってないよ
-  const handleFilter = () => {
-    // console.log("handleFilter pushed");
-    // addDocument();
-  };
+  const [spells, setSpells] = useState([]);
 
+  const handleFilter = () => {
+    console.log("handleFilter");
+    setSelectedSpells(spells);
+    setFilterApplied(true);
+    onClose();
+  };
+  console.log(spells);
   return (
     <Box textAlign='right'>
       <Button 
@@ -89,7 +92,7 @@ const FilterModal = ({setSelectedSpells}) => {
           <ModalHeader>Choose Spell</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <SpellButtonBoard setSelectedSpells={setSelectedSpells}/>
+            <SpellButtonBoard setSpells={setSpells}/>
           </ModalBody>
           <ModalFooter>
             <Button variant='ghost' mr={3} onClick={onClose}>Close</Button>
