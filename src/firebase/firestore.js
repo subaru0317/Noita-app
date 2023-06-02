@@ -82,7 +82,7 @@ export { addDocument };
 // });
 
 // // いいねの数の更新
-// function incrementLikes() {
+// const incrementLikes = () => {
 //   documentRef.update({ likes: firebase.firestore.FieldValue.increment(1) })
 //     .then(() => {
 //       console.log('いいねの数が更新されました');

@@ -4,7 +4,7 @@ import DragDrop from '../components/DragDrop';
 import SelectedFilePreview from "../components/SelectedFilePreview";
 import VideoDescriptionInput from "../components/VideoDescriptionInput";
 
-export default function UploadVideoPage() {
+const UploadVideoPage = () => {
   const [fileSelected, setFileSelected] = useState(null);
   const [additionalInfo, setAdditionalInfo] = useState([]);
   const [videoDescription, setVideoDescription] = useState('');
@@ -21,3 +21,5 @@ export default function UploadVideoPage() {
     </>
   );
 }
+
+export default UploadVideoPage;

@@ -60,19 +60,17 @@ const SpellIconButton = memo(({spellpath, id, setSelectedSpells}) => {
 });
 
 
-const SpellButtonBoard = () => {
-  const [selectedSpells, setSelectedSpells] = useState([]);
-  console.log(selectedSpells);
+const SpellButtonBoard = ({setSelectedSpells}) => {
   return (
     SpellList.map((spell) => (
       <SpellIconButton spellpath={spell.path} id={spell.id} key={spell.id} setSelectedSpells={setSelectedSpells}/>
     ))
   )
 };
+    
 
-const FilterModal = () => {
+const FilterModal = ({setSelectedSpells}) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  
   // まだ作ってないよ
   const handleFilter = () => {
     // console.log("handleFilter pushed");
@@ -91,7 +89,7 @@ const FilterModal = () => {
           <ModalHeader>Choose Spell</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <SpellButtonBoard />
+            <SpellButtonBoard setSelectedSpells={setSelectedSpells}/>
           </ModalBody>
           <ModalFooter>
             <Button variant='ghost' mr={3} onClick={onClose}>Close</Button>

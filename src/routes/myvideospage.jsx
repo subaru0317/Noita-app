@@ -1,5 +1,7 @@
-export default function MyVideosPage() {
+const MyVideosPage = () => {
   return (
     <p>MyVideosPage</p>
   );
 }
+
+export default MyVideosPage;

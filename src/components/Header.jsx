@@ -2,13 +2,11 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import {
   Flex,
-  Spacer,
   Heading,
 } from '@chakra-ui/react';
 import AuthButton from "./AuthButton";
 
-export default function Header() {
-
+const Header = () => {
   return (
     <Flex
       align='center'
@@ -25,3 +23,5 @@ export default function Header() {
     </Flex>
   );
 }
+
+export default Header;

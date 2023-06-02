@@ -8,7 +8,7 @@ const SelectedFilePreview = memo(({ setFileSelected }) => {
     setFileSelected(file);
     const reader = new FileReader();
 
-    reader.addEventListener("load", function () {
+    reader.addEventListener("load", () => {
       // Convert image file to a base64 string
       setPreviewSrc(reader.result);
     }, false);

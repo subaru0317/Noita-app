@@ -1,10 +1,14 @@
 import VideoList from '../components/VideoList';
 import FilterModal from '../components/FilterModal';
-export default function Root() {
+import { useState } from "react";
+const VideoPage = () => {
+  const [selectedSpells, setSelectedSpells] = useState([]);
   return (
     <>
-      <FilterModal />
-      <VideoList />
+      <FilterModal setSelectedSpells={setSelectedSpells} />
+      <VideoList selectedSpells={selectedSpells} />
     </>
   );
 }
+
+export default VideoPage;

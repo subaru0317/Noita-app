@@ -11,7 +11,7 @@ import { MdFolderSpecial } from "react-icons/md";
 import { Link } from 'react-router-dom';
 const provider = new GoogleAuthProvider();
 
-function UserMenu() {
+const UserMenu = () => {
   const IconText = ({icon, color, text, path}) => {
     return (
       <Link to={path}>
@@ -83,7 +83,7 @@ function UserMenu() {
   )
 }
 
-function SignInButton() {
+const SignInButton = () => {
   const handleLogin = () => {
     signInWithPopup(auth, provider)
       .then((result) => {
@@ -120,7 +120,7 @@ function SignInButton() {
   )
 }
 
-export default function AuthButton() {
+const AuthButton = () => {
   const [userSignedIn] = useAuthState(auth);
   return (
     <div>
@@ -129,3 +129,4 @@ export default function AuthButton() {
   )
 }
 
+export default AuthButton;
