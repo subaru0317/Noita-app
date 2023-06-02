@@ -69,14 +69,17 @@ const SpellButtonBoard = ({setSpells}) => {
 };
     
 
-const FilterModal = ({setSelectedSpells, setFilterApplied}) => {
+const FilterModal = ({setSelectedSpells}) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [spells, setSpells] = useState([]);
 
   const handleFilter = () => {
-    console.log("handleFilter");
-    setSelectedSpells(spells);
-    setFilterApplied(true);
+    const selectedSpellPaths = spells.map(spellId => {
+      const foundSpell = SpellList.find(spell => spell.id === spellId);
+      return foundSpell ? foundSpell.path : null;
+    }).filter(path => path !== null);
+
+    setSelectedSpells(selectedSpellPaths);
     onClose();
   };
   console.log(spells);

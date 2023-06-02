@@ -10,14 +10,13 @@ const ImageUploader = memo(({fileSelected, additionalInfo, videoDescription}) =>
   const [isUploaded, setUploaded] = useState(false);
   // const convertGifToMp4 = functions.httpsCallable("convertGifToMp4");
   const OnFileUploadToFirebase = async (e) => {
-    console.log("additionalInfo");
-    console.log(additionalInfo);
     if (!fileSelected) {
       alert("Oops! It looks like the video is not selected...")
       return ;
     }
-    if (!videoDescription) {
+    if (additionalInfo.length === 0) {
       alert("Oops! It looks like the wand edit has not been done...")
+      return ;
     }
     // const file = e.target.files[0];
     const file = fileSelected;

@@ -1,11 +1,12 @@
-import { storage } from '../firebase';
+import { storage, db } from '../firebase';
 import { ref, getDownloadURL, listAll } from 'firebase/storage';
-import { Grid, GridItem, Spinner, IconButton } from "@chakra-ui/react";
+// import { getFirestore, collection, getDocs, query, where, arrayContainsAny } from "firebase/firestore";
+import { Grid, GridItem, Spinner } from "@chakra-ui/react";
 import React, { useEffect, useState } from 'react';
 import LikeButton from "./LikeButton";
 
-const VideoList = ({selectedSpells, filterApplied}) => {
-  console.log("VideoList")
+const VideoList = ({selectedSpells}) => {
+  console.log(selectedSpells);
   const [imageUrls, setImageUrls] = useState([]);
   const [loading, setLoading] = useState(true);
 

@@ -29,3 +29,4 @@ src/firebase.js
 storage.rules
 # memo
 memo
+firestore-memo
