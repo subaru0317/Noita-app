@@ -35,8 +35,12 @@ const ImageUploader = memo(({fileSelected, additionalInfo, videoDescription}) =>
         setLoading(false);
         setUploaded(true);
         // Firestoreにファイルに関連する情報を保存
-        const filteredAdditionalInfo = additionalInfo.map(({ name, path }) => {
-          return { name, path };
+        // const filteredAdditionalInfo = additionalInfo.map(({ name, path }) => {
+        //   return { name, path };
+        // });
+        // nameの情報は不要だと判断
+        const filteredAdditionalInfo = additionalInfo.map(({ path }) => {
+          return { path };
         });
         const userId = auth.currentUser.uid
         const userInfo = {
