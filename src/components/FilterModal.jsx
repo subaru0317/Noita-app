@@ -82,7 +82,7 @@ const FilterModal = ({setSelectedSpells}) => {
     setSelectedSpells(selectedSpellPaths);
     onClose();
   };
-  // console.log(spells);
+  console.log(spells);
   return (
     <Box textAlign='right'>
       <Button 
