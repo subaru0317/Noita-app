@@ -1,7 +1,8 @@
 import { storage, db } from '../firebase';
 import { ref, getDownloadURL, listAll } from 'firebase/storage';
 import { collectionGroup, getDocs, query, getDoc, where } from "firebase/firestore";
-import { Grid, GridItem, Spinner, Box, Image, Button, Text, Link, Wrap, WrapItem } from "@chakra-ui/react";
+import { Grid, GridItem, Spinner, Box, Image, Flex, Text, Wrap, WrapItem } from "@chakra-ui/react";
+import { Link } from "react-router-dom";
 import React, { useEffect, useState } from 'react';
 import LikeButton from "./LikeButton";
 
@@ -28,14 +29,20 @@ const VideoCard = ({ imageDocData }) => {
               </WrapItem>
             ))}
           </Wrap>
-          <Box d="flex" justifyContent="space-between" alignItems="center" mt="2">
-            <Text color="gray.500">
-              {imageDocData.likeCount} likes
+          <Flex justifyContent="space-between" alignItems="center" mt="2">
+            <Text color="#747474">
+              {/* {imageDocData.username} // Assuming `username` is present in imageDocData */}
+              a
             </Text>
-            <LikeButton />
+            <Flex alignItems="center">
+              <LikeButton />
+              <Text ml="2" color="#747474">
+                {imageDocData.likeCount}
+              </Text>
+            </Flex>
+          </Flex>
           </Box>
         </Box>
-      </Box>
     </Link>
   );
 };
