@@ -5,10 +5,11 @@ import { Grid, GridItem, Spinner, Box, Image, Button, Text, Link, Wrap, WrapItem
 import React, { useEffect, useState } from 'react';
 import LikeButton from "./LikeButton";
 
-const VideoCard = ({ imageDocData, pageUrl }) => {
+const VideoCard = ({ imageDocData }) => {
   const MAX_ICON_DISPLAY = 26;
   const displayIcons = imageDocData.wandSpellsInfo.slice(0, MAX_ICON_DISPLAY); // 上限26までのアイコンを取得
 
+  const pageUrl = `/page/${imageDocData.id}`;
   return (
     <Link to={pageUrl}>
       <Box maxW="sm" borderWidth="1px" borderRadius="lg" overflow="hidden" mb={6}>
@@ -17,7 +18,13 @@ const VideoCard = ({ imageDocData, pageUrl }) => {
           <Wrap spacing={0} justify="start">
             {displayIcons.map((icon, index) => (
               <WrapItem key={index} mb="3px">
-                <Image boxSize="20px" src={icon} alt={`Icon ${index}`} /> {/* iconのサイズは適切に調整してください */}
+                <Image 
+                  bg="#9e9e9e"
+                  border="1px solid #931527"
+                  boxSize="25px"
+                  src={icon}
+                  alt={`Icon ${index}`}
+                />
               </WrapItem>
             ))}
           </Wrap>
@@ -81,7 +88,7 @@ const VideoList = ({selectedSpells}) => {
       <Grid templateColumns="repeat(2, 1fr)" gap={6}>
         {imageDocDatas.map((imageDocData, index) => (
           <GridItem key={index}>
-            <VideoCard imageDocData={imageDocData} pageUrl={pageUrl} />
+            <VideoCard imageDocData={imageDocData} />
             {/* <img src={url} alt={`Image ${index}`} style={{ width: '80%', height: '80%', objectFit: 'cover' }}/> */}
           </GridItem>
         ))}
