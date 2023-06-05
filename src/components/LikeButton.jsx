@@ -6,6 +6,7 @@ import { increment, updateDoc, doc, setDoc, getDoc, deleteDoc, serverTimestamp, 
 
 const LikeButton = ({imageDocData}) => {
   const [likeCount, setLikeCount] = useState(imageDocData.likeCount);
+  const [liked, setLiked] = useState(false);
 
   useEffect(() => {
     const imageRef = doc(db, "users", imageDocData.userId, "images", imageDocData.fileId);
@@ -13,7 +14,15 @@ const LikeButton = ({imageDocData}) => {
       setLikeCount(doc.data().likeCount);
     });
 
-    // Clean up function
+    const checkLiked = async () => {
+      const loginUserId = auth.currentUser.uid;
+      const likesRef = doc(db, "users", imageDocData.userId, "images", imageDocData.fileId, "likes", loginUserId);
+      const docSnap = await getDoc(likesRef);
+      setLiked(docSnap.exists());
+    };
+
+    checkLiked();
+
     return () => unsubscribe();
   }, [imageDocData]);
 
@@ -25,25 +34,25 @@ const LikeButton = ({imageDocData}) => {
     const docSnap = await getDoc(likesRef);
 
     if (docSnap.exists()) {
-      // if the user has already liked the image, we delete the like and decrement the likeCount
-      await deleteDoc(likesRef);
-      await updateDoc(imageRef, { likeCount: increment(-1) });
+      setLiked(false);
+      setLikeCount(likeCount - 1);
+      deleteDoc(likesRef).then(() => updateDoc(imageRef, { likeCount: increment(-1) }));
     } else {
-      // if the user has not liked the image yet, we add the like and increment the likeCount
-      await setDoc(likesRef, { likedAt: serverTimestamp() }, { merge: true });
-      await updateDoc(imageRef, { likeCount: increment(1) });
+      setLiked(true);
+      setLikeCount(likeCount + 1);
+      setDoc(likesRef, { likedAt: serverTimestamp() }, { merge: true }).then(() => updateDoc(imageRef, { likeCount: increment(1) }));
     }
   };
   
   return (
     <Flex alignItems="center">
       <IconButton
-        icon={<FaHeart />}
+        icon={<FaHeart color={liked ? "red" : "black"} />}
         aria-label="Like"
         onClick={handleLikeButtonClick}
         mt={2}
       />
-      <Text ml="2" color="#747474">
+      <Text ml="2" fontSize="xl">
         {likeCount}
       </Text>
     </Flex>

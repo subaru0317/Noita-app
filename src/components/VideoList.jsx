@@ -1,6 +1,6 @@
 import { storage, db } from '../firebase';
 import { ref, getDownloadURL, listAll } from 'firebase/storage';
-import { collectionGroup, getDocs, increment, updateDoc, doc, setDoc } from "firebase/firestore";
+import { collectionGroup, getDocs, query } from "firebase/firestore";
 import { Grid, GridItem, Spinner, Box, Image, Flex, Text, Wrap, WrapItem } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import React, { useEffect, useState } from 'react';
@@ -45,6 +45,7 @@ const VideoCard = ({ imageDocData }) => {
 };
 
 const VideoList = ({selectedSpells}) => {
+  console.log("selectedSpells", selectedSpells);
   const [imageDocDatas, setImageDocDatas] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -60,7 +61,7 @@ const VideoList = ({selectedSpells}) => {
           const filePath = doc.data().filePath;
           const wandSpellInfo = doc.data().wandSpellsInfo;
           // Check if any of the selectedSpells is part of the wandSpellInfo URL
-          if (selectedSpells.some(spell => wandSpellInfo.includes(spell))) {
+          if (selectedSpells.length === 0 || selectedSpells.some(spell => wandSpellInfo.includes(spell))) {
             const storageRef = ref(storage, filePath); // use the full file path stored in the document
             const url = await getDownloadURL(storageRef);
             return {
