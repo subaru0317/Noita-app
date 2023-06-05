@@ -1,6 +1,6 @@
 import { storage, db } from '../firebase';
 import { ref, getDownloadURL, listAll } from 'firebase/storage';
-import { collectionGroup, getDocs, query, getDoc, where } from "firebase/firestore";
+import { collectionGroup, getDocs, query, getDoc, where, updateDoc } from "firebase/firestore";
 import { Grid, GridItem, Spinner, Box, Image, Flex, Text, Wrap, WrapItem } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import React, { useEffect, useState } from 'react';
@@ -12,7 +12,7 @@ const VideoCard = ({ imageDocData }) => {
 
   const pageUrl = `/page/${imageDocData.id}`;
   return (
-    <Link to={pageUrl}>
+    // <Link to={pageUrl}>
       <Box maxW="sm" borderWidth="1px" borderRadius="lg" overflow="hidden" mb={6}>
         <Image src={imageDocData.url} alt="Image description" />
         <Box p="6">
@@ -35,7 +35,7 @@ const VideoCard = ({ imageDocData }) => {
               a
             </Text>
             <Flex alignItems="center">
-              <LikeButton />
+              <LikeButton handleLikeButtonClick={handleLikeButtonClick}/>
               <Text ml="2" color="#747474">
                 {imageDocData.likeCount}
               </Text>
@@ -43,7 +43,7 @@ const VideoCard = ({ imageDocData }) => {
           </Flex>
           </Box>
         </Box>
-    </Link>
+    // </Link>
   );
 };
 
@@ -84,11 +84,6 @@ const VideoList = ({selectedSpells}) => {
     fetchImages();
   }, [selectedSpells]);
   
-  
-  
-  
-  const [likeCount, setLikeCount] = useState(0);
-  const [pageUrl, setPageUrl] = useState(); // tmp
   return (
     <>
       {loading && <Spinner size="lg" color="blue.500" />}

@@ -3,7 +3,7 @@ import React, { useState, memo } from "react";
 import "./ImageUpload.css";
 import { storage, db, auth } from "../firebase"
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import { collection, setDoc, serverTimestamp, doc } from "firebase/firestore";
+import { collection, setDoc, serverTimestamp, doc, addDoc } from "firebase/firestore";
 
 const ImageUploader = memo(({fileSelected, wandSpellsInfo, videoDescription}) => {
   const [loading, setLoading] = useState(false);
@@ -26,6 +26,11 @@ const ImageUploader = memo(({fileSelected, wandSpellsInfo, videoDescription}) =>
     const storageRef = ref(storage, "images/" + fileName);
     const uploadImage = uploadBytesResumable(storageRef, file);
 
+    const userId = auth.currentUser.uid
+    const userDocRef = doc(db, "users", userId);
+    const imagesCollectionRef = collection(userDocRef, "images");
+    const newImageDocRef = doc(imagesCollectionRef);
+
     uploadImage.on("state_changed", (snapshot) => {
       setLoading(true);
     },
@@ -42,13 +47,13 @@ const ImageUploader = memo(({fileSelected, wandSpellsInfo, videoDescription}) =>
         // nameの情報は不要だと判断
         // pathだけにすることでFilterの効率改善
         const filteredWandSpellsInfo = wandSpellsInfo.map(({ path }) =>  path );
-        const userId = auth.currentUser.uid
         const userInfo = {
           userId: userId,
           userName: auth.currentUser.displayName,
         }
         const filePath = await getDownloadURL(storageRef);
         const fileInfo = {
+          fileId: newImageDocRef.id,
           fileName: fileName,
           filePath: filePath,
           wandSpellsInfo: filteredWandSpellsInfo,
@@ -57,10 +62,9 @@ const ImageUploader = memo(({fileSelected, wandSpellsInfo, videoDescription}) =>
           timestamp: serverTimestamp(),
         };
         try {
-          const userDocRef = doc(db, "users", userId);
           await setDoc(userDocRef, userInfo);
-          const imagesDocRef = doc(collection(userDocRef, "images"));
-          await setDoc(imagesDocRef, fileInfo);
+          await setDoc(newImageDocRef, fileInfo);
+          // Add the generated doc id to `fileInfo`
         } catch (error) {
           console.error("Error adding document: ", error);
         }
