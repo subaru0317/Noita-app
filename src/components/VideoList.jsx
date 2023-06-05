@@ -1,12 +1,14 @@
 import { storage, db } from '../firebase';
 import { ref, getDownloadURL, listAll } from 'firebase/storage';
-import { collectionGroup, getDocs, query, getDoc, where, updateDoc } from "firebase/firestore";
+import { collectionGroup, getDocs, increment, updateDoc, doc, setDoc } from "firebase/firestore";
 import { Grid, GridItem, Spinner, Box, Image, Flex, Text, Wrap, WrapItem } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import React, { useEffect, useState } from 'react';
 import LikeButton from "./LikeButton";
 
+
 const VideoCard = ({ imageDocData }) => {
+  console.log("VideoCard");
   const MAX_ICON_DISPLAY = 26;
   const displayIcons = imageDocData.wandSpellsInfo.slice(0, MAX_ICON_DISPLAY); // 上限26までのアイコンを取得
 
@@ -15,32 +17,27 @@ const VideoCard = ({ imageDocData }) => {
     // <Link to={pageUrl}>
       <Box maxW="sm" borderWidth="1px" borderRadius="lg" overflow="hidden" mb={6}>
         <Image src={imageDocData.url} alt="Image description" />
-        <Box p="6">
-          <Wrap spacing={0} justify="start">
-            {displayIcons.map((icon, index) => (
-              <WrapItem key={index} mb="3px">
-                <Image 
-                  bg="#9e9e9e"
-                  border="1px solid #931527"
-                  boxSize="25px"
-                  src={icon}
-                  alt={`Icon ${index}`}
-                />
-              </WrapItem>
-            ))}
-          </Wrap>
-          <Flex justifyContent="space-between" alignItems="center" mt="2">
-            <Text color="#747474">
-              {/* {imageDocData.username} // Assuming `username` is present in imageDocData */}
-              a
-            </Text>
-            <Flex alignItems="center">
-              <LikeButton handleLikeButtonClick={handleLikeButtonClick}/>
-              <Text ml="2" color="#747474">
-                {imageDocData.likeCount}
+          <Box p="6">
+            <Wrap spacing={0} justify="start">
+              {displayIcons.map((icon, index) => (
+                <WrapItem key={index} mb="3px">
+                  <Image 
+                    bg="#9e9e9e"
+                    border="1px solid #931527"
+                    boxSize="25px"
+                    src={icon}
+                    alt={`Icon ${index}`}
+                  />
+                </WrapItem>
+              ))}
+            </Wrap>
+            <Flex justifyContent="space-between" alignItems="center" mt="2">
+              <Text color="#747474">
+                {/* {imageDocData.username} // Assuming `username` is present in imageDocData */}
+                a
               </Text>
+              <LikeButton imageDocData={imageDocData} />
             </Flex>
-          </Flex>
           </Box>
         </Box>
     // </Link>

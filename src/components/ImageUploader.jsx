@@ -53,6 +53,7 @@ const ImageUploader = memo(({fileSelected, wandSpellsInfo, videoDescription}) =>
         }
         const filePath = await getDownloadURL(storageRef);
         const fileInfo = {
+          userId: userId,
           fileId: newImageDocRef.id,
           fileName: fileName,
           filePath: filePath,
