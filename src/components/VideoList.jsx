@@ -1,6 +1,6 @@
 import { storage, db } from '../firebase';
 import { ref, getDownloadURL, listAll } from 'firebase/storage';
-import { collectionGroup, getDocs, query } from "firebase/firestore";
+import { collectionGroup, getDocs, query, orderBy } from "firebase/firestore";
 import { Grid, GridItem, Spinner, Box, Image, Flex, Text, Wrap, WrapItem } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import React, { useEffect, useState } from 'react';
@@ -11,6 +11,17 @@ const VideoCard = ({ imageDocData }) => {
   console.log("VideoCard");
   const MAX_ICON_DISPLAY = 26;
   const displayIcons = imageDocData.wandSpellsInfo.slice(0, MAX_ICON_DISPLAY); // 上限26までのアイコンを取得
+
+  ///
+  /// 日付順に並んでいるかの確認用
+  ///
+  const timestampSeconds = imageDocData.timestamp.seconds;
+  const date = new Date(timestampSeconds * 1000); // Convert seconds to milliseconds
+  const dateString = date.toLocaleDateString(); // Convert to date string in local format
+  const timeString = date.toLocaleTimeString();
+  ///
+  ///
+  ///
 
   const pageUrl = `/page/${imageDocData.id}`;
   return (
@@ -34,7 +45,7 @@ const VideoCard = ({ imageDocData }) => {
             <Flex justifyContent="space-between" alignItems="center" mt="2">
               <Text color="#747474">
                 {/* {imageDocData.username} // Assuming `username` is present in imageDocData */}
-                a
+                {`${dateString} ${timeString}`}
               </Text>
               <LikeButton imageDocData={imageDocData} />
             </Flex>
@@ -53,15 +64,17 @@ const VideoList = ({selectedSpells}) => {
     const fetchImages = async () => {
       const imageDocDatas = [];
       const imagesCollectionGroup = collectionGroup(db, "images");
-  
-      const querySnapshot = await getDocs(imagesCollectionGroup);
+      const imagesQuery = query(imagesCollectionGroup, orderBy('timestamp', 'desc'));
+    
+      const querySnapshot = await getDocs(imagesQuery);
+      
       const downloadPromises = querySnapshot.docs.map(async (doc) => {
         try {
           console.log("doc.data(): ", doc.data());
           const filePath = doc.data().filePath;
           const wandSpellInfo = doc.data().wandSpellsInfo;
-          // Check if any of the selectedSpells is part of the wandSpellInfo URL
-          if (selectedSpells.length === 0 || selectedSpells.some(spell => wandSpellInfo.includes(spell))) {
+          // Check if all of the selectedSpells are part of the wandSpellInfo URL
+          if (selectedSpells.length === 0 || selectedSpells.every(spell => wandSpellInfo.includes(spell))) {
             const storageRef = ref(storage, filePath); // use the full file path stored in the document
             const url = await getDownloadURL(storageRef);
             return {
@@ -73,11 +86,12 @@ const VideoList = ({selectedSpells}) => {
           console.log(error);
         }
       });
-  
+    
       const allImageUrls = await Promise.all(downloadPromises);
       setImageDocDatas(allImageUrls.filter(url => url));
       setLoading(false);
     };
+    
   
     fetchImages();
   }, [selectedSpells]);
