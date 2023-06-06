@@ -1,4 +1,4 @@
-import { Button, Box, useDisclosure, IconButton } from '@chakra-ui/react';
+import { Button, Box, useDisclosure, IconButton, Radio, RadioGroup, Stack, Text, Tooltip, VStack, HStack, Flex } from '@chakra-ui/react';
 import {
   Modal,
   ModalOverlay,
@@ -8,6 +8,7 @@ import {
   ModalBody,
   ModalCloseButton,
 } from '@chakra-ui/react'
+import { InfoIcon } from "@chakra-ui/icons";
 import { useState, useCallback, memo, useEffect } from 'react';
 import { addDocument } from "../firebase/firestore";
 import SpellList from "./SpellList";
@@ -31,6 +32,7 @@ const SpellIcon = memo(({ spellpath }) => {
 });
 
 const SpellIconButton = memo(({spellpath, id, setSpells}) => {
+  console.log("SpellIconButton")
   const [isClicked, setIsClicked] = useState(false);
 
   const handleSpellButtonClick = useCallback(() => {
@@ -67,13 +69,15 @@ const SpellButtonBoard = ({setSpells}) => {
     ))
   )
 };
-    
 
 const FilterModal = ({setSelectedSpells}) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [spells, setSpells] = useState([]);
+  const [value, setValue] = useState("OR");
 
   const handleFilter = () => {
+    // TODO: handle the filtering based on the selected value (OR or AND)
+
     const selectedSpellPaths = spells.map(spellId => {
       const foundSpell = SpellList.find(spell => spell.id === spellId);
       return foundSpell ? foundSpell.path : null;
@@ -82,7 +86,6 @@ const FilterModal = ({setSelectedSpells}) => {
     setSelectedSpells(selectedSpellPaths);
     onClose();
   };
-  console.log(spells);
   return (
     <Box textAlign='right'>
       <Button 
@@ -96,6 +99,22 @@ const FilterModal = ({setSelectedSpells}) => {
           <ModalCloseButton />
           <ModalBody>
             <SpellButtonBoard setSpells={setSpells}/>
+            <VStack mt={4} align="start" spacing={3}>
+              <HStack spacing={1}>
+                <Text>Filtering Mode</Text>
+                <Tooltip label="OR mode will match any of the selected spells. AND mode will match all of the selected spells." 
+                          fontSize="md"
+                          placement="top">
+                  <InfoIcon boxSize={4} color="gray.500" transform="translateY(1px)"/>
+                </Tooltip>
+              </HStack>
+              <RadioGroup onChange={setValue} value={value}>
+                <Stack direction="row">
+                  <Radio value="OR">OR</Radio>
+                  <Radio value="AND">AND</Radio>
+                </Stack>
+              </RadioGroup>
+            </VStack>
           </ModalBody>
           <ModalFooter>
             <Button variant='ghost' mr={3} onClick={onClose}>Close</Button>
