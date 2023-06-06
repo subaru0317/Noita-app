@@ -2,7 +2,7 @@ import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { auth } from "../firebase";
 import { Button, Icon } from '@chakra-ui/react';
 import { useAuthState } from "react-firebase-hooks/auth";
-import { Menu, MenuButton, MenuList, MenuItem, MenuDivider, Image } from "@chakra-ui/react";
+import { Menu, MenuButton, MenuList, MenuItem, MenuDivider, Image, Avatar } from "@chakra-ui/react";
 import { GiFairyWand } from "react-icons/gi";
 import { MdFavorite } from "react-icons/md";
 import { RiLogoutBoxRLine } from "react-icons/ri";
@@ -30,14 +30,22 @@ const UserMenu = () => {
       <MenuButton
         _hover={{ borderRadius: 'full', transition: "border-radiuo 10.3s"}}
         _focus={{ outline: "none" }}
+        minHeight='40px'
       >
-        <Image
+        <Avatar
+          name={auth.currentUser.displayName}
+          src={auth.currentUser.photoURL}
+          referrerPolicy="no-referrer"
+          size='md'
+        />
+        {/* <Image
           borderRadius='full'
           boxSize='40px'
+          objectFit='cover'
           src={auth.currentUser.photoURL}
           referrerPolicy="no-referrer" // https://stackoverflow.com/questions/56242788/http-403-on-images-loaded-from-googleusercontent-com
           alt='UserIcon'
-          />
+          /> */}
         {/* <p>{auth.currentUser.displayName}</p> */}
       </MenuButton>
       <MenuList>
@@ -109,6 +117,7 @@ const SignInButton = () => {
       mr={3}
       borderWidth='2px'
       borderRadius='md'
+      minHeight='40px'
     >
       Sign In
     </Button>
@@ -118,7 +127,7 @@ const SignInButton = () => {
 const AuthButton = () => {
   const [userSignedIn] = useAuthState(auth);
   return (
-    <div>
+    <div style={{ minHeight: '40px' }}>
       {userSignedIn ? <UserMenu /> : <SignInButton />}
     </div>
   )
