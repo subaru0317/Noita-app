@@ -2,7 +2,7 @@ import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { auth } from "../firebase";
 import { Button, Icon } from '@chakra-ui/react';
 import { useAuthState } from "react-firebase-hooks/auth";
-import { Menu, MenuButton, MenuList, MenuItem, MenuDivider, Image, Avatar } from "@chakra-ui/react";
+import { Menu, MenuButton, MenuList, MenuItem, MenuDivider, Avatar, Box } from "@chakra-ui/react";
 import { GiFairyWand } from "react-icons/gi";
 import { MdFavorite } from "react-icons/md";
 import { RiLogoutBoxRLine } from "react-icons/ri";
@@ -38,15 +38,6 @@ const UserMenu = () => {
           referrerPolicy="no-referrer"
           size='md'
         />
-        {/* <Image
-          borderRadius='full'
-          boxSize='40px'
-          objectFit='cover'
-          src={auth.currentUser.photoURL}
-          referrerPolicy="no-referrer" // https://stackoverflow.com/questions/56242788/http-403-on-images-loaded-from-googleusercontent-com
-          alt='UserIcon'
-          /> */}
-        {/* <p>{auth.currentUser.displayName}</p> */}
       </MenuButton>
       <MenuList>
         <IconText

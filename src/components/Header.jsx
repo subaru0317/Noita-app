@@ -19,7 +19,7 @@ const Header = () => {
       padding={{ base: '0.5rem', md: '1rem' }}
       bg='gray.100'
       width='100%'
-      minHeight='60px'  // ここで最小高さを設定
+      minHeight='82px'  // ここで最小高さを設定
     >
       <Box maxW={{ base: "80%", md: "auto" }}>
         <Heading as='h1' size={headingSize} cursor="none">
