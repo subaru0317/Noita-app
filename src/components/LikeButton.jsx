@@ -4,10 +4,16 @@ import { FaHeart } from "react-icons/fa";
 import { Flex, Box, Button } from "@chakra-ui/react";
 import { increment, updateDoc, doc, setDoc, getDoc, deleteDoc, serverTimestamp, onSnapshot } from "firebase/firestore";
 
-
 const LikeButton = ({imageDocData}) => {
   const [likeCount, setLikeCount] = useState(imageDocData.likeCount);
   const [liked, setLiked] = useState(false);
+  const [processing, setProcessing] = useState(false);
+
+  const checkLiked = async (uid) => {
+    const likesRef = doc(db, "users", imageDocData.userId, "images", imageDocData.fileId, "likes", uid);
+    const docSnap = await getDoc(likesRef);
+    setLiked(docSnap.exists());
+  };
 
   useEffect(() => {
     const imageRef = doc(db, "users", imageDocData.userId, "images", imageDocData.fileId);
@@ -15,23 +21,27 @@ const LikeButton = ({imageDocData}) => {
       setLikeCount(doc.data().likeCount);
     });
 
-    const checkLiked = async () => {
-      const loginUserId = auth.currentUser.uid;
-      const likesRef = doc(db, "users", imageDocData.userId, "images", imageDocData.fileId, "likes", loginUserId);
-      const docSnap = await getDoc(likesRef);
-      setLiked(docSnap.exists());
+    const unsubscribeAuth = auth.onAuthStateChanged(user => {
+      if (!user) {
+        setLiked(false);
+      } else {
+        checkLiked(user.uid);
+      }
+    });
+
+    return () => {
+      unsubscribe();
+      unsubscribeAuth();
     };
-
-    checkLiked();
-
-    return () => unsubscribe();
   }, [imageDocData]);
 
-  const [processing, setProcessing] = useState(false);
-
   const handleLikeButtonClick = async () => {
+    if (!auth.currentUser) {
+      return ;
+    }
+    
     setProcessing(true);
-  
+    
     const loginUserId = auth.currentUser.uid;
     const likesRef = doc(db, "users", imageDocData.userId, "images", imageDocData.fileId, "likes", loginUserId);
     const imageRef = doc(db, "users", imageDocData.userId, "images", imageDocData.fileId);
@@ -53,15 +63,14 @@ const LikeButton = ({imageDocData}) => {
     setProcessing(false);
   };
   
-  
   return (
     <Flex alignItems="center">
       <Button
-        leftIcon={<FaHeart color={liked ? "red" : "black"} />}
+        leftIcon={<FaHeart color={(auth.currentUser && liked) ? "red" : "black"} />}
         aria-label='Like'
         onClick={handleLikeButtonClick}
         mt={2}
-        isDisabled={processing}
+        isDisabled={processing || !auth.currentUser}
       >
         <Box mt={-1} fontSize="19px">
           {likeCount}

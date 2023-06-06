@@ -47,7 +47,7 @@ const VideoCard = ({ imageDocData }) => {
                 {/* {imageDocData.username} // Assuming `username` is present in imageDocData */}
                 {`${dateString} ${timeString}`}
               </Text>
-              <LikeButton imageDocData={imageDocData} />
+              { imageDocData && <LikeButton imageDocData={imageDocData} /> }
             </Flex>
           </Box>
         </Box>
