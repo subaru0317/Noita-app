@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { auth, db } from '../firebase';
 import { FaHeart } from "react-icons/fa";
-import { Flex, Box, Button } from "@chakra-ui/react";
+import { Flex, Box, Button, Tooltip } from "@chakra-ui/react";
 import { increment, updateDoc, doc, setDoc, getDoc, deleteDoc, serverTimestamp, onSnapshot } from "firebase/firestore";
 
 const LikeButton = ({imageDocData}) => {
@@ -65,17 +65,21 @@ const LikeButton = ({imageDocData}) => {
   
   return (
     <Flex alignItems="center">
-      <Button
-        leftIcon={<FaHeart color={(auth.currentUser && liked) ? "red" : "black"} />}
-        aria-label='Like'
-        onClick={handleLikeButtonClick}
-        mt={2}
-        isDisabled={processing || !auth.currentUser}
-      >
-        <Box mt={-1} fontSize="19px">
-          {likeCount}
+      <Tooltip label={!auth.currentUser ? "Please log in to like" : ""} >
+        <Box>
+          <Button
+            leftIcon={<FaHeart color={auth.currentUser && liked ? "red" : "black"} />}
+            aria-label='Like'
+            onClick={handleLikeButtonClick}
+            mt={2}
+            isDisabled={processing || !auth.currentUser}
+          >
+            <Box mt={-1} fontSize="19px">
+              {likeCount}
+            </Box>
+          </Button>
         </Box>
-      </Button>
+      </Tooltip>
     </Flex>
   )
 }
