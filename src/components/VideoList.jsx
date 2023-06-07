@@ -74,8 +74,16 @@ const VideoList = ({selectedSpells, filterMode}) => {
           console.log("doc.data(): ", doc.data());
           const filePath = doc.data().filePath;
           const wandSpellInfo = doc.data().wandSpellsInfo;
+          const checkFilterMode = (spellList, spellInfo) => {
+            if (filterMode === "OR") {
+              return spellList.some(spell => spellInfo.includes(spell));
+            } else if (filterMode === "AND") {
+              return spellList.every(spell => spellInfo.includes(spell));
+            }
+            return false;
+          }
           // Check if all of the selectedSpells are part of the wandSpellInfo URL
-          if (selectedSpells.length === 0 || selectedSpells.every(spell => wandSpellInfo.includes(spell))) {
+          if (selectedSpells.length === 0 || checkFilterMode(selectedSpells, wandSpellInfo)) {
             const storageRef = ref(storage, filePath); // use the full file path stored in the document
             const url = await getDownloadURL(storageRef);
             return {
