@@ -1,7 +1,7 @@
 import { storage, db } from '../firebase';
 import { ref, getDownloadURL, listAll } from 'firebase/storage';
 import { collectionGroup, getDocs, query, orderBy } from "firebase/firestore";
-import { Grid, GridItem, Spinner, Box, Image, Flex, Text, Wrap, WrapItem, useBreakpointValue } from "@chakra-ui/react";
+import { Grid, GridItem, Spinner, Box, Image, Flex, Text, Wrap, WrapItem, useBreakpointValue, Container, useMediaQuery } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import React, { useEffect, useState } from 'react';
 import LikeButton from "./LikeButton";
@@ -107,27 +107,45 @@ const VideoList = ({selectedSpells, filterMode}) => {
 
   // 要素の幅を調整するためのブレークポイント値を定義します。
   const videoCardWidth = useBreakpointValue({
-    base: "100%",  // 480px以下の場合
-    sm: "50%",  // 481px以上の場合
     md: "382px",  // 768px以上の場合
   });
-  const gridTemplateColumns = useBreakpointValue({
-    base: "repeat(1, 1fr)",  // 480px以下の場合
-    sm: "repeat(2, 1fr)",  // 481px以上の場合
-    md: "repeat(3, 1fr)",  // 768px以上の場合
-    lg: "repeat(4, 1fr)",  // 1024px以上の場合
-  });
+  // const gridTemplateColumns = useBreakpointValue({
+  //   base: "repeat(1, 1fr)",  // 480px以下の場合
+  //   sm: "repeat(2, 1fr)",  // 481px以上の場合
+  //   md: "repeat(3, 1fr)",  // 768px以上の場合
+  //   lg: "repeat(4, 1fr)",  // 1024px以上の場合
+  // });
+
+  const useCustomBreakpointsValue = () => {
+    const [isLargerThan800] = useMediaQuery("(min-width: 800px)");
+    const [isLargerThan1200] = useMediaQuery("(min-width: 1200px)");
+    const [isLargerThan1600] = useMediaQuery("(min-width: 1600px)");
   
+    if (isLargerThan1600) {
+      return "repeat(4, 1fr)";
+    } else if (isLargerThan1200) {
+      return "repeat(3, 1fr)";
+    } else if (isLargerThan800) {
+      return "repeat(2, 1fr)";
+    } else {
+      return "repeat(1, 1fr)";
+    }
+  }
+  
+  const gridTemplateColumns = useCustomBreakpointsValue();
+
   return (
     <>
       {loading && <Spinner size="lg" color="blue.500" />}
+      <Container centerContent>
       <Grid templateColumns={gridTemplateColumns} gap={6}>
         {imageDocDatas.map((imageDocData, index) => (
-          <GridItem key={index} w={videoCardWidth}>
+          <GridItem key={index} minW="382px">
             <VideoCard imageDocData={imageDocData} />
           </GridItem>
         ))}
       </Grid>
+      </Container>
     </>
   );
 }
