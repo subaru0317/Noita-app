@@ -32,7 +32,7 @@ const SpellIcon = memo(({ spellpath }) => {
 });
 
 const SpellIconButton = memo(({spellpath, id, setSpells}) => {
-  console.log("SpellIconButton")
+  // console.log("SpellIconButton")
   const [isClicked, setIsClicked] = useState(false);
 
   const handleSpellButtonClick = useCallback(() => {
