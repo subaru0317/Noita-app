@@ -3,10 +3,11 @@ import FilterModal from '../components/FilterModal';
 import { useState } from "react";
 const VideoPage = () => {
   const [selectedSpells, setSelectedSpells] = useState([]);
+  const [filterMode, setFilterMode] = useState("OR");
   return (
     <>
-      <FilterModal setSelectedSpells={setSelectedSpells} />
-      <VideoList selectedSpells={selectedSpells} />
+      <FilterModal setSelectedSpells={setSelectedSpells} setFilterMode={setFilterMode}/>
+      <VideoList selectedSpells={selectedSpells} filterMode={filterMode}/>
     </>
   );
 }

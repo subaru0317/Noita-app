@@ -190,7 +190,6 @@ const DragDrop = memo(({setWandSpellsInfo}) => {
       <div className="Board" ref={drop}>
         <TransitionGroup className="board-transition-group">
           {boardItems.map((spell, index) => {
-            // console.log(boardItems);
             return (
               <CSSTransition
                 key={spell.id}

@@ -1,7 +1,7 @@
 import { storage, db } from '../firebase';
 import { ref, getDownloadURL, listAll } from 'firebase/storage';
 import { collectionGroup, getDocs, query, orderBy } from "firebase/firestore";
-import { Grid, GridItem, Spinner, Box, Image, Flex, Text, Wrap, WrapItem } from "@chakra-ui/react";
+import { Grid, GridItem, Spinner, Box, Image, Flex, Text, Wrap, WrapItem, filter } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import React, { useEffect, useState } from 'react';
 import LikeButton from "./LikeButton";
@@ -55,8 +55,9 @@ const VideoCard = ({ imageDocData }) => {
   );
 };
 
-const VideoList = ({selectedSpells}) => {
-  console.log("selectedSpells", selectedSpells);
+const VideoList = ({selectedSpells, filterMode}) => {
+  // console.log("selectedSpells", selectedSpells);
+  console.log("filterMode: ", filterMode);
   const [imageDocDatas, setImageDocDatas] = useState([]);
   const [loading, setLoading] = useState(true);
 

@@ -70,7 +70,7 @@ const SpellButtonBoard = ({setSpells}) => {
   )
 };
 
-const FilterModal = ({setSelectedSpells}) => {
+const FilterModal = ({setSelectedSpells, setFilterMode}) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [spells, setSpells] = useState([]);
   const [value, setValue] = useState("OR");
@@ -84,6 +84,7 @@ const FilterModal = ({setSelectedSpells}) => {
     }).filter(path => path !== null);
 
     setSelectedSpells(selectedSpellPaths);
+    setFilterMode(value);
     onClose();
   };
   return (
