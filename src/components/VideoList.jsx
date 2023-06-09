@@ -1,4 +1,4 @@
-import { storage, db } from '../firebase';
+import { storage, db, auth } from '../firebase';
 import { ref, getDownloadURL, listAll } from 'firebase/storage';
 import { collectionGroup, query, orderBy, startAfter, getDocs, limit, where, count, getCountFromServer } from "firebase/firestore";
 import { Grid, GridItem, Spinner, Box, Image, Flex, Text, Wrap, WrapItem, Container, useMediaQuery, Button } from "@chakra-ui/react";
@@ -12,6 +12,8 @@ import "./Pagination.css";
 
 const VideoCard = ({ imageDocData }) => {
   // console.log("VideoCard");
+  // ここの処理元々26個までにしてるから要らないかも
+  // 2重にチェックしていることになる．どうなんだ？これは
   const MAX_ICON_DISPLAY = 26;
   const displayIcons = imageDocData.wandSpellsInfo.slice(0, MAX_ICON_DISPLAY); // 上限26までのアイコンを取得
 
@@ -25,6 +27,17 @@ const VideoCard = ({ imageDocData }) => {
   ///
   ///
   ///
+
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged(user => {
+      setIsLoggedIn(!!user);
+    });
+
+    // コンポーネントがアンマウントされたときにリスナーを削除する
+    return () => unsubscribe();
+  }, []);
 
   const pageUrl = `/page/${imageDocData.id}`;
   return (
@@ -50,7 +63,7 @@ const VideoCard = ({ imageDocData }) => {
                 {/* {imageDocData.username} // Assuming `username` is present in imageDocData */}
                 {`${dateString} ${timeString}`}
               </Text>
-              { imageDocData && <LikeButton imageDocData={imageDocData} /> }
+                <LikeButton imageDocData={imageDocData} isLoggedIn={isLoggedIn}/>
             </Flex>
           </Box>
         </Box>
@@ -61,7 +74,7 @@ const VideoCard = ({ imageDocData }) => {
 const VideoList = ({selectedSpells, filterMode}) => {
   console.log("selectedSpells", selectedSpells);
   // console.log("filterMode: ", filterMode);
-  const itemsPerPage = 24;
+  const ITEMS_PER_PAGE = 24;
   const [allImageDocDatas, setAllImageDocDatas] = useState([]);
   const [imageDocDatas, setImageDocDatas] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
@@ -109,9 +122,9 @@ const VideoList = ({selectedSpells, filterMode}) => {
     
       const allImageUrls = await Promise.all(downloadPromises);
       const filteredImageUrls = allImageUrls.filter(url => url);
-      // setImageDocDatas(filteredImageUrls.slice(0, currentPage * itemsPerPage));
+      // setImageDocDatas(filteredImageUrls.slice(0, currentPage * ITEMS_PER_PAGE));
       setAllImageDocDatas(filteredImageUrls);
-      setPageCount(Math.ceil(filteredImageUrls.length / itemsPerPage));
+      setPageCount(Math.ceil(filteredImageUrls.length / ITEMS_PER_PAGE));
       setLoading(false);
     };
   
@@ -119,7 +132,7 @@ const VideoList = ({selectedSpells, filterMode}) => {
   }, [selectedSpells]);
 
   useEffect(() => {
-    setImageDocDatas(allImageDocDatas.slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage));
+    setImageDocDatas(allImageDocDatas.slice(currentPage * ITEMS_PER_PAGE, (currentPage + 1) * ITEMS_PER_PAGE));
   }, [allImageDocDatas, currentPage]);
 
   const useCustomBreakpointsValue = () => {

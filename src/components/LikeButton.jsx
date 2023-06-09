@@ -4,7 +4,8 @@ import { FaHeart } from "react-icons/fa";
 import { Flex, Box, Button, Tooltip } from "@chakra-ui/react";
 import { increment, updateDoc, doc, setDoc, getDoc, deleteDoc, serverTimestamp, onSnapshot } from "firebase/firestore";
 
-const LikeButton = ({imageDocData}) => {
+// isLoggedInは再レンダリングするためだけに呼び出し
+const LikeButton = ({imageDocData, isLoggedIn}) => {
   const [likeCount, setLikeCount] = useState(imageDocData.likeCount);
   const [liked, setLiked] = useState(false);
   const [processing, setProcessing] = useState(false);
