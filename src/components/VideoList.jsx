@@ -74,7 +74,7 @@ const VideoCard = ({ imageDocData }) => {
 const VideoList = ({selectedSpells, filterMode}) => {
   console.log("selectedSpells", selectedSpells);
   // console.log("filterMode: ", filterMode);
-  const ITEMS_PER_PAGE = 24;
+  const ITEMS_PER_PAGE = 1;
   const [allImageDocDatas, setAllImageDocDatas] = useState([]);
   const [imageDocDatas, setImageDocDatas] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
