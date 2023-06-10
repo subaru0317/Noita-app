@@ -5,7 +5,7 @@ import { storage, db, auth } from "../firebase"
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { collection, setDoc, serverTimestamp, doc, addDoc } from "firebase/firestore";
 
-const ImageUploader = memo(({fileSelected, wandSpellsInfo, videoDescription}) => {
+const ImageUploader = memo(({fileSelected, wandSpells, videoDescription}) => {
   const [loading, setLoading] = useState(false);
   const [isUploaded, setUploaded] = useState(false);
   const OnFileUploadToFirebase = async (e) => {
@@ -13,8 +13,8 @@ const ImageUploader = memo(({fileSelected, wandSpellsInfo, videoDescription}) =>
       alert("Oops! It looks like the video is not selected...")
       return ;
     }
-    console.log("ImageUploader, wandSpellsInfo", wandSpellsInfo);
-    if (wandSpellsInfo.length === 0) {
+    console.log("ImageUploader, wandSpells", wandSpells);
+    if (wandSpells.length === 0) {
       alert("Oops! It looks like the wand edit has not been done...")
       return ;
     }
@@ -40,12 +40,12 @@ const ImageUploader = memo(({fileSelected, wandSpellsInfo, videoDescription}) =>
         setLoading(false);
         setUploaded(true);
         // Firestoreにファイルに関連する情報を保存
-        // const filteredAdditionalInfo = wandSpellsInfo.map(({ name, path }) => {
+        // const filteredAdditionalInfo = wandSpells.map(({ name, path }) => {
         //   return { name, path };
         // });
         // nameの情報は不要だと判断
         // pathだけにすることでFilterの効率改善
-        const filteredWandSpellsInfo = wandSpellsInfo.map(({ path }) =>  path );
+        const filteredWandSpells = wandSpells.map(({ path }) =>  path );
         const userInfo = {
           userId: userId,
           userName: auth.currentUser.displayName,
@@ -56,7 +56,7 @@ const ImageUploader = memo(({fileSelected, wandSpellsInfo, videoDescription}) =>
           fileId: newImageDocRef.id,
           fileName: fileName,
           filePath: filePath,
-          wandSpellsInfo: filteredWandSpellsInfo,
+          wandSpells: filteredWandSpells,
           description: videoDescription,
           likeCount: 0,
           timestamp: serverTimestamp(),

@@ -15,7 +15,7 @@ const VideoCard = ({ imageDocData }) => {
   // ここの処理元々26個までにしてるから要らないかも
   // 2重にチェックしていることになる．どうなんだ？これは
   const MAX_ICON_DISPLAY = 26;
-  const displayIcons = imageDocData.wandSpellsInfo.slice(0, MAX_ICON_DISPLAY); // 上限26までのアイコンを取得
+  const displayIcons = imageDocData.wandSpells.slice(0, MAX_ICON_DISPLAY); // 上限26までのアイコンを取得
 
   ///
   /// 日付順に並んでいるかの確認用
@@ -95,7 +95,7 @@ const VideoList = ({selectedSpells, filterMode}) => {
         try {
           // console.log("doc.data(): ", doc.data());
           const filePath = doc.data().filePath;
-          const wandSpellInfo = doc.data().wandSpellsInfo;
+          const wandSpellInfo = doc.data().wandSpells;
           const checkFilterMode = (spellList, spellInfo) => {
             if (filterMode === "OR") {
               return spellList.some(spell => spellInfo.includes(spell));

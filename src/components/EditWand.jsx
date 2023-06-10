@@ -5,11 +5,7 @@ import SpellList from "./SpellList";
 import "./App.css";
 import { Button } from "@chakra-ui/react";
 
-// const SpellList = [	
-// 	{ id: 0, name: "bomb", path: "/spells/Spell_bomb.webp" },
-// ];
-
-const SpellSelector = ({setWandSpells, setWandSpellsInfo}) => {
+const SpellSelector = ({setWandSpells}) => {
   console.log("SpellSelector");
   const addImageToBoard = useCallback((item) => {
     setWandSpells((prevboard) => {
@@ -21,8 +17,7 @@ const SpellSelector = ({setWandSpells, setWandSpellsInfo}) => {
         return prevboard;
       }
     })
-    setWandSpellsInfo(prevboard => [...prevboard, {...item, id:uuidv4()}]);
-  }, [setWandSpellsInfo]);
+  }, []);
 
   const handleAddToBoard = useCallback((item) => {
     addImageToBoard(item);
@@ -38,7 +33,7 @@ const SpellSelector = ({setWandSpells, setWandSpellsInfo}) => {
 
 const SortableSpellWand = ({wandSpells}) => {
   return (
-    <div className="Board">
+    <div className="SortableSpellWand">
       {wandSpells.map((spell, index) => {
         return (
           <SpellAddButton spell={spell} key={spell.id} index={index}/>
@@ -48,10 +43,9 @@ const SortableSpellWand = ({wandSpells}) => {
   );
 }
 
-const ResetButton = memo(({setWandSpells, setWandSpellsInfo}) => {
+const ResetButton = memo(({setWandSpells}) => {
   const handleReset = useCallback(() => {
     setWandSpells([]);
-    setWandSpellsInfo([]);
   }, []);
 
   return (
@@ -61,14 +55,13 @@ const ResetButton = memo(({setWandSpells, setWandSpellsInfo}) => {
   );
 });
 
-const EditWand = memo(({setWandSpellsInfo}) => {
-  const [wandSpells, setWandSpells] = useState([]);
+const EditWand = memo(({wandSpells, setWandSpells}) => {
   console.log("wandSpells: ", wandSpells);
   return (
     <>
-      <SpellSelector setWandSpells={setWandSpells} setWandSpellsInfo={setWandSpellsInfo}/>
+      <SpellSelector setWandSpells={setWandSpells} />
       <SortableSpellWand wandSpells={wandSpells} />
-      <ResetButton setWandSpells={setWandSpells} setWandSpellsInfo={setWandSpellsInfo} />
+      <ResetButton setWandSpells={setWandSpells} />
     </>
   );
 });

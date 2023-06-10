@@ -6,9 +6,9 @@ import VideoDescriptionInput from "../components/VideoDescriptionInput";
 
 const UploadVideoPage = () => {
   const [fileSelected, setFileSelected] = useState(null);
-  const [wandSpellsInfo, setWandSpellsInfo] = useState([]);
+  const [wandSpells, setWandSpells] = useState([]);
   const [videoDescription, setVideoDescription] = useState('');
-  console.log("wandSpellsInfo: ", wandSpellsInfo);
+  console.log("wandSpells: ", wandSpells);
   return (
     <>
       <SelectedFilePreview setFileSelected={setFileSelected} />
@@ -16,10 +16,10 @@ const UploadVideoPage = () => {
         setVideoDescription={setVideoDescription}
         videoDescription={videoDescription}
       />
-      <EditWand setWandSpellsInfo={setWandSpellsInfo}/>
+      <EditWand wandSpells={wandSpells} setWandSpells={setWandSpells}/>
       <ImageUploader
         fileSelected={fileSelected}
-        wandSpellsInfo={wandSpellsInfo}
+        wandSpells={wandSpells}
         videoDescription={videoDescription}
       />
     </>

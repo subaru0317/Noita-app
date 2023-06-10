@@ -15,7 +15,7 @@
   grid-column-end: span 1;
 }
 
-.Board {
+.SortableSpellWand {
   display: flex;
   justify-content: start;
   width: 913px;
