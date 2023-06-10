@@ -3,14 +3,17 @@ import SpellAddButton from "./SpellAddButton";
 import { v4 as uuidv4 } from "uuid";
 import SpellList from "./SpellList";
 import "./App.css";
-import { Button } from "@chakra-ui/react";
+import { Button, Image } from "@chakra-ui/react";
+import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
+import { arrayMove, SortableContext, sortableKeyboardCoordinates, rectSortingStrategy, useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
-const SpellSelector = ({setWandSpells}) => {
+const SpellSelector = ({ setWandSpells }) => {
   console.log("SpellSelector");
   const addImageToBoard = useCallback((item) => {
     setWandSpells((prevboard) => {
       if (prevboard.length < 26) {
-        const cloneSpell = {...item, id: uuidv4()};
+        const cloneSpell = { ...item, id: uuidv4() };
         return [...prevboard, cloneSpell];
       } else {
         console.log("You can only have 26 spells on the board");
@@ -31,19 +34,62 @@ const SpellSelector = ({setWandSpells}) => {
   );
 }
 
-const SortableSpellWand = ({wandSpells}) => {
+const SortableSpellWand = ({ wandSpells, setWandSpells }) => {
+  const SortableSpell = ({ id, spell }) => {
+    const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id });
+
+    const style = {
+      transform: CSS.Transform.toString(transform),
+      transition
+    };
+
+    return (
+      <Image
+        ref={setNodeRef}
+        boxSize="35px"
+        bg="#4f4f4f"
+        _hover={{ bg: "gray.900" }}
+        border="2px solid #931527"
+        src={spell.path}
+        alt={spell.name}
+        style={{ borderRadius: '2px', ...style }}
+        {...attributes}
+        {...listeners}
+      />
+    );
+  }
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  const handleDragEnd = useCallback((event) => {
+    const { active, over } = event;
+
+    if (active.id !== over.id) {
+      const oldIndex = wandSpells.findIndex(({ id }) => id === active.id);
+      const newIndex = wandSpells.findIndex(({ id }) => id === over.id);
+      setWandSpells(arrayMove(wandSpells, oldIndex, newIndex));
+    }
+  }, [wandSpells, setWandSpells]);
+
   return (
-    <div className="SortableSpellWand">
-      {wandSpells.map((spell, index) => {
-        return (
-          <SpellAddButton spell={spell} key={spell.id} index={index}/>
-        )
-      })}
-    </div>
+    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+      <SortableContext items={wandSpells.map(({ id }) => id)} strategy={rectSortingStrategy}>
+        <div className="SortableSpellWand">
+          {wandSpells.map((spell) => (
+            <SortableSpell key={spell.id} id={spell.id} spell={spell} />
+          ))}
+        </div>
+      </SortableContext>
+    </DndContext>
   );
 }
 
-const ResetButton = memo(({setWandSpells}) => {
+const ResetButton = memo(({ setWandSpells }) => {
   const handleReset = useCallback(() => {
     setWandSpells([]);
   }, []);
@@ -55,12 +101,12 @@ const ResetButton = memo(({setWandSpells}) => {
   );
 });
 
-const EditWand = memo(({wandSpells, setWandSpells}) => {
+const EditWand = memo(({ wandSpells, setWandSpells }) => {
   console.log("wandSpells: ", wandSpells);
   return (
     <>
       <SpellSelector setWandSpells={setWandSpells} />
-      <SortableSpellWand wandSpells={wandSpells} />
+      <SortableSpellWand wandSpells={wandSpells} setWandSpells={setWandSpells} />
       <ResetButton setWandSpells={setWandSpells} />
     </>
   );

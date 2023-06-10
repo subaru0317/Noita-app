@@ -1,7 +1,7 @@
 import React, { memo } from "react";
 import { Image } from '@chakra-ui/react';
 
-const SpellAddButton = memo(({ spell, index, onSortEnd, onAddToBoard }) => {
+const SpellAddButton = memo(({ spell, onAddToBoard }) => {
   return (
     <Image
       boxSize="35px"
