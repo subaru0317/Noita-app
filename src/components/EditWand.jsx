@@ -3,12 +3,11 @@ import SpellAddButton from "./SpellAddButton";
 import { v4 as uuidv4 } from "uuid";
 import SpellList from "./SpellList";
 import "./App.css";
-import { Button, Image } from "@chakra-ui/react";
+import { Button, Image, Box, IconButton } from "@chakra-ui/react";
+import { CloseIcon } from '@chakra-ui/icons';
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, rectSortingStrategy, useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { restrictToHorizontalAxis } from "@dnd-kit/modifiers";
-
 
 const SpellSelector = ({ setWandSpells }) => {
   console.log("SpellSelector");
@@ -46,18 +45,31 @@ const SortableSpellWand = ({ wandSpells, setWandSpells }) => {
     };
 
     return (
-      <Image
-        ref={setNodeRef}
-        boxSize="35px"
-        bg="#4f4f4f"
-        _hover={{ bg: "gray.900" }}
-        border="2px solid #931527"
-        src={spell.path}
-        alt={spell.name}
-        style={{ borderRadius: '2px', ...style }}
-        {...attributes}
-        {...listeners}
-      />
+      <Box position="relative" display="inline-block">
+        <Image
+          ref={setNodeRef}
+          boxSize="35px"
+          bg="#4f4f4f"
+          _hover={{ bg: "gray.900" }}
+          border="2px solid #931527"
+          src={spell.path}
+          alt={spell.name}
+          style={{ borderRadius: '2px', ...style }}
+          {...attributes}
+          {...listeners}
+        />
+        <IconButton
+          position="absolute"
+          top="0"
+          right="0"
+          size="xs"
+          height="10px"
+          width="10px"
+          aria-label="Remove"
+          icon={<CloseIcon />}
+          onClick={() => removeSpell(id)}
+        />
+      </Box>
     );
   }
 
@@ -78,9 +90,13 @@ const SortableSpellWand = ({ wandSpells, setWandSpells }) => {
     }
   }, [wandSpells, setWandSpells]);
 
+  const removeSpell = (id) => {
+    setWandSpells(wandSpells.filter(spell => spell.id !== id));
+  }
+
   return (
-    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd} modifiers={[restrictToHorizontalAxis]}>
-      <SortableContext items={wandSpells.map(({ id }) => id)} strategy={rectSortingStrategy} >
+    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+      <SortableContext items={wandSpells.map(({ id }) => id)} strategy={rectSortingStrategy}>
         <div className="SortableSpellWand">
           {wandSpells.map((spell) => (
             <SortableSpell key={spell.id} id={spell.id} spell={spell} />
