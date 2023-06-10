@@ -8,7 +8,6 @@ import { collection, setDoc, serverTimestamp, doc, addDoc } from "firebase/fires
 const ImageUploader = memo(({fileSelected, wandSpellsInfo, videoDescription}) => {
   const [loading, setLoading] = useState(false);
   const [isUploaded, setUploaded] = useState(false);
-  // const convertGifToMp4 = functions.httpsCallable("convertGifToMp4");
   const OnFileUploadToFirebase = async (e) => {
     if (!fileSelected) {
       alert("Oops! It looks like the video is not selected...")
@@ -69,7 +68,6 @@ const ImageUploader = memo(({fileSelected, wandSpellsInfo, videoDescription}) =>
         } catch (error) {
           console.error("Error adding document: ", error);
         }
-        // const result = await convertGifToMp4(storageRef.fullPath);
       }
     );
     console.log("Upload File!");
