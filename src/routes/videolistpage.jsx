@@ -2,7 +2,7 @@ import VideoList from '../components/VideoList';
 import FilterModal from '../components/FilterModal';
 import SpacingDivider from "../components/SpacingDivider";
 import { useState } from "react";
-const VideoPage = () => {
+const VideoListPage = () => {
   const [selectedSpells, setSelectedSpells] = useState([]);
   const [filterMode, setFilterMode] = useState("OR");
   return (
@@ -14,4 +14,4 @@ const VideoPage = () => {
   );
 }
 
-export default VideoPage;
+export default VideoListPage;

@@ -2,7 +2,7 @@ import React from 'react'
 import { ChakraProvider } from '@chakra-ui/react';
 import { extendTheme } from '@chakra-ui/react';
 import ReactDOM from 'react-dom/client'
-import VideoPage from './routes/videopage';
+import VideoListPage from './routes/videolistpage';
 import MyPage from './routes/mypage';
 import UploadVideoPage from './routes/uploadvideopage';
 import Favorite from './routes/favoritepage';
@@ -47,7 +47,7 @@ const router = createBrowserRouter(
       <Route path='/' element={<PageFrame />}>
         <Route
           path='list'
-          element={<VideoPage />}
+          element={<VideoListPage />}
           errorElement={<ErrorPage />}
         />
         {/* <Route
