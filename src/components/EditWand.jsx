@@ -10,7 +10,6 @@ import { arrayMove, SortableContext, sortableKeyboardCoordinates, rectSortingStr
 import { CSS } from "@dnd-kit/utilities";
 
 const SpellSelector = ({ setWandSpells }) => {
-  console.log("SpellSelector");
   const addImageToBoard = useCallback((item) => {
     setWandSpells((prevboard) => {
       if (prevboard.length < 26) {
@@ -120,7 +119,6 @@ const ResetButton = memo(({ setWandSpells }) => {
 });
 
 const EditWand = memo(({ wandSpells, setWandSpells }) => {
-  console.log("wandSpells: ", wandSpells);
   return (
     <>
       <SpellSelector setWandSpells={setWandSpells} />

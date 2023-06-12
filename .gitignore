@@ -23,6 +23,7 @@ dist-ssr
 *.sln
 *.sw?
 
+
 # apiKey
 src/firebase.js
 # Rules
@@ -30,3 +31,5 @@ storage.rules
 # memo
 memo
 firestore-memo
+# config
+vite.config.js

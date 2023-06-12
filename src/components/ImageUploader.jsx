@@ -4,6 +4,32 @@ import "./ImageUpload.css";
 import { storage, db, auth } from "../firebase"
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { collection, setDoc, serverTimestamp, doc, addDoc } from "firebase/firestore";
+import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
+
+// Initialize FFmpeg
+const ffmpeg = createFFmpeg({ log: true });
+
+const convertToWebm = async (file) => {
+  // Wait for FFmpeg to be ready
+  await ffmpeg.load();
+
+  // Convert the file to a Uint8Array
+  const fileData = await fetchFile(file);
+
+  // Write the file data to FFmpeg's memory
+  ffmpeg.FS('writeFile', 'input.gif', fileData);
+
+  // Run the FFmpeg command
+  await ffmpeg.run('-i', 'input.gif', 'output.webm');
+
+  // Read the result
+  const output = ffmpeg.FS('readFile', 'output.webm');
+
+  // Create a new Blob from the output file
+  const webmBlob = new Blob([output.buffer], { type: 'video/webm' });
+
+  return webmBlob;
+}
 
 const ImageUploader = memo(({fileSelected, wandSpells, videoDescription}) => {
   const [loading, setLoading] = useState(false);
@@ -20,10 +46,11 @@ const ImageUploader = memo(({fileSelected, wandSpells, videoDescription}) => {
     }
     // const file = e.target.files[0];
     const file = fileSelected;
+    const convertedFile = await convertToWebm(file);
     // ファイル名を一意にするためにタイムスタンプを追加 いるんかこれ？ dbの方は問題ないけど，storageの方でないと問題が発生する．はず．
     const fileName = Date.now() + "_" + file.name;
     const storageRef = ref(storage, "images/" + fileName);
-    const uploadImage = uploadBytesResumable(storageRef, file);
+    const uploadImage = uploadBytesResumable(storageRef, convertedFile);
 
     const userId = auth.currentUser.uid
     const userDocRef = doc(db, "users", userId);

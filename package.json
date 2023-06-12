@@ -16,6 +16,8 @@
     "@dnd-kit/modifiers": "^6.0.1",
     "@dnd-kit/sortable": "^7.0.2",
     "@dnd-kit/utilities": "^3.2.1",
+    "@ffmpeg/core": "^0.11.0",
+    "@ffmpeg/ffmpeg": "^0.11.6",
     "firebase": "^9.22.0",
     "firebaseui": "^6.0.2",
     "polished": "^4.2.2",
