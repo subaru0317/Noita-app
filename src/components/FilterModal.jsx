@@ -1,4 +1,4 @@
-import { Button, Box, useDisclosure, IconButton, Radio, RadioGroup, Stack, Text, Tooltip, VStack, HStack, Flex } from '@chakra-ui/react';
+import { Button, Box, useDisclosure, IconButton, Radio, RadioGroup, Stack, Text, Tooltip, VStack, HStack } from '@chakra-ui/react';
 import {
   Modal,
   ModalOverlay,
@@ -6,13 +6,13 @@ import {
   ModalHeader,
   ModalFooter,
   ModalBody,
-  ModalCloseButton,
+  ModalCloseButton
 } from '@chakra-ui/react'
 import { InfoIcon } from "@chakra-ui/icons";
 import { useState, useCallback, memo, useEffect } from 'react';
-import { addDocument } from "../firebase/firestore";
-import SpellList from "./SpellList";
 import { darken } from "polished";
+import SpellIcon from "./SpellIcon";
+import SpellList from "./SpellList";
 
 const Overlay = () => (
   <ModalOverlay
@@ -21,18 +21,7 @@ const Overlay = () => (
   />
 )
 
-const SpellIcon = memo(({ spellpath }) => {
-  return (
-    <img 
-      src={spellpath}
-      alt='spell'
-      style={{ borderRadius: '2px' }}
-    />
-  );
-});
-
 const SpellIconButton = memo(({spellpath, id, setSpells}) => {
-  // console.log("SpellIconButton")
   const [isClicked, setIsClicked] = useState(false);
 
   const handleSpellButtonClick = useCallback(() => {
@@ -52,10 +41,8 @@ const SpellIconButton = memo(({spellpath, id, setSpells}) => {
 
   return (
     <IconButton
-      bg={bgColor}
       _hover={{ bg: hoverColor }}
-      border="2px solid #931527"
-      icon={<SpellIcon spellpath={spellpath} />}
+      icon={<SpellIcon spellpath={spellpath} bg={bgColor}/>}
       onClick={handleSpellButtonClick}
     />
   );
@@ -74,6 +61,8 @@ const FilterModal = ({setSelectedSpells, setFilterMode}) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [spells, setSpells] = useState([]);
   const [value, setValue] = useState("OR");
+  const [displaySpells, setDisplaySpells] = useState(spells);
+  const [displayMode, setDisplayMode] = useState();
 
   const handleFilter = () => {
     // TODO: handle the filtering based on the selected value (OR or AND)
@@ -85,14 +74,27 @@ const FilterModal = ({setSelectedSpells, setFilterMode}) => {
 
     setSelectedSpells(selectedSpellPaths);
     setFilterMode(value);
+    setDisplaySpells(spells);
+    setDisplayMode(value);
     onClose();
   };
   return (
-    <Box textAlign='right'>
-      <Button 
-        onClick={onOpen} colorScheme='blue' size='md'>
-        Filter
-      </Button>
+    <Box textAlign='left' mt={4} mb={4} px={12}>
+    <HStack spacing={4}>
+      <Button onClick={onOpen} colorScheme='blue' size='md'>Filter</Button>
+      <VStack alignItems="flex-start">
+        <HStack>
+        <Text>Spell: </Text>
+            {displaySpells.map(spellId => {
+              const spell = SpellList.find(item => item.id === spellId);
+              return (
+                <SpellIcon key={spellId} spellpath={spell.path} />
+              );
+            })}
+        </HStack>
+        <Text>Mode: {displayMode}</Text>
+      </VStack>
+    </HStack>
       <Modal isCentered isOpen={isOpen} onClose={onClose}>
         <Overlay />
         <ModalContent maxW='600px'>
