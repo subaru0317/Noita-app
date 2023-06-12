@@ -62,7 +62,7 @@ const FilterModal = ({setSelectedSpells, setFilterMode}) => {
   const [spells, setSpells] = useState([]);
   const [value, setValue] = useState("OR");
   const [displaySpells, setDisplaySpells] = useState(spells);
-  const [displayMode, setDisplayMode] = useState();
+  const [displayMode, setDisplayMode] = useState(null);
 
   const handleFilter = () => {
     // TODO: handle the filtering based on the selected value (OR or AND)
@@ -75,7 +75,11 @@ const FilterModal = ({setSelectedSpells, setFilterMode}) => {
     setSelectedSpells(selectedSpellPaths);
     setFilterMode(value);
     setDisplaySpells(spells);
-    setDisplayMode(value);
+    if (spells.length === 0) {
+      setDisplayMode(null);
+    } else {
+      setDisplayMode(value);
+    }
     onClose();
   };
   return (
