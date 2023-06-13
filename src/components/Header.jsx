@@ -23,7 +23,7 @@ const Header = () => {
     >
       <Box maxW={{ base: "80%", md: "auto" }}>
         <Heading as='h1' size={headingSize} cursor="none">
-          <Link to='/list'>Noita - Your Only Wand</Link>
+          <Link to='/'>Noita - Your Only Wand</Link>
         </Heading>
       </Box>
       <AuthButton />

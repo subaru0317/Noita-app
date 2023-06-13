@@ -77,7 +77,7 @@ const LikeButton = ({imageDocData, isLoggedIn}) => {
             mt={2}
             isDisabled={processing || !auth.currentUser}
           >
-            <Box mt={-1} fontSize="19px">
+            <Box mt={-1} fontSize="19px" color="black">
               {likeCount}
             </Box>
           </Button>

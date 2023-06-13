@@ -1,76 +1,11 @@
-import { storage, db, auth } from '../firebase';
+import { storage, db } from '../firebase';
 import { ref, getDownloadURL } from 'firebase/storage';
 import { collectionGroup, query, orderBy, getDocs } from "firebase/firestore";
-import { Grid, GridItem, Spinner, Box, Image, Flex, Text, Wrap, WrapItem, Container, useMediaQuery, Button } from "@chakra-ui/react";
-import { Link } from "react-router-dom";
+import { Grid, GridItem, Spinner, Container, useMediaQuery } from "@chakra-ui/react";
 import React, { useEffect, useState, useMemo } from 'react';
-import LikeButton from "./LikeButton";
-// import PaginatedItems from "./PaginatedItems";
+import VideoCard from "./VideoCard";
 import ReactPaginate from "react-paginate";
 import "./Pagination.css";
-
-
-const VideoCard = ({ imageDocData }) => {
-  console.log("imageDocData", imageDocData);
-  // console.log("VideoCard");
-  // ここの処理元々26個までにしてるから要らないかも
-  // 2重にチェックしていることになる．どうなんだ？これは
-  const MAX_ICON_DISPLAY = 26;
-  const displayIcons = imageDocData.wandSpells.slice(0, MAX_ICON_DISPLAY); // 上限26までのアイコンを取得
-
-  ///
-  /// 日付順に並んでいるかの確認用
-  ///
-  const timestampSeconds = imageDocData.timestamp.seconds;
-  const date = new Date(timestampSeconds * 1000); // Convert seconds to milliseconds
-  const dateString = date.toLocaleDateString(); // Convert to date string in local format
-  const timeString = date.toLocaleTimeString();
-  ///
-  ///
-  ///
-
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(user => {
-      setIsLoggedIn(!!user);
-    });
-
-    // コンポーネントがアンマウントされたときにリスナーを削除する
-    return () => unsubscribe();
-  }, []);
-
-  const videoDetailUrl = useMemo(() => `/list/${imageDocData.fileId}`, [imageDocData.fileId]);
-  return (
-    <Link to={videoDetailUrl}>
-      <Box maxW="sm" borderWidth="1px" borderRadius="lg" overflow="hidden" mb={6}>
-        <Image src={imageDocData.url} alt="Image description" />
-        <Box p="6">
-          <Wrap spacing={0} justify="start">
-            {displayIcons.map((icon, index) => (
-              <WrapItem key={index} mb="3px">
-                <Image 
-                  bg="#4f4f4f"
-                  border="1px solid #931527"
-                  boxSize="25px"
-                  src={icon}
-                  alt={`Icon ${index}`}
-                />
-              </WrapItem>
-            ))}
-          </Wrap>
-          <Flex justifyContent="space-between" alignItems="center" mt="2">
-            <Text color="#747474">
-              {/* {imageDocData.username} // Assuming `username` is present in imageDocData */}
-              {`${dateString} ${timeString}`}
-            </Text>
-              <LikeButton imageDocData={imageDocData} isLoggedIn={isLoggedIn}/>
-          </Flex>
-        </Box>
-      </Box>
-    </Link>
-  );
-};
 
 const VideoList = ({selectedSpells, filterMode}) => {
   console.log("selectedSpells", selectedSpells);
@@ -81,7 +16,6 @@ const VideoList = ({selectedSpells, filterMode}) => {
   const [currentPage, setCurrentPage] = useState(0);
   const [pageCount, setPageCount] = useState(0);
   const [loading, setLoading] = useState(true);
-
 
   useEffect(() => {
     const fetchImages = async () => {
