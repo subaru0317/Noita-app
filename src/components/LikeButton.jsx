@@ -36,7 +36,9 @@ const LikeButton = ({imageDocData, isLoggedIn}) => {
     };
   }, [imageDocData]);
 
-  const handleLikeButtonClick = async () => {
+  const handleLikeButtonClick = async (e) => {
+    e.preventDefault();
+
     if (!auth.currentUser) {
       return ;
     }
@@ -71,7 +73,7 @@ const LikeButton = ({imageDocData, isLoggedIn}) => {
           <Button
             leftIcon={<FaHeart color={auth.currentUser && liked ? "red" : "black"} />}
             aria-label='Like'
-            onClick={handleLikeButtonClick}
+            onClick={(e) => handleLikeButtonClick(e)}
             mt={2}
             isDisabled={processing || !auth.currentUser}
           >
