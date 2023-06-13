@@ -2,14 +2,24 @@ import { storage, db } from '../firebase';
 import { ref, getDownloadURL } from 'firebase/storage';
 import { collectionGroup, query, orderBy, getDocs } from "firebase/firestore";
 import { Grid, GridItem, Spinner, Container, useMediaQuery } from "@chakra-ui/react";
-import React, { useEffect, useState, useMemo } from 'react';
-import VideoCard from "./VideoCard";
+import React, { useEffect, useState } from 'react';
 import ReactPaginate from "react-paginate";
+import VideoCard from "./VideoCard";
 import "./Pagination.css";
 
+// imageDocData = {
+//   description: string
+//   fileId: string
+//   fileName: string
+//   filePath: string
+//   likeCount: int
+//   timestamp: Object { seconds: int, nanoseconds: int }
+//   url: string
+//   userId: string
+//   wandSpells: Array(5) [ "/spells/Spell_bomb.webp", "/spells/Spell_light_bullet.webp", "/spells/Spell_light_bullet_trigger.webp", … ]
+// }
+
 const VideoList = ({selectedSpells, filterMode}) => {
-  console.log("selectedSpells", selectedSpells);
-  // console.log("filterMode: ", filterMode);
   const ITEMS_PER_PAGE = 24;
   const [allImageDocDatas, setAllImageDocDatas] = useState([]);
   const [imageDocDatas, setImageDocDatas] = useState([]);
@@ -19,16 +29,14 @@ const VideoList = ({selectedSpells, filterMode}) => {
 
   useEffect(() => {
     const fetchImages = async () => {
-      const imageDocDatas = [];
+      // const imageDocDatas = [];
       const imagesCollectionGroup = collectionGroup(db, "images");
       const imagesQuery = query(imagesCollectionGroup, orderBy('timestamp', 'desc'));
-
 
       const querySnapshot = await getDocs(imagesQuery);
       
       const downloadPromises = querySnapshot.docs.map(async (doc) => {
         try {
-          // console.log("doc.data(): ", doc.data());
           const filePath = doc.data().filePath;
           const wandSpellInfo = doc.data().wandSpells;
           const checkFilterMode = (spellList, spellInfo) => {
@@ -41,8 +49,6 @@ const VideoList = ({selectedSpells, filterMode}) => {
           }
           // Check if all of the selectedSpells are part of the wandSpellInfo URL
           if (selectedSpells.length === 0 || checkFilterMode(selectedSpells, wandSpellInfo)) {
-            // const countSnapshot = await getCountFromServer(imagesCollectionGroup);
-            // console.log('Total number of filtered documents: ', countSnapshot.data().count);
             const storageRef = ref(storage, filePath); // use the full file path stored in the document
             const url = await getDownloadURL(storageRef);
             return {
