@@ -14,4 +14,4 @@ const SpellIcon = memo(({ spellpath, bg="#4f4f4f", size="35px"}) => {
   );
 });
 
-export default SpellIcon
+export default SpellIcon;

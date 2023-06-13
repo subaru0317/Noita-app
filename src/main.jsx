@@ -3,13 +3,14 @@ import { ChakraProvider } from '@chakra-ui/react';
 import { extendTheme } from '@chakra-ui/react';
 import ReactDOM from 'react-dom/client'
 import VideoListPage from './routes/videolistpage';
+import VideoDetailPage from "./routes/videodetailpage";
 import MyPage from './routes/mypage';
 import UploadVideoPage from './routes/uploadvideopage';
 import Favorite from './routes/favoritepage';
 import MyVideos from './routes/myvideospage';
 import ErrorPage from "./error-page";
 import Header from './components/Header';
-import Footer from "./components/Footer";
+import Footer from './components/Footer';
 import {
   createBrowserRouter,
   createRoutesFromElements,
@@ -18,8 +19,6 @@ import {
   RouterProvider,
 } from "react-router-dom"
 import './index.css'
-// import Footer from "./components/Footer";
-// import Header from "./components/Header";
 
 const colors = {
   brand: {
@@ -46,17 +45,16 @@ const router = createBrowserRouter(
     <>
       <Route path='/' element={<PageFrame />}>
         <Route
-          path='list'
+          index
           element={<VideoListPage />}
           errorElement={<ErrorPage />}
         />
-        {/* <Route
-          path='/test'
-          element={<test />}
-          errorElement={<ErrorPage />}
-        /> */}
         <Route
-          // path='mypage/:usrid' // テキトー書いてるので注意
+          path='list/:videoId'
+          element={<VideoDetailPage />}
+          errorElement={<ErrorPage />}
+        />
+        <Route
           path='mypage'
           element={<MyPage />}
           errorElement={<ErrorPage />}
@@ -79,7 +77,8 @@ const router = createBrowserRouter(
       </Route>
     </>
   )
-)
+);
+
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
