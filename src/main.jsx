@@ -50,7 +50,7 @@ const router = createBrowserRouter(
           errorElement={<ErrorPage />}
         />
         <Route
-          path='list/:videoId'
+          path='list/:imageId'
           element={<VideoDetailPage />}
           errorElement={<ErrorPage />}
         />
