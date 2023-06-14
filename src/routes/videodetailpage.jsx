@@ -2,8 +2,21 @@ import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import VideoCard from '../components/VideoCard';
 import { collection, collectionGroup, getDocs, onSnapshot, query, where, addDoc, orderBy, serverTimestamp } from 'firebase/firestore';
-import { db } from '../firebase';
-import { Flex, Box, Heading, Center, Input, Button, VStack } from '@chakra-ui/react';
+import { db, auth } from '../firebase';
+import {
+  Avatar,
+  Box,
+  Flex,
+  Text,
+  VStack,
+  Heading,
+  Input,
+  Button,
+  Spacer,
+  HStack,
+  Center
+} from "@chakra-ui/react";
+import { formatDistanceToNow } from 'date-fns';
 
 const VideoDetailPage = () => {
   const { imageId } = useParams();
@@ -45,12 +58,14 @@ const VideoDetailPage = () => {
 
   const handleCommentSubmit = async (e) => {
     e.preventDefault();
-    setNewComment('');
     await addDoc(collection(db, 'comments'), {
       text: newComment,
       imageId,
-      timestamp: serverTimestamp(),
+      username: auth.currentUser.displayName,
+      userPhoto: auth.currentUser?.photoURL,
+      timestamp: serverTimestamp()
     });
+    setNewComment('');
   };
 
   return (
@@ -71,9 +86,21 @@ const VideoDetailPage = () => {
           Comments
         </Heading>
         {comments.map((comment) => (
-          <Box key={comment.id} bg="gray.200" p={4} rounded="md">
-            {comment.text}
-          </Box>
+          <HStack key={comment.id} spacing={4} w="full">
+            <Avatar src={comment.userPhoto} /> 
+            <VStack align="start" spacing={1} w="full">
+              <Flex w="full">
+                <Text fontWeight="bold">{comment.username}</Text> 
+                <Spacer />
+                <Text fontSize="sm" color="gray.500">
+                  {comment.timestamp && formatDistanceToNow(comment.timestamp?.toDate(), { addSuffix: true })}
+                </Text>
+              </Flex>
+              <Box bg="gray.100" p={2} borderRadius="md" w="full">
+                {comment.text}
+              </Box>
+            </VStack>
+          </HStack>
         ))}
         <form onSubmit={handleCommentSubmit}>
           <Input
