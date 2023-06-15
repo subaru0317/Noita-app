@@ -4,7 +4,6 @@ import {
   Box,
   Flex,
   Text,
-  Heading,
   Spacer,
   HStack,
 } from "@chakra-ui/react";
@@ -28,7 +27,8 @@ const CommentList = ({comments}) => {
                 <Text mt={1} wordBreak="break-word">{comment.text}</Text>
               </Box>
               <Spacer />
-              <CommentActions userId={comment.userid}/>
+              {/* <CommentActions userId={comment.userid}/> */}
+              <CommentActions userId={comment.userid} commentId={comment.commentId}/>
             </Flex>
           </Box>
         </Flex>

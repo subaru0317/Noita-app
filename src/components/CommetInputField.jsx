@@ -1,25 +1,25 @@
 import { useState } from "react";
 import { Input, Button } from "@chakra-ui/react";
 import { auth, db } from "../firebase";
-import { addDoc, serverTimestamp, collection } from 'firebase/firestore';
-
-
+import { addDoc, serverTimestamp, collection, updateDoc } from 'firebase/firestore';
 
 const CommentInputField = ({imageId}) => {
   const [newComment, setNewComment] = useState('');
 
   const handleCommentSubmit = async (e) => {
     e.preventDefault();
-    await addDoc(collection(db, 'comments'), {
+    const docRef = await addDoc(collection(db, 'comments'), {
       text: newComment,
       imageId,
-      isEdited: false,
       username: auth.currentUser.displayName,
       userPhoto: auth.currentUser?.photoURL,
       userid: auth.currentUser.uid,
       timestamp: serverTimestamp()
     });
     setNewComment('');
+    await updateDoc(docRef, {
+      commentId: docRef.id
+    });
   };
 
   const handleNewCommentChange = (e) => {
