@@ -17,6 +17,7 @@ import {
   Center
 } from "@chakra-ui/react";
 import { formatDistanceToNow } from 'date-fns';
+import { BiEditAlt } from "react-icons/bi";
 
 const VideoDetailPage = () => {
   const { imageId } = useParams();
@@ -61,6 +62,7 @@ const VideoDetailPage = () => {
     await addDoc(collection(db, 'comments'), {
       text: newComment,
       imageId,
+      isEdited: false,
       username: auth.currentUser.displayName,
       userPhoto: auth.currentUser?.photoURL,
       timestamp: serverTimestamp()
@@ -81,38 +83,39 @@ const VideoDetailPage = () => {
           </Box>
         </Flex>
       </Center>
-      <VStack spacing={4} maxW="800px" mx="auto" mt={4}>
-        <Heading as="h3" size="md">
+      <Flex direction="column" align="start" bg="gray.700" p={4} borderRadius="md" color="white" maxW="800px" mx="auto" mt={4}>
+        <Heading as="h3" size="md" mb={4} color="white">
           Comments
         </Heading>
         {comments.map((comment) => (
-          <HStack key={comment.id} spacing={4} w="full">
-            <Avatar src={comment.userPhoto} /> 
-            <VStack align="start" spacing={1} w="full">
-              <Flex w="full">
-                <Text fontWeight="bold">{comment.username}</Text> 
-                <Spacer />
-                <Text fontSize="sm" color="gray.500">
-                  {comment.timestamp && formatDistanceToNow(comment.timestamp?.toDate(), { addSuffix: true })}
+          <Flex key={comment.id} mb={3}>
+            <Avatar src={comment.userPhoto} size="sm" mt={1}/>
+            <Box ml={3}>
+              <HStack>
+                <Text fontWeight="bold">{comment.username}</Text>
+                <Text color="gray.400" fontSize="sm">
+                  {formatDistanceToNow(comment.timestamp?.toDate(), { addSuffix: true })}
                 </Text>
-              </Flex>
-              <Box bg="gray.100" p={2} borderRadius="md" w="full">
-                {comment.text}
-              </Box>
-            </VStack>
-          </HStack>
+              </HStack>
+              <Text mt={1} wordBreak="break-word">{comment.text}</Text>
+            </Box>
+          </Flex>
         ))}
         <form onSubmit={handleCommentSubmit}>
           <Input
             placeholder="Write a comment"
             value={newComment}
             onChange={handleNewCommentChange}
+            borderRadius="lg" 
+            bg="gray.800" 
+            color="white"
+            mb={2}
           />
-          <Button mt={2} type="submit">
+          <Button mt={2} type="submit" colorScheme="teal">
             Submit
           </Button>
         </form>
-      </VStack>
+      </Flex>
     </Box>
   );
 };
