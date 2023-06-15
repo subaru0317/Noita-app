@@ -3,6 +3,7 @@ import { auth, db } from '../firebase';
 import { FaHeart } from "react-icons/fa";
 import { Flex, Box, Button, Tooltip } from "@chakra-ui/react";
 import { increment, updateDoc, doc, setDoc, getDoc, deleteDoc, serverTimestamp, onSnapshot } from "firebase/firestore";
+import { onAuthStateChanged } from "firebase/auth";
 
 // isLoggedInは再レンダリングするためだけに呼び出し
 const LikeButton = ({imageDocData, isLoggedIn}) => {
@@ -22,7 +23,7 @@ const LikeButton = ({imageDocData, isLoggedIn}) => {
       setLikeCount(doc.data().likeCount);
     });
 
-    const unsubscribeAuth = auth.onAuthStateChanged(user => {
+    const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
       if (!user) {
         setLiked(false);
       } else {

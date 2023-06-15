@@ -1,10 +1,12 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, memo } from 'react';
 import { auth } from '../firebase';
 import { Box, Image, Flex, Text, Wrap, WrapItem } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import LikeButton from "./LikeButton";
+import { onAuthStateChanged } from "firebase/auth";
 
-const VideoCard = ({ imageDocData, isLinkActive = true }) => {
+const VideoCard = memo(({ imageDocData, isLinkActive = true }) => {
+  console.log("VideoCard");
   const MAX_ICON_DISPLAY = 26;
   const displayIcons = imageDocData.wandSpells.slice(0, MAX_ICON_DISPLAY);
 
@@ -16,7 +18,7 @@ const VideoCard = ({ imageDocData, isLinkActive = true }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(user => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
       setIsLoggedIn(!!user);
     });
 
@@ -68,6 +70,6 @@ const VideoCard = ({ imageDocData, isLinkActive = true }) => {
   ) : (
     <div>{cardContent}</div>
   );
-};
+});
 
 export default VideoCard;
