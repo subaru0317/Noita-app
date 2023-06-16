@@ -1,16 +1,18 @@
-import { ButtonGroup, IconButton, Input, Tooltip, Box, Text, Kbd, Spacer } from "@chakra-ui/react";
+import { ButtonGroup, IconButton, Input, Tooltip, Box, Kbd, Spacer, useDisclosure, AlertDialog, AlertDialogBody, AlertDialogFooter, AlertDialogHeader, AlertDialogContent, AlertDialogOverlay, Button } from "@chakra-ui/react";
 import { auth, db } from "../firebase";
-import { BiEditAlt } from "react-icons/bi";
-import { BiTrash } from "react-icons/bi";
-import { useState, useEffect } from 'react';
+import { BiEditAlt, BiTrash } from "react-icons/bi";
+import { useState, useEffect, useRef } from 'react';
 import { onAuthStateChanged } from "firebase/auth";
 import { collection, doc, getDoc, updateDoc, deleteDoc } from "firebase/firestore";
 
 const CommentActions = ({userId, commentId}) => {
+  console.log("CommentActions");
   const [currentUser, setCurrentUser] = useState(null);
   const [editing, setEditing] = useState(false);
   const [comment, setComment] = useState('');
   const [originalComment, setOriginalComment] = useState('');
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const cancelRef = useRef();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -44,6 +46,7 @@ const CommentActions = ({userId, commentId}) => {
     const commentsRef = collection(db, "comments");
     const commentDoc = doc(commentsRef, commentId);
     await deleteDoc(commentDoc);
+    onClose();
   };
 
   const handleInputChange = (event) => {
@@ -84,7 +87,7 @@ const CommentActions = ({userId, commentId}) => {
               colorScheme='ghost'
               aria-label='Delete comment'
               size='xs'
-              onClick={handleDelete}
+              onClick={onOpen}
             />
           </Tooltip>
         </ButtonGroup>
@@ -105,6 +108,34 @@ const CommentActions = ({userId, commentId}) => {
         ) : (
           <></>
         )}
+      <AlertDialog
+        isOpen={isOpen}
+        leastDestructiveRef={cancelRef}
+        onClose={onClose}
+      >
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+              Delete Comment
+            </AlertDialogHeader>
+            <AlertDialogBody>
+              Are you sure you want to delete this comment?
+              <Box mt={3} p={2} bg="gray.100" borderRadius="md">
+                {comment}
+              </Box>
+              This action cannot be undone.
+            </AlertDialogBody>
+            <AlertDialogFooter>
+              <Button ref={cancelRef} onClick={onClose}>
+                Cancel
+              </Button>
+              <Button colorScheme="red" onClick={handleDelete} ml={3}>
+                Delete
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
     </Box>
   );
 }

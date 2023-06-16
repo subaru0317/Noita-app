@@ -3,6 +3,7 @@ import CommentInputField from "./CommetInputField";
 import CommentLists from "./CommentLists";
 
 const UserCommentSection = ({comments, imageId}) => {
+  console.log("UserCommentSection");
   return (
     <Flex direction="column" align="start" bg="gray.700" p={4} borderRadius="md" color="white" maxW="800px" mx="auto" mt={4}>
       <Heading as="h3" size="md" mb={4} color="white">

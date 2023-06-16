@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Textarea, Box, IconButton, Tooltip, Kbd, Flex, Center } from '@chakra-ui/react';
 import { db, auth } from "../firebase";
 import { addDoc, updateDoc, collection, serverTimestamp } from "firebase/firestore";
@@ -10,13 +10,14 @@ const CommentInputField = ({ imageId }) => {
   const [showTooltip, setShowTooltip] = useState(false);
   const [user] = useAuthState(auth);
 
-  const handleCommentSubmit = async (e) => {
+  const handleCommentSubmit = useCallback(async (e) => {
     e.preventDefault();
 
-    // Check if the trimmed comment is not an empty string
     if (newComment.trim() !== '') {
+      const newCommentCopy = newComment;
+      setNewComment('');
       const docRef = await addDoc(collection(db, 'comments'), {
-        text: newComment,
+        text: newCommentCopy,
         imageId,
         username: auth.currentUser.displayName,
         userPhoto: auth.currentUser?.photoURL,
@@ -28,23 +29,22 @@ const CommentInputField = ({ imageId }) => {
         commentId: docRef.id
       });
 
-      setNewComment('');
-      setShowTooltip(false);  // Hide the tooltip after submitting a comment
+      setShowTooltip(false);
     }
-  };
+  }, [newComment, imageId]);
 
-  const handleNewCommentChange = (e) => {
+  const handleNewCommentChange = useCallback((e) => {
     setNewComment(e.target.value);
     setShowTooltip(e.target.value.trim() !== '');
-  };
+  }, []);
 
-  const handleKeyPress = (e) => {
+  const handleKeyPress = useCallback((e) => {
     if (e.key === 'Enter' && e.shiftKey) {
       handleCommentSubmit(e);
     }
-  };
+  }, [handleCommentSubmit]);
 
-  const ToolTipMessage = () => {
+  const ToolTipMessage = useCallback(() => {
     return (
       <>
         <Flex direction="column" align="center">
@@ -54,7 +54,7 @@ const CommentInputField = ({ imageId }) => {
         </Flex>
       </>
     );
-  };
+  }, []);
 
   return (
     <Box as="form" onSubmit={handleCommentSubmit} pos="relative">
@@ -62,11 +62,12 @@ const CommentInputField = ({ imageId }) => {
         value={newComment}
         onChange={handleNewCommentChange}
         onKeyPress={handleKeyPress}
-        placeholder={user ? "Enter comment..." : "Log in to comment..."} // Display different placeholders based on login status
+        placeholder={user ? "Enter comment..." : "Log in to comment..."}
         mb={2}
         resize="vertical"
         width="730px"
-        isDisabled={!user}  // Disable the Textarea if the user is not logged in
+        isDisabled={!user}
+        _placeholder={{ color: "white" }}
       />
       <Box pos="absolute" right="-45px" bottom="8px">
         <Tooltip 
@@ -87,7 +88,7 @@ const CommentInputField = ({ imageId }) => {
             variant="outline"
             left="2px"
             bgColor={newComment.trim() !== '' ? 'green.500' : undefined}
-            isDisabled={!user}  // Disable the button if the user is not logged in
+            isDisabled={!user}
           />
         </Tooltip>
       </Box>
