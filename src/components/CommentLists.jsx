@@ -1,4 +1,4 @@
-import CommentActions from '../components/CommentActions';
+import CommentActions from './CommentActions';
 import {
   Avatar,
   Box,
@@ -9,7 +9,7 @@ import {
 } from "@chakra-ui/react";
 import { formatDistanceToNow } from 'date-fns';
 
-const CommentList = ({comments}) => {
+const CommentLists = ({comments}) => {
   return (
     <>
       {comments.map((comment) => (
@@ -37,4 +37,4 @@ const CommentList = ({comments}) => {
 }
 
 
-export default CommentList;
+export default CommentLists;

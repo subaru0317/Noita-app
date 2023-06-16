@@ -1,9 +1,10 @@
 import { ButtonGroup, IconButton, Input, Tooltip, Box, Text, Kbd, Spacer } from "@chakra-ui/react";
 import { auth, db } from "../firebase";
 import { BiEditAlt } from "react-icons/bi";
+import { BiTrash } from "react-icons/bi";
 import { useState, useEffect } from 'react';
 import { onAuthStateChanged } from "firebase/auth";
-import { collection, doc, getDoc, updateDoc } from "firebase/firestore";
+import { collection, doc, getDoc, updateDoc, deleteDoc } from "firebase/firestore";
 
 const CommentActions = ({userId, commentId}) => {
   const [currentUser, setCurrentUser] = useState(null);
@@ -39,6 +40,12 @@ const CommentActions = ({userId, commentId}) => {
     setEditing(!editing);
   };
 
+  const handleDelete = async () => {
+    const commentsRef = collection(db, "comments");
+    const commentDoc = doc(commentsRef, commentId);
+    await deleteDoc(commentDoc);
+  };
+
   const handleInputChange = (event) => {
     setComment(event.target.value);
   };
@@ -61,7 +68,7 @@ const CommentActions = ({userId, commentId}) => {
   return (
     <Box>
       {userId === currentUser?.uid && (
-        <ButtonGroup>
+        <ButtonGroup isAttached>
           <Tooltip label="Edit" openDelay={100} placement="top">
             <IconButton
               icon={<BiEditAlt size='16px'/>}
@@ -71,24 +78,33 @@ const CommentActions = ({userId, commentId}) => {
               onClick={handleEdit}
             />
           </Tooltip>
+          <Tooltip label="Delete" openDelay={100} placement="top">
+            <IconButton
+              icon={<BiTrash size='16px' />}
+              colorScheme='ghost'
+              aria-label='Delete comment'
+              size='xs'
+              onClick={handleDelete}
+            />
+          </Tooltip>
         </ButtonGroup>
       )}
       {editing ? (
-        <>
-          <Input
-            value={comment}
-            onChange={handleInputChange}
-            onKeyDown={handleInputKeyDown}
-          />
-          <Text fontSize="xs" mt={2}>
-            <Kbd color='black'>Shift</Kbd> + <Kbd color='black'>Enter</Kbd> : Save 
-            <Spacer />
-            <Kbd color='black'>Esc</Kbd> : Cancel
-          </Text>
-        </>
-      ) : (
-        <p></p>
-      )}
+          <>
+            <Input
+              value={comment}
+              onChange={handleInputChange}
+              onKeyDown={handleInputKeyDown}
+            />
+            <span>
+              <Kbd color='black' fontSize='xs'>Shift</Kbd> + <Kbd color='black' fontSize='xs'>Enter</Kbd> : Save 
+              <Spacer />
+              <Kbd color='black' fontSize='xs'>Esc</Kbd> : Cancel
+            </span>
+          </>
+        ) : (
+          <></>
+        )}
     </Box>
   );
 }

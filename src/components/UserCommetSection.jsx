@@ -1,6 +1,6 @@
 import { Flex, Heading } from "@chakra-ui/react";
 import CommentInputField from "./CommetInputField";
-import CommentList from "./CommentList";
+import CommentLists from "./CommentLists";
 
 const UserCommentSection = ({comments, imageId}) => {
   return (
@@ -8,7 +8,7 @@ const UserCommentSection = ({comments, imageId}) => {
       <Heading as="h3" size="md" mb={4} color="white">
         Comments
       </Heading>
-      <CommentList comments={comments}/>
+      <CommentLists comments={comments}/>
       <CommentInputField imageId={imageId}/>
     </Flex>
   );
