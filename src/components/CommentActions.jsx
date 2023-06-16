@@ -76,7 +76,7 @@ const CommentActions = ({userId, commentId}) => {
           <Text fontSize="xs" mt={2}>Shift + Enter to finish editing</Text>
         </>
       ) : (
-        <p>{comment}</p>
+        <p></p>
       )}
     </Box>
   );

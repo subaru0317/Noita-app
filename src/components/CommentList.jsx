@@ -27,8 +27,7 @@ const CommentList = ({comments}) => {
                 <Text mt={1} wordBreak="break-word">{comment.text}</Text>
               </Box>
               <Spacer />
-              {/* <CommentActions userId={comment.userid}/> */}
-              <CommentActions userId={comment.userid} commentId={comment.commentId}/>
+              { comment.commentId && <CommentActions userId={comment.userid} commentId={comment.commentId}/> }
             </Flex>
           </Box>
         </Flex>
