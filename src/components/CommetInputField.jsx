@@ -23,6 +23,7 @@ const CommentInputField = ({ imageId }) => {
         userPhoto: auth.currentUser?.photoURL,
         userid: auth.currentUser.uid,
         timestamp: serverTimestamp()
+        
       });
 
       await updateDoc(docRef, {

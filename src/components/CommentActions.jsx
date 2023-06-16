@@ -1,16 +1,12 @@
-import { ButtonGroup, IconButton, Input, Tooltip, Box, Kbd, Spacer, useDisclosure, AlertDialog, AlertDialogBody, AlertDialogFooter, AlertDialogHeader, AlertDialogContent, AlertDialogOverlay, Button } from "@chakra-ui/react";
+import { Text, ButtonGroup, IconButton, Input, Tooltip, Box, Kbd, Spacer, useDisclosure, AlertDialog, AlertDialogBody, AlertDialogFooter, AlertDialogHeader, AlertDialogContent, AlertDialogOverlay, Button } from "@chakra-ui/react";
 import { auth, db } from "../firebase";
 import { BiEditAlt, BiTrash } from "react-icons/bi";
 import { useState, useEffect, useRef } from 'react';
 import { onAuthStateChanged } from "firebase/auth";
 import { collection, doc, getDoc, updateDoc, deleteDoc } from "firebase/firestore";
 
-const CommentActions = ({userId, commentId}) => {
-  console.log("CommentActions");
+const CommentActions = ({userId, commentId, commentText, setEditing}) => {
   const [currentUser, setCurrentUser] = useState(null);
-  const [editing, setEditing] = useState(false);
-  const [comment, setComment] = useState('');
-  const [originalComment, setOriginalComment] = useState('');
   const { isOpen, onOpen, onClose } = useDisclosure();
   const cancelRef = useRef();
 
@@ -19,27 +15,12 @@ const CommentActions = ({userId, commentId}) => {
       setCurrentUser(user);
     });
 
-    // Fetch comment from Firestore
-    const fetchComment = async () => {
-      const commentsRef = collection(db, "comments");
-      const commentDoc = doc(commentsRef, commentId);
-      const commentSnapshot = await getDoc(commentDoc);
-      if (commentSnapshot.exists()) {
-        setComment(commentSnapshot.data().text);
-        setOriginalComment(commentSnapshot.data().text);
-      } else {
-        console.log('No such document!');
-      }
-    }
-
-    fetchComment();
-
     // Cleanup subscription on unmount
     return () => unsubscribe();
-  }, [commentId]);
+  }, []);
 
   const handleEdit = () => {
-    setEditing(!editing);
+    setEditing(true);
   };
 
   const handleDelete = async () => {
@@ -47,25 +28,6 @@ const CommentActions = ({userId, commentId}) => {
     const commentDoc = doc(commentsRef, commentId);
     await deleteDoc(commentDoc);
     onClose();
-  };
-
-  const handleInputChange = (event) => {
-    setComment(event.target.value);
-  };
-
-  const handleInputKeyDown = async (event) => {
-    if(event.key === 'Enter' && event.shiftKey) {
-      event.preventDefault();
-      setEditing(false);
-      const commentsRef = collection(db, "comments");
-      const commentDoc = doc(commentsRef, commentId);
-      await updateDoc(commentDoc, { text: comment });
-    }
-    if(event.key === 'Escape') {
-      event.preventDefault();
-      setEditing(false);
-      setComment(originalComment);
-    }
   };
 
   return (
@@ -92,22 +54,6 @@ const CommentActions = ({userId, commentId}) => {
           </Tooltip>
         </ButtonGroup>
       )}
-      {editing ? (
-          <>
-            <Input
-              value={comment}
-              onChange={handleInputChange}
-              onKeyDown={handleInputKeyDown}
-            />
-            <span>
-              <Kbd color='black' fontSize='xs'>Shift</Kbd> + <Kbd color='black' fontSize='xs'>Enter</Kbd> : Save 
-              <Spacer />
-              <Kbd color='black' fontSize='xs'>Esc</Kbd> : Cancel
-            </span>
-          </>
-        ) : (
-          <></>
-        )}
       <AlertDialog
         isOpen={isOpen}
         leastDestructiveRef={cancelRef}
@@ -120,10 +66,15 @@ const CommentActions = ({userId, commentId}) => {
             </AlertDialogHeader>
             <AlertDialogBody>
               Are you sure you want to delete this comment?
-              <Box mt={3} p={2} bg="gray.100" borderRadius="md">
-                {comment}
-              </Box>
               This action cannot be undone.
+              <Box 
+                bg="gray.100" 
+                borderRadius="md" 
+                p={2} 
+                mt={2}
+              >
+                {commentText}
+              </Box>
             </AlertDialogBody>
             <AlertDialogFooter>
               <Button ref={cancelRef} onClick={onClose}>
