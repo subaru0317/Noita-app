@@ -3,33 +3,39 @@ import { Textarea, Box, IconButton, Tooltip, Kbd, Flex, Center } from '@chakra-u
 import { db, auth } from "../firebase";
 import { addDoc, updateDoc, collection, serverTimestamp } from "firebase/firestore";
 import { AiOutlineSend } from "react-icons/ai";
+import { useAuthState } from 'react-firebase-hooks/auth'
 
 const CommentInputField = ({ imageId }) => {
   const [newComment, setNewComment] = useState('');
   const [showTooltip, setShowTooltip] = useState(false);
+  const [user] = useAuthState(auth);
 
   const handleCommentSubmit = async (e) => {
     e.preventDefault();
 
-    const docRef = await addDoc(collection(db, 'comments'), {
-      text: newComment,
-      imageId,
-      username: auth.currentUser.displayName,
-      userPhoto: auth.currentUser?.photoURL,
-      userid: auth.currentUser.uid,
-      timestamp: serverTimestamp()
-    });
+    // Check if the trimmed comment is not an empty string
+    if (newComment.trim() !== '') {
+      const docRef = await addDoc(collection(db, 'comments'), {
+        text: newComment,
+        imageId,
+        username: auth.currentUser.displayName,
+        userPhoto: auth.currentUser?.photoURL,
+        userid: auth.currentUser.uid,
+        timestamp: serverTimestamp()
+      });
 
-    await updateDoc(docRef, {
-      commentId: docRef.id
-    });
+      await updateDoc(docRef, {
+        commentId: docRef.id
+      });
 
-    setNewComment('');
+      setNewComment('');
+      setShowTooltip(false);  // Hide the tooltip after submitting a comment
+    }
   };
 
   const handleNewCommentChange = (e) => {
     setNewComment(e.target.value);
-    setShowTooltip(e.target.value !== '');
+    setShowTooltip(e.target.value.trim() !== '');
   };
 
   const handleKeyPress = (e) => {
@@ -56,10 +62,11 @@ const CommentInputField = ({ imageId }) => {
         value={newComment}
         onChange={handleNewCommentChange}
         onKeyPress={handleKeyPress}
-        placeholder="Enter comment..."
+        placeholder={user ? "Enter comment..." : "Log in to comment..."} // Display different placeholders based on login status
         mb={2}
         resize="vertical"
-        width="730px"  // Set the width of the Textarea
+        width="730px"
+        isDisabled={!user}  // Disable the Textarea if the user is not logged in
       />
       <Box pos="absolute" right="-45px" bottom="8px">
         <Tooltip 
@@ -79,6 +86,8 @@ const CommentInputField = ({ imageId }) => {
             onClick={handleCommentSubmit}
             variant="outline"
             left="2px"
+            bgColor={newComment.trim() !== '' ? 'green.500' : undefined}
+            isDisabled={!user}  // Disable the button if the user is not logged in
           />
         </Tooltip>
       </Box>
