@@ -1,4 +1,4 @@
-import { ButtonGroup, IconButton, Input, Tooltip, Box, Text } from "@chakra-ui/react";
+import { ButtonGroup, IconButton, Input, Tooltip, Box, Text, Kbd, Spacer } from "@chakra-ui/react";
 import { auth, db } from "../firebase";
 import { BiEditAlt } from "react-icons/bi";
 import { useState, useEffect } from 'react';
@@ -9,6 +9,7 @@ const CommentActions = ({userId, commentId}) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [editing, setEditing] = useState(false);
   const [comment, setComment] = useState('');
+  const [originalComment, setOriginalComment] = useState('');
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -22,6 +23,7 @@ const CommentActions = ({userId, commentId}) => {
       const commentSnapshot = await getDoc(commentDoc);
       if (commentSnapshot.exists()) {
         setComment(commentSnapshot.data().text);
+        setOriginalComment(commentSnapshot.data().text);
       } else {
         console.log('No such document!');
       }
@@ -49,6 +51,11 @@ const CommentActions = ({userId, commentId}) => {
       const commentDoc = doc(commentsRef, commentId);
       await updateDoc(commentDoc, { text: comment });
     }
+    if(event.key === 'Escape') {
+      event.preventDefault();
+      setEditing(false);
+      setComment(originalComment);
+    }
   };
 
   return (
@@ -73,7 +80,11 @@ const CommentActions = ({userId, commentId}) => {
             onChange={handleInputChange}
             onKeyDown={handleInputKeyDown}
           />
-          <Text fontSize="xs" mt={2}>Shift + Enter to finish editing</Text>
+          <Text fontSize="xs" mt={2}>
+            <Kbd color='black'>Shift</Kbd> + <Kbd color='black'>Enter</Kbd> : Save 
+            <Spacer />
+            <Kbd color='black'>Esc</Kbd> : Cancel
+          </Text>
         </>
       ) : (
         <p></p>
