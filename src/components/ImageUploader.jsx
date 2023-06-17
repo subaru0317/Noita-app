@@ -39,7 +39,7 @@ const ImageUploader = memo(({fileSelected, wandSpells, videoDescription}) => {
       alert("Oops! It looks like the video is not selected...")
       return ;
     }
-    console.log("ImageUploader, wandSpells", wandSpells);
+    // console.log("ImageUploader, wandSpells", wandSpells);
     if (wandSpells.length === 0) {
       alert("Oops! It looks like the wand edit has not been done...")
       return ;
@@ -47,17 +47,22 @@ const ImageUploader = memo(({fileSelected, wandSpells, videoDescription}) => {
     // const file = e.target.files[0];
     const file = fileSelected;
     const convertedFile = await convertToWebm(file);
+    // console.log("Converted file:", convertedFile);
     // ファイル名を一意にするためにタイムスタンプを追加 いるんかこれ？ dbの方は問題ないけど，storageの方でないと問題が発生する．はず．
-    const fileName = Date.now() + "_" + file.name;
+    const fileName = Date.now() + "_" + file.name.replace('.gif', '.webm');
+    console.log("fileName: ", fileName);
     const storageRef = ref(storage, "images/" + fileName);
+    // console.log('Starting upload to Firebase...');
     const uploadImage = uploadBytesResumable(storageRef, convertedFile);
 
-    const userId = auth.currentUser.uid
+    const userId = auth.currentUser.uid;
     const userDocRef = doc(db, "users", userId);
     const imagesCollectionRef = collection(userDocRef, "images");
     const newImageDocRef = doc(imagesCollectionRef);
 
     uploadImage.on("state_changed", (snapshot) => {
+      const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+      console.log('Upload is ' + progress + '% done');
       setLoading(true);
     },
     (error) => {
@@ -89,6 +94,7 @@ const ImageUploader = memo(({fileSelected, wandSpells, videoDescription}) => {
           timestamp: serverTimestamp(),
         };
         try {
+          console.log('Adding document to Firestore...');
           await setDoc(userDocRef, userInfo);
           await setDoc(newImageDocRef, fileInfo);
           // Add the generated doc id to `fileInfo`

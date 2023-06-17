@@ -38,17 +38,17 @@ const VideoCard = memo(({ imageDocData, isLinkActive = true }) => {
 
   const cardContent = (
     <Box maxW="sm" borderWidth="1px" borderRadius="lg" overflow="hidden" mb={6} {...hoverAndClickStyles}>
-      <Image src={imageDocData.filePath} alt="Image description" />
+      <video src={imageDocData.filePath} alt="Video description" controls />
       <Box p="6">
         <Wrap spacing={0} justify="start">
-          {displayIcons.map((icon, index) => (
+          {displayIcons.map((spellIcon, index) => (
             <WrapItem key={index} mb="3px">
               <Image 
                 bg="#4f4f4f"
                 border="1px solid #931527"
                 boxSize="25px"
-                src={icon}
-                alt={`Icon ${index}`}
+                src={spellIcon}
+                alt={`SpellIcon ${index}`}
               />
             </WrapItem>
           ))}
