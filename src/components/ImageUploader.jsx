@@ -1,4 +1,4 @@
-import { Button } from "@chakra-ui/react";
+import { Button, Alert, AlertIcon, useToast } from "@chakra-ui/react";
 import React, { useState, memo } from "react";
 import "./ImageUpload.css";
 import { storage, db, auth } from "../firebase"
@@ -34,16 +34,21 @@ const convertToWebm = async (file) => {
 const ImageUploader = memo(({fileSelected, wandSpells, videoDescription}) => {
   const [loading, setLoading] = useState(false);
   const [isUploaded, setUploaded] = useState(false);
+
+  const toast = useToast();
+
   const OnFileUploadToFirebase = async (e) => {
     if (!fileSelected) {
-      alert("Oops! It looks like the video is not selected...")
-      return ;
+      toast({
+        title: "An error occurred.",
+        description: "It looks like the video is not selected.",
+        status: "error",
+        duration: 9000,
+        isClosable: true,
+      });
+      return;
     }
     // console.log("ImageUploader, wandSpells", wandSpells);
-    if (wandSpells.length === 0) {
-      alert("Oops! It looks like the wand edit has not been done...")
-      return ;
-    }
     // const file = e.target.files[0];
     const file = fileSelected;
     const convertedFile = await convertToWebm(file);
