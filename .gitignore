@@ -28,6 +28,7 @@ dist-ssr
 src/firebase.js
 # Rules
 storage.rules
+firebase.json
 # memo
 memo
 firestore-memo

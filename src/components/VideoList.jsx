@@ -9,6 +9,7 @@ import "./Pagination.css";
 
 // imageDocData = {
 //   description: string
+//   title: string
 //   fileId: string
 //   fileName: string
 //   filePath: string

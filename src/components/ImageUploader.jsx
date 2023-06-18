@@ -31,7 +31,7 @@ const convertToWebm = async (file) => {
   return webmBlob;
 }
 
-const ImageUploader = memo(({fileSelected, wandSpells, videoDescription}) => {
+const ImageUploader = memo(({fileSelected, wandSpells, videoDescription, videoTitle}) => {
   const [loading, setLoading] = useState(false);
   const [isUploaded, setUploaded] = useState(false);
 
@@ -95,6 +95,7 @@ const ImageUploader = memo(({fileSelected, wandSpells, videoDescription}) => {
           filePath: filePath,
           wandSpells: filteredWandSpells,
           description: videoDescription,
+          videoTitle: videoTitle,
           likeCount: 0,
           timestamp: serverTimestamp(),
         };

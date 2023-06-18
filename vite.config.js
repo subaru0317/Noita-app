@@ -25,6 +25,9 @@
 // //   ],
 // // })
 
+// import { defineConfig } from 'vite'
+// import react from '@vitejs/plugin-react'
+
 // export default defineConfig({
 //   plugins: [
 //     react(),
@@ -41,6 +44,7 @@
 //   ],
 // });
 
+
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
@@ -51,9 +55,14 @@ export default defineConfig({
       name: "configure-response-headers",
       configureServer: (server) => {
         server.middlewares.use((req, res, next) => {
-          if (req.originalUrl.startsWith('/api/ffmpeg')) {
+          // リクエストが /uploadvideo ページにマッチした場合にだけヘッダを設定
+          if (req.url.startsWith('/uploadvideo')) {
             res.setHeader("Cross-Origin-Embedder-Policy", "require-corp");
             res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
+          }
+          else {
+            res.setHeader("Cross-Origin-Embedder-Policy", "unsafe-none");
+            res.setHeader("Cross-Origin-Opener-Policy", "unsafe-none");
           }
           next();
         });
@@ -61,3 +70,39 @@ export default defineConfig({
     },
   ],
 });
+
+
+// import { defineConfig } from 'vite'
+// import react from '@vitejs/plugin-react'
+
+// export default {
+//   server: {
+//     headers: {
+//       'Cross-Origin-Embedder-Policy': 'require-corp',
+//       'Cross-Origin-Opener-Policy': 'same-origin',
+//     },
+//   },
+// };
+
+
+// import { defineConfig } from 'vite'
+// import react from '@vitejs/plugin-react'
+
+// export default defineConfig({
+//   plugins: [
+//     react(),
+//     {
+//       name: "configure-response-headers",
+//       configureServer: (server) => {
+//         server.middlewares.use((req, res, next) => {
+//           // if (req.originalUrl.startsWith('/api/ffmpeg')) {
+//           if (req.originalUrl.startsWith('/api/ffmpeg')) {
+//             res.setHeader("Cross-Origin-Embedder-Policy", "require-corp");
+//             res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
+//           }
+//           next();
+//         });
+//       },
+//     },
+//   ],
+// });

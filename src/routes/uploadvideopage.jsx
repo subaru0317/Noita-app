@@ -4,11 +4,13 @@ import ImageUploader from '../components/ImageUploader';
 import EditWand from '../components/EditWand';
 import SelectedFilePreview from "../components/SelectedFilePreview";
 import VideoDescriptionInput from "../components/VideoDescriptionInput";
+import VideoTitleInput from "../components/VideoTitleInput";
 
 const UploadVideoPage = () => {
   const [fileSelected, setFileSelected] = useState(null);
-  const [wandSpells, setWandSpells] = useState([]);
+  const [videoTitle, setVideoTitle] = useState('');
   const [videoDescription, setVideoDescription] = useState('');
+  const [wandSpells, setWandSpells] = useState([]);
   console.log("wandSpells: ", wandSpells);
   return (
     <>
@@ -17,6 +19,10 @@ const UploadVideoPage = () => {
         (In Windows, %UserProfile% would be "<strong>C:\Users\username</strong>"etc.)
       </Text>
       <SelectedFilePreview setFileSelected={setFileSelected} />
+      <VideoTitleInput
+        setVideoTitle={setVideoTitle}
+        videoTitle={videoTitle}
+      />
       <VideoDescriptionInput
         setVideoDescription={setVideoDescription}
         videoDescription={videoDescription}
@@ -31,6 +37,7 @@ const UploadVideoPage = () => {
         fileSelected={fileSelected}
         wandSpells={wandSpells}
         videoDescription={videoDescription}
+        videoTitle={videoTitle}
       />
     </>
   );
