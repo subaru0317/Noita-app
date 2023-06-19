@@ -58,41 +58,42 @@ const CommentInputField = ({ imageId }) => {
   }, []);
 
   return (
-    <Box as="form" onSubmit={handleCommentSubmit} pos="relative">
-      <Textarea
-        value={newComment}
-        onChange={handleNewCommentChange}
-        onKeyPress={handleKeyPress}
-        placeholder={user ? "Enter comment..." : "Log in to comment..."}
-        mb={2}
-        resize="vertical"
-        width="730px"
-        isDisabled={!user}
-        _placeholder={{ color: "white" }}
-      />
-      <Box pos="absolute" right="-45px" bottom="8px">
+    <Box as="form" onSubmit={handleCommentSubmit} pos="relative" width="100%">
+      <Flex direction="row" alignItems="flex-end" spacing="10px">
+        <Textarea
+          value={newComment}
+          onChange={handleNewCommentChange}
+          onKeyPress={handleKeyPress}
+          placeholder={user ? "Enter comment! Your submitted comments are editable and deletable at any time :)" : "Log in to comment..."}
+          mb={2}
+          resize="vertical"
+          flexGrow={1}
+          isDisabled={!user}
+          _placeholder={{ color: "white" }}
+        />
         <Tooltip 
           hasArrow
           label={<ToolTipMessage />}
           isOpen={showTooltip} 
-          bgColor="white"
+          bgColor="gray.300"
           color="black"
           placement="top"
           openDelay={500}
           width="43px"
           border="3px solid"
-          borderColor="white"
+          borderColor="gray.300"
         >
           <IconButton
             icon={<AiOutlineSend />}
             onClick={handleCommentSubmit}
             variant="outline"
-            left="2px"
+            left="7px"
+            bottom="8px"
             bgColor={newComment.trim() !== '' ? 'green.500' : undefined}
             isDisabled={!user}
           />
         </Tooltip>
-      </Box>
+      </Flex>
     </Box>
   );
 };
