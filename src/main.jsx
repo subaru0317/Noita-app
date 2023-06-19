@@ -54,6 +54,7 @@ const router = createBrowserRouter(
           element={<VideoDetailPage />}
           errorElement={<ErrorPage />}
         />
+        
         <Route
           path='mypage'
           element={<MyPage />}
@@ -65,7 +66,7 @@ const router = createBrowserRouter(
           errorElement={<ErrorPage />}
         />
         <Route
-          path='myvideos'
+          path='myvideos/:userId'
           element={<MyVideos />}
           errorElement={<ErrorPage />}
         />

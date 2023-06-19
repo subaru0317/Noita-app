@@ -29,6 +29,7 @@ src/firebase.js
 # Rules
 storage.rules
 firebase.json
+.firebaserc
 # memo
 memo
 firestore-memo
