@@ -1,18 +1,20 @@
 import React, { memo } from "react";
-import { Image } from '@chakra-ui/react';
+import { Box } from '@chakra-ui/react';
+import SpellIcon from './SpellIcon';
 
 const SpellAddButton = memo(({ spell, onAddToBoard }) => {
   return (
-    <Image
-      boxSize="35px"
+    <Box
       bg="#4f4f4f"
       _hover={{ bg: "gray.900" }}
-      border="2px solid #931527"
-      src={spell.path}
-      alt={spell.name}
       style={{ borderRadius: '2px' }}
       onClick={() => { if (onAddToBoard) onAddToBoard(spell) }}
-    />
+    >
+      <SpellIcon
+        spellpath={spell.path}
+        size="35px"
+      />
+    </Box>
   );
 });
 

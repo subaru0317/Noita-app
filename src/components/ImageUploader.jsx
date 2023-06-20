@@ -7,6 +7,7 @@ import { collection, setDoc, serverTimestamp, doc } from "firebase/firestore";
 import axios from 'axios'; // import axios for making HTTP requests
 
 const ImageUploader = memo(({fileSelected, wandSpells, videoDescription, videoTitle}) => {
+  console.log("Clicked!");
   const [loading, setLoading] = useState(false);
   const [isUploaded, setUploaded] = useState(false);
 
