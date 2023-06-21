@@ -1,5 +1,4 @@
 import { memo } from "react";
-import { Box } from "@chakra-ui/react";
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import 'react-lazy-load-image-component/src/effects/blur.css';
 
@@ -37,7 +36,7 @@ const SpellIcon = memo(({ spell, bg="#595959", size="35px" }) => {
   return (
       <LazyLoadImage 
         src={spell.path}
-        alt='spell'
+        alt={spell.name}
         effect="blur"
         width={size}
         height={size}
