@@ -35,16 +35,18 @@ const SpellIcon = memo(({ spell, bg="#595959", size="35px" }) => {
   }
 
   return (
-    <Box bg={bg} borderRadius="2px">
       <LazyLoadImage 
         src={spell.path}
         alt='spell'
         effect="blur"
         width={size}
-        height="30px"
-        style={{ border: `3px solid ${borderColor}`, borderRadius: "2px" }}
+        height={size}
+        style={{
+          border: `3px solid ${borderColor}`,
+          borderRadius: "2px",
+          backgroundColor: bg,
+        }}
       />
-    </Box>
   );
 });
 

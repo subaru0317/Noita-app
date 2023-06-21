@@ -65,7 +65,6 @@ const ImageUploader = memo(({fileSelected, wandSpells, videoDescription, videoTi
           const webmFileRef = ref(storage, webmFilePath);
           const webmFileURL = await getDownloadURL(webmFileRef);
           
-          const filteredWandSpells = wandSpells.map(({ path }) =>  path );
           const userInfo = {
             userId: userId,
             userName: auth.currentUser.displayName,
@@ -75,7 +74,7 @@ const ImageUploader = memo(({fileSelected, wandSpells, videoDescription, videoTi
             fileId: newImageDocRef.id,
             fileName: webmFilePath,
             filePath: webmFileURL,
-            wandSpells: filteredWandSpells,
+            wandSpells: wandSpells,
             description: videoDescription,
             videoTitle: videoTitle,
             likeCount: 0,

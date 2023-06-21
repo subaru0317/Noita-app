@@ -33,5 +33,6 @@ firebase.json
 # memo
 memo
 firestore-memo
+todo
 # config
 vite.config.js

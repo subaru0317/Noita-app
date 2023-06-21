@@ -1,4 +1,4 @@
-import VideoList from '../components/VideoList';
+import VideoCardList from '../components/VideoCardList';
 import FilterModal from '../components/FilterModal';
 import SpacingDivider from "../components/SpacingDivider";
 import { useState } from "react";
@@ -9,7 +9,7 @@ const VideoListPage = () => {
     <>
       <FilterModal setSelectedSpells={setSelectedSpells} setFilterMode={setFilterMode}/>
       <SpacingDivider />
-      <VideoList selectedSpells={selectedSpells} filterMode={filterMode}/>
+      <VideoCardList selectedSpells={selectedSpells} filterMode={filterMode}/>
     </>
   );
 }

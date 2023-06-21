@@ -17,10 +17,10 @@ import "./Pagination.css";
 //   timestamp: Object { seconds: int, nanoseconds: int }
 //   url: string
 //   userId: string
-//   wandSpells: Array(5) [ "/spells/Spell_bomb.webp", "/spells/Spell_light_bullet.webp", "/spells/Spell_light_bullet_trigger.webp", … ]
+//   wandSpells: Array() Object {id, name, path, type}
 // }
 
-const VideoList = ({selectedSpells, filterMode}) => {
+const VideoCardList = ({selectedSpells, filterMode}) => {
   const ITEMS_PER_PAGE = 24;
   const [allImageDocDatas, setAllImageDocDatas] = useState([]);
   const [imageDocDatas, setImageDocDatas] = useState([]);
@@ -39,7 +39,7 @@ const VideoList = ({selectedSpells, filterMode}) => {
       const downloadPromises = querySnapshot.docs.map(async (doc) => {
         try {
           const filePath = doc.data().filePath;
-          const wandSpellInfo = doc.data().wandSpells;
+          const wandSpellsPath = doc.data().wandSpells.map(spell => spell.path);
           const checkFilterMode = (spellList, spellInfo) => {
             if (filterMode === "OR") {
               return spellList.some(spell => spellInfo.includes(spell));
@@ -48,8 +48,8 @@ const VideoList = ({selectedSpells, filterMode}) => {
             }
             return false;
           }
-          // Check if all of the selectedSpells are part of the wandSpellInfo URL
-          if (selectedSpells.length === 0 || checkFilterMode(selectedSpells, wandSpellInfo)) {
+          // Check if all of the selectedSpells are part of the wandSpellsPath URL
+          if (selectedSpells.length === 0 || checkFilterMode(selectedSpells, wandSpellsPath)) {
             const storageRef = ref(storage, filePath); // use the full file path stored in the document
             const url = await getDownloadURL(storageRef);
             return {
@@ -138,4 +138,4 @@ const VideoList = ({selectedSpells, filterMode}) => {
   );
 }
 
-export default VideoList;
+export default VideoCardList;

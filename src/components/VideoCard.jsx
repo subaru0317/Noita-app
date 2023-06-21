@@ -7,11 +7,6 @@ import SpellIcon from './SpellIcon';
 import { onAuthStateChanged } from "firebase/auth";
 
 const VideoCard = memo(({ imageDocData, isLinkActive = true }) => {
-  console.log("VideoCard");
-  const MAX_ICON_DISPLAY = 26;
-  const displayIcons = imageDocData.wandSpells.slice(0, MAX_ICON_DISPLAY);
-  console.log("displayIcons: ", displayIcons);
-
   const timestampSeconds = imageDocData.timestamp.seconds;
   const date = new Date(timestampSeconds * 1000); 
   const dateString = date.toLocaleDateString();
@@ -43,15 +38,9 @@ const VideoCard = memo(({ imageDocData, isLinkActive = true }) => {
       <video src={imageDocData.filePath} alt="Video description" controls loop autoPlay muted/>
       <Box p="6">
         <Wrap spacing={0} justify="start">
-          {displayIcons.map((spellIcon, index) => (
+          {imageDocData.wandSpells.map((spell, index) => (
             <WrapItem key={index} mb="3px">
-              <Image 
-                bg="#4f4f4f"
-                border="1px solid #931527"
-                boxSize="25px"
-                src={spellIcon}
-                alt={`SpellIcon ${index}`}
-              />
+              <SpellIcon spell={spell} size="25px" />
             </WrapItem>
           ))}
         </Wrap>
