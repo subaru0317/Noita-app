@@ -3,12 +3,14 @@ import { auth } from '../firebase';
 import { Box, Image, Flex, Text, Wrap, WrapItem } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import LikeButton from "./LikeButton";
+import SpellIcon from './SpellIcon';
 import { onAuthStateChanged } from "firebase/auth";
 
 const VideoCard = memo(({ imageDocData, isLinkActive = true }) => {
   console.log("VideoCard");
   const MAX_ICON_DISPLAY = 26;
   const displayIcons = imageDocData.wandSpells.slice(0, MAX_ICON_DISPLAY);
+  console.log("displayIcons: ", displayIcons);
 
   const timestampSeconds = imageDocData.timestamp.seconds;
   const date = new Date(timestampSeconds * 1000); 

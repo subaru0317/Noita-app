@@ -21,7 +21,7 @@ const Overlay = () => (
   />
 )
 
-const SpellIconButton = memo(({spellpath, id, setSpells}) => {
+const SpellIconButton = memo(({spell, setSpells}) => {
   const [isClicked, setIsClicked] = useState(false);
 
   const handleSpellButtonClick = useCallback(() => {
@@ -30,19 +30,19 @@ const SpellIconButton = memo(({spellpath, id, setSpells}) => {
 
   useEffect(() => {
     if (isClicked) {
-      setSpells((prev) => [...prev, id]);
+      setSpells((prev) => [...prev, spell.id]);
     } else {
-      setSpells((prev) => prev.filter((spellId) => spellId !== id));
+      setSpells((prev) => prev.filter((spellId) => spellId !== spell.id));
     }
-  }, [isClicked, setSpells, id]);
+  }, [isClicked, setSpells, spell.id]);
 
-  const bgColor = isClicked ? "red" : "#4f4f4f";
+  const bgColor = isClicked ? "red" : "#595959";
   const hoverColor = darken(0.2, bgColor);
 
   return (
     <IconButton
       _hover={{ bg: hoverColor }}
-      icon={<SpellIcon spellpath={spellpath} bg={bgColor}/>}
+      icon={<SpellIcon spell={spell} bg={bgColor}/>}
       onClick={handleSpellButtonClick}
     />
   );
@@ -52,7 +52,7 @@ const SpellIconButton = memo(({spellpath, id, setSpells}) => {
 const SpellButtonBoard = ({setSpells}) => {
   return (
     SpellList.map((spell) => (
-      <SpellIconButton spellpath={spell.path} id={spell.id} key={spell.id} setSpells={setSpells}/>
+      <SpellIconButton spell={spell} key={spell.id} setSpells={setSpells}/>
     ))
   )
 };
@@ -92,7 +92,7 @@ const FilterModal = ({setSelectedSpells, setFilterMode}) => {
             {displaySpells.map(spellId => {
               const spell = SpellList.find(item => item.id === spellId);
               return (
-                <SpellIcon key={spellId} spellpath={spell.path} />
+                <SpellIcon spell={spell} key={spellId}  />
               );
             })}
         </HStack>

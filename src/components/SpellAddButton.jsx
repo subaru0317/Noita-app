@@ -11,7 +11,7 @@ const SpellAddButton = memo(({ spell, onAddToBoard }) => {
       onClick={() => { if (onAddToBoard) onAddToBoard(spell) }}
     >
       <SpellIcon
-        spellpath={spell.path}
+        spell={spell}
         size="35px"
       />
     </Box>

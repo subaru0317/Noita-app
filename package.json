@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint src --ext js,jsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "optimize-images": "bash optimize-images.sh"
   },
   "dependencies": {
     "@chakra-ui/icons": "^2.0.19",
@@ -16,7 +17,6 @@
     "@dnd-kit/modifiers": "^6.0.1",
     "@dnd-kit/sortable": "^7.0.2",
     "@dnd-kit/utilities": "^3.2.1",
-    "@ffmpeg/ffmpeg": "^0.11.6",
     "axios": "^1.4.0",
     "data-fns": "^1.1.0",
     "date-fns": "^2.30.0",
@@ -32,14 +32,13 @@
     "react-modal-hook": "^3.0.2",
     "react-paginate": "^8.2.0",
     "react-router-dom": "^6.11.1",
-    "sharp": "^0.32.1",
-    "sharp-cli": "^4.1.1",
     "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@types/react": "^18.0.28",
     "@types/react-dom": "^18.0.11",
     "@vitejs/plugin-react": "^4.0.0",
+    "cwebp-bin": "^8.0.0",
     "eslint": "^8.38.0",
     "eslint-plugin-react": "^7.32.2",
     "eslint-plugin-react-hooks": "^4.6.0",
