@@ -6,7 +6,7 @@ import { ref, uploadBytesResumable, getDownloadURL, deleteObject } from "firebas
 import { collection, setDoc, serverTimestamp, doc } from "firebase/firestore";
 import axios from 'axios';
 
-const ImageUploader = memo(({fileSelected, wandSpells, videoDescription, videoTitle, setFileSelected, setWandSpells, setVideoDescription, setVideoTitle, setPreviewSrc}) => {
+const ImageUploader = memo(({fileSelected, wandSpells, videoDescription, videoTitle, videoTag, setFileSelected, setWandSpells, setVideoDescription, setVideoTitle, setVideoTag, setPreviewSrc}) => {
   const [isUploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
 
@@ -82,6 +82,7 @@ const ImageUploader = memo(({fileSelected, wandSpells, videoDescription, videoTi
             wandSpells: wandSpells,
             description: videoDescription,
             videoTitle: videoTitle,
+            videoTag: videoTag,
             likeCount: 0,
             timestamp: serverTimestamp(),
           };
@@ -107,6 +108,7 @@ const ImageUploader = memo(({fileSelected, wandSpells, videoDescription, videoTi
     setVideoTitle('');
     setVideoDescription('');
     setWandSpells([]);
+    setVideoTag([]);
     onClose();
   }
   
