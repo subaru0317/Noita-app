@@ -1,17 +1,17 @@
-import { Button, useToast } from "@chakra-ui/react";
+import { Button, useToast, CircularProgress, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, useDisclosure } from "@chakra-ui/react";
 import React, { useState, memo } from "react";
 import "./ImageUpload.css";
 import { storage, db, auth, functionsURL, bucket } from "../firebase";
 import { ref, uploadBytesResumable, getDownloadURL, deleteObject } from "firebase/storage";
 import { collection, setDoc, serverTimestamp, doc } from "firebase/firestore";
-import axios from 'axios'; // import axios for making HTTP requests
+import axios from 'axios';
 
-const ImageUploader = memo(({fileSelected, wandSpells, videoDescription, videoTitle}) => {
-  console.log("Clicked!");
-  const [loading, setLoading] = useState(false);
-  const [isUploaded, setUploaded] = useState(false);
+const ImageUploader = memo(({fileSelected, wandSpells, videoDescription, videoTitle, setFileSelected, setWandSpells, setVideoDescription, setVideoTitle, setPreviewSrc}) => {
+  const [isUploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   const toast = useToast();
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const OnFileUploadToFirebase = async (e) => {
     if (!fileSelected) {
@@ -33,6 +33,8 @@ const ImageUploader = memo(({fileSelected, wandSpells, videoDescription, videoTi
     const imagesCollectionRef = collection(userDocRef, "images");
     const newImageDocRef = doc(imagesCollectionRef);
 
+    const startTime = Date.now(); //
+
     const uploadImage = uploadBytesResumable(storageRef, file, {
       metadata: {
         customMetadata: {
@@ -44,15 +46,17 @@ const ImageUploader = memo(({fileSelected, wandSpells, videoDescription, videoTi
 
     uploadImage.on("state_changed", (snapshot) => {
         const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        setLoading(true);
+        setUploadProgress(progress);
+        setUploading(true);
       },
       (error) => {
         console.log(error);
       },
       async () => {
         try {
-          setLoading(false);
-          
+          setUploading(false);
+          setUploadProgress(0); // Reset upload progress after upload is complete
+          onOpen(); // Open the modal
           const filePath = 'images/' + fileName;
           
           // make HTTP request to your Cloud Function
@@ -60,6 +64,7 @@ const ImageUploader = memo(({fileSelected, wandSpells, videoDescription, videoTi
             filePath: filePath,
             bucket: bucket
           });
+
           const webmFilePath = response.data.filePath;
           
           const webmFileRef = ref(storage, webmFilePath);
@@ -86,9 +91,8 @@ const ImageUploader = memo(({fileSelected, wandSpells, videoDescription, videoTi
           await setDoc(newImageDocRef, fileInfo);
 
           // Delete the original gif file
-          await deleteObject(storageRef);
-
-          setUploaded(true);
+          await deleteObject(storageRef); 
+          setUploadProgress(0);
           console.log("Upload File!");
         } catch (error) {
           console.error("Error: ", error);
@@ -96,12 +100,42 @@ const ImageUploader = memo(({fileSelected, wandSpells, videoDescription, videoTi
       }
     );
   };
+
+  const handleReset = () => {
+    setFileSelected(null);
+    setPreviewSrc(null);
+    setVideoTitle('');
+    setVideoDescription('');
+    setWandSpells([]);
+    onClose();
+  }
   
   return (
     <div className="outerBox">
-      <Button colorScheme='teal' variant='solid' onClick={OnFileUploadToFirebase}>
-        Upload Video!
+      <Button colorScheme='teal' variant='solid' onClick={OnFileUploadToFirebase} isLoading={isUploading}>
+        {isUploading ? <CircularProgress isIndeterminate color="green.300" /> : "Upload Video!"}
       </Button>
+
+      <Modal isOpen={isOpen} onClose={onClose} isCentered closeOnOverlayClick={false}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Thank you for your upload:)</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            Keep : remain your input data <br />
+            Reset : reset your input data
+          </ModalBody>
+
+          <ModalFooter>
+            <Button colorScheme="gray" mr={3} onClick={onClose}>
+              Keep
+            </Button>
+            <Button colorScheme="blue" onClick={handleReset}>
+              Reset
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </div>
   );
 });
