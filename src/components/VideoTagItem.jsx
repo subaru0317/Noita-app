@@ -1,11 +1,11 @@
 import { memo } from "react";
-import { Tag, TagLabel, TagLeftIcon, Tooltip } from "@chakra-ui/react";
+import { Tag, TagLabel, TagLeftIcon, Tooltip, Box } from "@chakra-ui/react";
 
 
-const TagItem = memo(({ tag, isSelected, onClick }) => (
-  <Tooltip label={tag.description} fontSize="md">
+const VideoTagItem = memo(({ tag, isSelected, onClick }) => (
+  <Tooltip label={tag.description} fontSize="sm">
     <Tag
-      size="sm"
+      size="md"
       borderRadius="full"
       bg={isSelected ? "#595959" : "gray.800"}
       borderColor={isSelected ? "blue.500" : "gray.800"}
@@ -16,9 +16,11 @@ const TagItem = memo(({ tag, isSelected, onClick }) => (
       onClick={() => onClick(tag)}
     >
       <TagLeftIcon boxSize="12px" as="img" src={tag.path} />
-      <TagLabel>{tag.name}</TagLabel>
+      <Box as="span" lineHeight="tall" paddingY="1px">
+        <TagLabel>{tag.name}</TagLabel>
+      </Box>
     </Tag>
   </Tooltip>
 ));
 
-export default TagItem;
+export default VideoTagItem;

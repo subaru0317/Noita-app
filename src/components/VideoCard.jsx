@@ -34,7 +34,7 @@ const VideoCard = memo(({ imageDocData, isLinkActive = true }) => {
   const videoDetailUrl = useMemo(() => `/list/${imageDocData.fileId}`, [imageDocData.fileId]);
 
   const cardContent = (
-    <Box maxW="sm" borderWidth="1px" borderRadius="lg" overflow="hidden" mb={6} {...hoverAndClickStyles}>
+    <Box minW="382px" maxW="sm" borderWidth="1px" borderRadius="lg" overflow="hidden" mb={6} {...hoverAndClickStyles}>
       <video src={imageDocData.filePath} alt="Video description" controls loop autoPlay muted/>
       <Box p="6">
         <Wrap spacing={0} justify="start">

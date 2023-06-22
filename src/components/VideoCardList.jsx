@@ -20,7 +20,7 @@ import "./Pagination.css";
 //   wandSpells: Array() Object {id, name, path, type}
 // }
 
-const VideoCardList = ({selectedSpells, filterMode}) => {
+const VideoCardList = ({selectedSpells, filterMode, search, setSearch}) => {
   const ITEMS_PER_PAGE = 24;
   const [allImageDocDatas, setAllImageDocDatas] = useState([]);
   const [imageDocDatas, setImageDocDatas] = useState([]);
@@ -29,49 +29,51 @@ const VideoCardList = ({selectedSpells, filterMode}) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchImages = async () => {
-      // const imageDocDatas = [];
-      const imagesCollectionGroup = collectionGroup(db, "images");
-      const imagesQuery = query(imagesCollectionGroup, orderBy('timestamp', 'desc'));
+    if (search) {
+      const fetchImages = async () => {
+        const imagesCollectionGroup = collectionGroup(db, "images");
+        const imagesQuery = query(imagesCollectionGroup, orderBy('timestamp', 'desc'));
 
-      const querySnapshot = await getDocs(imagesQuery);
-      
-      const downloadPromises = querySnapshot.docs.map(async (doc) => {
-        try {
-          const filePath = doc.data().filePath;
-          const wandSpellsPath = doc.data().wandSpells.map(spell => spell.path);
-          const checkFilterMode = (spellList, spellInfo) => {
-            if (filterMode === "OR") {
-              return spellList.some(spell => spellInfo.includes(spell));
-            } else if (filterMode === "AND") {
-              return spellList.every(spell => spellInfo.includes(spell));
+        const querySnapshot = await getDocs(imagesQuery);
+        
+        const downloadPromises = querySnapshot.docs.map(async (doc) => {
+          try {
+            const filePath = doc.data().filePath;
+            const wandSpellPaths = doc.data().wandSpells.map(spell => spell.path);
+            const checkFilterMode = (selectedSpells, wandSpellPaths) => {
+              const selectedSpellPathArray = selectedSpells.map(spell => spell.path);
+              if (filterMode === "OR") {
+                return selectedSpellPathArray.some(spell => wandSpellPaths.includes(spell));
+              } else if (filterMode === "AND") {
+                return selectedSpellPathArray.every(spell => wandSpellPaths.includes(spell));
+              }
+              return false;
             }
-            return false;
+            // Check if all of the selectedSpells are part of the wandSpellPaths URL
+            if (selectedSpells.length === 0 || checkFilterMode(selectedSpells, wandSpellPaths)) {
+              const storageRef = ref(storage, filePath); // use the full file path stored in the document
+              const url = await getDownloadURL(storageRef);
+              return {
+                url: url,
+                ...doc.data()
+              };
+            }
+          } catch (error) {
+            console.log(error);
           }
-          // Check if all of the selectedSpells are part of the wandSpellsPath URL
-          if (selectedSpells.length === 0 || checkFilterMode(selectedSpells, wandSpellsPath)) {
-            const storageRef = ref(storage, filePath); // use the full file path stored in the document
-            const url = await getDownloadURL(storageRef);
-            return {
-              url: url,
-              ...doc.data()
-            };
-          }
-        } catch (error) {
-          console.log(error);
-        }
-      });
+        });
+      
+        const allImageUrls = await Promise.all(downloadPromises);
+        const filteredImageUrls = allImageUrls.filter(url => url);
+        setAllImageDocDatas(filteredImageUrls);
+        setPageCount(Math.ceil(filteredImageUrls.length / ITEMS_PER_PAGE));
+        setLoading(false);
+      };
     
-      const allImageUrls = await Promise.all(downloadPromises);
-      const filteredImageUrls = allImageUrls.filter(url => url);
-      // setImageDocDatas(filteredImageUrls.slice(0, currentPage * ITEMS_PER_PAGE));
-      setAllImageDocDatas(filteredImageUrls);
-      setPageCount(Math.ceil(filteredImageUrls.length / ITEMS_PER_PAGE));
-      setLoading(false);
-    };
-  
-    fetchImages();
-  }, [selectedSpells]);
+      fetchImages();
+      setSearch(false);
+    }
+  }, [search]); // dependency on search
 
   useEffect(() => {
     setImageDocDatas(allImageDocDatas.slice(currentPage * ITEMS_PER_PAGE, (currentPage + 1) * ITEMS_PER_PAGE));
@@ -95,11 +97,8 @@ const VideoCardList = ({selectedSpells, filterMode}) => {
   
   const gridTemplateColumns = useCustomBreakpointsValue();
 
-  console.log("imageDocDatas: ", imageDocDatas);
-  console.log("imageDocDatas: ", imageDocDatas.length);
-
   const handlePageClick = ({ selected }) => {
-    setCurrentPage(selected); // react-paginate counts pages from 0, but we count from 1
+    setCurrentPage(selected);
   };
 
   return (
@@ -108,7 +107,7 @@ const VideoCardList = ({selectedSpells, filterMode}) => {
       <Container centerContent>
         <Grid templateColumns={gridTemplateColumns} gap={6}>
           {imageDocDatas.map((imageDocData, index) => (
-            <GridItem key={index} minW="382px">
+            <GridItem key={index}>
               <VideoCard imageDocData={imageDocData} />
             </GridItem>
           ))}

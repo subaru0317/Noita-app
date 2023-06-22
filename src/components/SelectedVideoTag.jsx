@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import { Box } from "@chakra-ui/react";
-import TagItem from "./TagItem";
+import VideoTagItem from "./VideoTagItem";
 
 const TagList = [
   { id: 0, name: "Commonly Applicable", path: "/tags/commonly_applicable", description: "Likely to be obtainable and useful on a typical main path run."},
@@ -34,7 +34,7 @@ const SelectedVideoTag = memo(({ videoTag, setVideoTag }) => {
   return (
     <Box display="flex" flexDirection="row" flexWrap="wrap">
       {TagList.map((tag, index) => (
-        <TagItem
+        <VideoTagItem
           key={tag.id}
           tag={tag}
           isSelected={!!videoTag.find(item => item.id === tag.id)}

@@ -58,13 +58,13 @@ const ImageUploader = memo(({fileSelected, wandSpells, videoDescription, videoTi
           setUploadProgress(0); // Reset upload progress after upload is complete
           onOpen(); // Open the modal
           const filePath = 'images/' + fileName;
-          
+          console.log("Modal Open!");
           // make HTTP request to your Cloud Function
           const response = await axios.post(functionsURL, {
             filePath: filePath,
             bucket: bucket
           });
-
+          console.log("Gif to Webm!");
           const webmFilePath = response.data.filePath;
           
           const webmFileRef = ref(storage, webmFilePath);

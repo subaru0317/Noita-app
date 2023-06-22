@@ -16,7 +16,6 @@ const UploadVideoPage = () => {
   const [wandSpells, setWandSpells] = useState([]);
   // const [perks, setPerks] = useState([]);
   const [videoTag, setVideoTag] = useState([]);
-  console.log("videoTag: ", videoTag);
   return (
     <>
       <Heading as='h2' size='xl'> Upload Video </Heading>
