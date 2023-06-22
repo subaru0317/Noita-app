@@ -5,6 +5,8 @@ import { Link } from "react-router-dom";
 import LikeButton from "./LikeButton";
 import SpellIcon from './SpellIcon';
 import { onAuthStateChanged } from "firebase/auth";
+import TagList from "./TagList";
+import VideoTagItem from "./VideoTagItem";
 
 const VideoCard = memo(({ imageDocData, isLinkActive = true }) => {
   const timestampSeconds = imageDocData.timestamp.seconds;
@@ -41,6 +43,13 @@ const VideoCard = memo(({ imageDocData, isLinkActive = true }) => {
           {imageDocData.wandSpells.map((spell, index) => (
             <WrapItem key={index} mb="3px">
               <SpellIcon spell={spell} size="25px" />
+            </WrapItem>
+          ))}
+        </Wrap>
+        <Wrap spacing={0} justify="start">
+          {imageDocData.videoTag.map((tag, index) => (
+            <WrapItem key={index} mb="3px">
+              <VideoTagItem tag={tag} withTooltip={false} />
             </WrapItem>
           ))}
         </Wrap>

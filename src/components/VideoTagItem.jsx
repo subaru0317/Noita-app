@@ -1,9 +1,8 @@
 import { memo } from "react";
 import { Tag, TagLabel, TagLeftIcon, Tooltip, Box } from "@chakra-ui/react";
 
-
-const VideoTagItem = memo(({ tag, isSelected, onClick }) => (
-  <Tooltip label={tag.description} fontSize="sm">
+const VideoTagItem = memo(({ tag, isSelected = false, onClick = () => {}, withTooltip = true }) => {
+  const tagItem = (
     <Tag
       size="md"
       borderRadius="full"
@@ -20,7 +19,15 @@ const VideoTagItem = memo(({ tag, isSelected, onClick }) => (
         <TagLabel>{tag.name}</TagLabel>
       </Box>
     </Tag>
-  </Tooltip>
-));
+  );
+
+  return withTooltip ? (
+    <Tooltip label={tag.description} fontSize="sm">
+      {tagItem}
+    </Tooltip>
+  ) : (
+    tagItem
+  );
+});
 
 export default VideoTagItem;
