@@ -127,7 +127,6 @@ const ImageUploader = memo(({fileSelected, wandSpells, videoDescription, videoTi
             Keep : remain your input data <br />
             Reset : reset your input data
           </ModalBody>
-
           <ModalFooter>
             <Button colorScheme="gray" mr={3} onClick={onClose}>
               Keep

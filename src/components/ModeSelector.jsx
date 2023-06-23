@@ -5,7 +5,7 @@ const FilterSpellMode = ({ mode, setMode }) => {
   return (
     <VStack mt={4} align="start" spacing={3}>
       <HStack spacing={1}>
-        <Text>Filtering Mode</Text>
+        <Text>Mode</Text>
         <Tooltip 
           label="OR mode will match any of the selected spells. AND mode will match all of the selected spells." 
           fontSize="md"

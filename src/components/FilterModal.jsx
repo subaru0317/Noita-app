@@ -15,7 +15,7 @@ import SpellList from "./SpellList";
 
 const Overlay = () => (
   <ModalOverlay
-    bg='blockAlpha.300'
+    bg='rgba(0, 0, 0, 0.5)'
     backdropFilter='blur(10px) hue-rotate(90deg)'
   />
 )
