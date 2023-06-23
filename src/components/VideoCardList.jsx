@@ -183,6 +183,7 @@ import "./Pagination.css";
 // }
 
 const VideoCardList = ({selectedSpells, selectedSpellsMode, videoTag, videoTagMode, search, setSearch}) => {
+  console.log("VideoCardList");
   const ITEMS_PER_PAGE = 24;
   const [allImageDocDatas, setAllImageDocDatas] = useState([]);
   const [imageDocDatas, setImageDocDatas] = useState([]);
@@ -190,7 +191,7 @@ const VideoCardList = ({selectedSpells, selectedSpellsMode, videoTag, videoTagMo
   const [pageCount, setPageCount] = useState(0);
   const [loading, setLoading] = useState(true);
 
-useEffect(() => {
+  useEffect(() => {
     if (search) {
       const fetchImages = async () => {
         const imagesCollectionGroup = collectionGroup(db, "images");

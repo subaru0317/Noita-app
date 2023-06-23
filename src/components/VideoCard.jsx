@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo, memo } from 'react';
 import { auth } from '../firebase';
-import { Box, Image, Flex, Text, Wrap, WrapItem } from "@chakra-ui/react";
+import { Box, Flex, Text, Wrap, WrapItem } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import LikeButton from "./LikeButton";
 import SpellIcon from './SpellIcon';
@@ -9,6 +9,7 @@ import TagList from "./TagList";
 import VideoTagItem from "./VideoTagItem";
 
 const VideoCard = memo(({ imageDocData, isLinkActive = true }) => {
+  // console.log("VideoCard");
   const timestampSeconds = imageDocData.timestamp.seconds;
   const date = new Date(timestampSeconds * 1000); 
   const dateString = date.toLocaleDateString();

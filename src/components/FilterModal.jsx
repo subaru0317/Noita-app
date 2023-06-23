@@ -1,4 +1,4 @@
-import { Button, useDisclosure, IconButton } from '@chakra-ui/react';
+import { Button, useDisclosure, IconButton, Icon } from '@chakra-ui/react';
 import {
   Modal,
   ModalOverlay,
@@ -12,6 +12,7 @@ import { useState, useCallback, memo, useEffect } from 'react';
 import { darken } from "polished";
 import SpellIcon from "./SpellIcon";
 import SpellList from "./SpellList";
+import { GiBoltSpellCast } from "react-icons/gi";
 
 const Overlay = () => (
   <ModalOverlay
@@ -71,7 +72,14 @@ const FilterModal = ({ setSelectedSpells }) => {
 
   return (
     <>
-      <Button onClick={onOpen} colorScheme='blue' size='md'>Filter</Button>
+      <Button 
+        onClick={onOpen} 
+        colorScheme='blue' 
+        size='md' 
+        leftIcon={<Icon as={GiBoltSpellCast} boxSize={6} />} // Adjust boxSize as needed
+      >
+        Select Spell
+      </Button>
       <Modal isCentered isOpen={isOpen} onClose={onClose}>
         <Overlay />
         <ModalContent maxW='600px'>

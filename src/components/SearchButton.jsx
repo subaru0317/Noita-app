@@ -1,11 +1,14 @@
 import { Button } from '@chakra-ui/react';
+import { SearchIcon } from '@chakra-ui/icons';
 
 const SearchButton = ({ setSearch }) => {
-  const handleSearch = () => {
-    setSearch(true);
-  };
   return (
-    <Button onClick={handleSearch} colorScheme='green' size='md'>
+    <Button
+      onClick={() => setSearch(true)}
+      colorScheme='green'
+      size='md'
+      leftIcon={<SearchIcon />}
+    >
       Search
     </Button>
   );

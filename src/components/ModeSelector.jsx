@@ -3,7 +3,7 @@ import { InfoIcon } from "@chakra-ui/icons";
 
 const FilterSpellMode = ({ mode, setMode }) => {
   return (
-    <VStack mt={4} align="start" spacing={3}>
+    <HStack mt={4} align="start" spacing={3}>
       <HStack spacing={1}>
         <Text>Mode</Text>
         <Tooltip 
@@ -13,6 +13,7 @@ const FilterSpellMode = ({ mode, setMode }) => {
         >
           <InfoIcon boxSize={4} color="gray.500" transform="translateY(1px)" />
         </Tooltip>
+        <Text> : </Text>
       </HStack>
       <RadioGroup onChange={setMode} value={mode}>
         <Stack direction="row">
@@ -20,7 +21,7 @@ const FilterSpellMode = ({ mode, setMode }) => {
           <Radio value="AND">AND</Radio>
         </Stack>
       </RadioGroup>
-    </VStack>
+    </HStack>
   );
 };
 

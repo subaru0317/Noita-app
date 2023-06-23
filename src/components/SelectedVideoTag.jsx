@@ -17,16 +17,18 @@ const SelectedVideoTag = memo(({ videoTag, setVideoTag }) => {
   };
 
   return (
-    <Box display="flex" flexDirection="row" flexWrap="wrap">
-      {TagList.map((tag, index) => (
-        <VideoTagItem
-          key={tag.id}
-          tag={tag}
-          isSelected={!!videoTag.find(item => item.id === tag.id)}
-          onClick={handleTagClick}
-        />
-      ))}
-    </Box>
+    <>
+      <Box display="flex" flexDirection="row" flexWrap="wrap">
+        {TagList.map((tag, index) => (
+          <VideoTagItem
+            key={tag.id}
+            tag={tag}
+            isSelected={!!videoTag.find(item => item.id === tag.id)}
+            onClick={handleTagClick}
+          />
+        ))}
+      </Box>
+    </>
   );
 });
 
