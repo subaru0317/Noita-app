@@ -1,13 +1,12 @@
-import React from 'react'
-import { ChakraProvider } from '@chakra-ui/react';
-import { extendTheme } from '@chakra-ui/react';
+import React, { useEffect, useState } from 'react'
+import { ChakraProvider, extendTheme } from '@chakra-ui/react';
 import ReactDOM from 'react-dom/client'
 import VideoCardListPage from './routes/videocardlistpage';
 import VideoDetailPage from "./routes/videodetailpage";
 import MyPage from './routes/mypage';
 import UploadVideoPage from './routes/uploadvideopage';
 import Favorite from './routes/favoritepage';
-import MyVideos from './routes/myvideospage';
+import MyVideosPage from './routes/myvideospage';
 import ErrorPage from "./error-page";
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -17,8 +16,11 @@ import {
   Outlet,
   Route,
   RouterProvider,
+  useNavigate,
+  Navigate
 } from "react-router-dom"
 import './index.css'
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 const colors = {
   brand: {
@@ -40,46 +42,45 @@ const PageFrame = () => {
   );
 }
 
+const ProtectedRoute = ({ children }) => {
+  const navigate = useNavigate();
+  const [isAuth, setIsAuth] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(getAuth(), (user) => {
+      if (user) {
+        setIsAuth(true);
+        setLoading(false);
+      } else {
+        navigate('/');
+        setLoading(false);
+      }
+    });
+
+    return () => unsubscribe();
+  }, [navigate]);
+
+  return (
+    <>
+      {!loading && isAuth && children}
+    </>
+  );
+};
+
 const router = createBrowserRouter(
   createRoutesFromElements(
-    <>
-      <Route path='/' element={<PageFrame />}>
-        <Route
-          index
-          element={<VideoCardListPage />}
-          errorElement={<ErrorPage />}
-        />
-        <Route
-          path='list/:imageId'
-          element={<VideoDetailPage />}
-          errorElement={<ErrorPage />}
-        />
-        
-        <Route
-          path='mypage'
-          element={<MyPage />}
-          errorElement={<ErrorPage />}
-        />
-        <Route
-          path='uploadvideo'
-          element={<UploadVideoPage />}
-          errorElement={<ErrorPage />}
-        />
-        <Route
-          path='myvideos/:userId'
-          element={<MyVideos />}
-          errorElement={<ErrorPage />}
-        />
-        <Route
-          path='favorite'
-          element={<Favorite />}
-          errorElement={<ErrorPage />}
-        />
-      </Route>
-    </>
+    <Route path="/" element={<PageFrame />}>
+      <Route index element={<VideoCardListPage />} />
+      <Route path="list/:imageId" element={<VideoDetailPage />} />
+      <Route path="mypage/:userId" element={<ProtectedRoute><MyPage /></ProtectedRoute>} />
+      <Route path="uploadvideo" element={<ProtectedRoute><UploadVideoPage /></ProtectedRoute>} />
+      <Route path="myvideos/:userId" element={<ProtectedRoute><MyVideosPage /></ProtectedRoute>} />
+      <Route path="favorite/:userId" element={<ProtectedRoute><Favorite /></ProtectedRoute>} />
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Route>
   )
 );
-
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

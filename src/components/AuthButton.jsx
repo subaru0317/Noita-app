@@ -50,7 +50,7 @@ const UserMenu = () => {
           icon={RiAccountCircleLine}
           color="black"
           text="My Account"
-          path="/mypage"
+          path={`/mypage/${auth.currentUser.uid}`}
         />
         <MenuDivider />
         <IconText
@@ -63,13 +63,13 @@ const UserMenu = () => {
           icon={MdFolderSpecial}
           color="green"
           text="My Videos"
-          path="/myvideos"
+          path={`/myvideos/${auth.currentUser.uid}`}
         />
         <IconText
           icon={MdFavorite}
           color="red"
           text="Favorite"
-          path="/favorite"
+          path={`/favorite/${auth.currentUser.uid}`}
         />
         <MenuDivider />
         <MenuItem onClick={() => auth.signOut()}>

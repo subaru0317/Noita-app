@@ -1,13 +1,13 @@
 import { Radio, RadioGroup, Stack, Tooltip, HStack, Text, VStack } from '@chakra-ui/react';
 import { InfoIcon } from "@chakra-ui/icons";
 
-const FilterSpellMode = ({ mode, setMode }) => {
+const FilterSpellMode = ({ mode, setMode, description }) => {
   return (
     <HStack mt={4} align="start" spacing={3}>
       <HStack spacing={1}>
         <Text>Mode</Text>
         <Tooltip 
-          label="OR mode will match any of the selected spells. AND mode will match all of the selected spells." 
+          label={`OR mode will match any of the selected ${description}. AND mode will match all of the selected ${description}.`}
           fontSize="md"
           placement="top"
         >

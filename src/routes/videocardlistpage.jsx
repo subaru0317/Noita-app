@@ -32,7 +32,7 @@ const VideoListPage = () => {
           </Box>
           <VStack align="left" flexGrow={1}>
             <DisplaySpellIcons spells={selectedSpells} />
-            <ModeSelector mode={selectedSpellsMode} setMode={setSelectedSpellsMode} />
+            <ModeSelector mode={selectedSpellsMode} setMode={setSelectedSpellsMode} description={"spells"}/>
           </VStack>
         </HStack>
         <HStack>
@@ -41,7 +41,7 @@ const VideoListPage = () => {
           </Box>
           <VStack align="left" flexGrow={1}>
             <SelectedVideoTag videoTag={videoTag} setVideoTag={setVideoTag} />
-            <ModeSelector mode={videoTagMode} setMode={setVideoTagMode} />
+            <ModeSelector mode={videoTagMode} setMode={setVideoTagMode} description={"tags"}/>
           </VStack>
         </HStack>
         <Box display="flex" justifyContent="flex-end" width="95%">
