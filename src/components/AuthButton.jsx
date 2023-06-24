@@ -2,6 +2,7 @@ import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { auth } from "../firebase";
 import { Button, Icon, IconButton } from '@chakra-ui/react';
 import { HamburgerIcon } from '@chakra-ui/icons';
+import { ChevronDownIcon } from '@chakra-ui/icons';
 import { useAuthState } from "react-firebase-hooks/auth";
 import { Menu, MenuButton, MenuList, MenuItem, MenuDivider, Avatar } from "@chakra-ui/react";
 import { GiFairyWand } from "react-icons/gi";
@@ -29,9 +30,12 @@ const UserMenu = () => {
   return (
     <Menu>
       <MenuButton
-        _hover={{ borderRadius: 'full', transition: "border-radiuo 10.3s"}}
+        _hover={{ borderRadius: 'full', transition: "border-radius 0.3s"}}
         _focus={{ outline: "none" }}
         minHeight='40px'
+        p={2}
+        display='flex'
+        alignItems='center'
       >
         <Avatar
           name={auth.currentUser.displayName}
@@ -39,6 +43,7 @@ const UserMenu = () => {
           referrerPolicy="no-referrer"
           size='md'
         />
+        <ChevronDownIcon boxSize={10} style={{marginTop: '6px'}} />
       </MenuButton>
       <MenuList>
         <IconText
