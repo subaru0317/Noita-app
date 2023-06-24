@@ -9,7 +9,7 @@ const TagList = [
   { id: 7, name: "Long Distance Travel", path: "/tags/long_distance_travel", description: "Used for traversing large distances in a specific direction instantaneously. Typically used for PW travel."},
   { id: 8, name: "Healing", path: "/tags/healing", description: "Used for healing yourself, or occasionally others."},
   { id: 9, name: "Trick Kill", path: "/tags/trick_kil", description: "Deals damage that is not assigned to the player, meaning killed enemies will drop double gold but will not register in the progress screen or run stats. Also capable of self-damage in most cases, immunities/resistances notwithstanding."},
-  { id: 10, name: "Help Me!", path: "/tags/help_me", description: "Please write about the question in the description and add this tag. Kind people will help you!"},
+  // { id: 10, name: "Help Me!", path: "/tags/help_me", description: "Please write about the question in the description and add this tag. Kind people will help you!"},
   { id: 11, name: "Misc", path: "/tags/misc", description: "The wand is designed with the intent of performing some function not covered by other tags."},
   { id: 12, name: "Bugged", path: "/tags/bugged", description: "This wand makes use of interactions likely not intended or foreseen by the developers. If you aren't sure if your wand needs this tag, assume it doesn't."}
 ];

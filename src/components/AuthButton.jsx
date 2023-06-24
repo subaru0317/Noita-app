@@ -1,8 +1,9 @@
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { auth } from "../firebase";
-import { Button, Icon } from '@chakra-ui/react';
+import { Button, Icon, IconButton } from '@chakra-ui/react';
+import { HamburgerIcon } from '@chakra-ui/icons';
 import { useAuthState } from "react-firebase-hooks/auth";
-import { Menu, MenuButton, MenuList, MenuItem, MenuDivider, Avatar, Box } from "@chakra-ui/react";
+import { Menu, MenuButton, MenuList, MenuItem, MenuDivider, Avatar } from "@chakra-ui/react";
 import { GiFairyWand } from "react-icons/gi";
 import { MdFavorite } from "react-icons/md";
 import { RiLogoutBoxRLine } from "react-icons/ri";

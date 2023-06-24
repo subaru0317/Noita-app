@@ -1,11 +1,10 @@
 import React, { useEffect, useState, useMemo, memo } from 'react';
-import { auth } from '../firebase';
-import { Box, Flex, Text, Wrap, WrapItem } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
+import { Box, Flex, Text, Wrap, WrapItem } from "@chakra-ui/react";
+import { auth } from '../firebase';
+import { onAuthStateChanged } from "firebase/auth";
 import LikeButton from "./LikeButton";
 import SpellIcon from './SpellIcon';
-import { onAuthStateChanged } from "firebase/auth";
-import TagList from "./TagList";
 import VideoTagItem from "./VideoTagItem";
 
 const VideoCard = memo(({ imageDocData, isLinkActive = true }) => {
@@ -40,6 +39,11 @@ const VideoCard = memo(({ imageDocData, isLinkActive = true }) => {
     <Box minW="382px" maxW="sm" borderWidth="1px" borderRadius="lg" overflow="hidden" mb={6} {...hoverAndClickStyles}>
       <video src={imageDocData.filePath} alt="Video description" controls loop autoPlay muted/>
       <Box p="6">
+        <Wrap spacing={0} justify="start">
+          <Text ab='b'>
+            {imageDocData.videoTitle}
+          </Text>
+        </Wrap>
         <Wrap spacing={0} justify="start">
           {imageDocData.wandSpells.map((spell, index) => (
             <WrapItem key={index} mb="3px">
