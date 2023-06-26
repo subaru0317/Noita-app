@@ -8,7 +8,6 @@ import SpellIcon from './SpellIcon';
 import VideoTagItem from "./VideoTagItem";
 
 const VideoCard = memo(({ imageDocData, isLinkActive = true }) => {
-  // console.log("VideoCard");
   const timestampSeconds = imageDocData.timestamp.seconds;
   const date = new Date(timestampSeconds * 1000); 
   const dateString = date.toLocaleDateString();
