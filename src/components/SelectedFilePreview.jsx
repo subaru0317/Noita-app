@@ -21,6 +21,7 @@ const SelectedFilePreview = memo(({ setFileSelected, setPreviewSrc, previewSrc }
     <>
       <input type="file" onChange={previewFile} />
       <Image src={previewSrc} width="480px" height="270px"/>
+      
     </>
   )
 });

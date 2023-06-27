@@ -12,15 +12,17 @@ const LikeButton = ({imageDocData, isLoggedIn}) => {
   const [processing, setProcessing] = useState(false);
 
   const checkLiked = async (uid) => {
-    const likesRef = doc(db, "users", imageDocData.userId, "images", imageDocData.fileId, "likes", uid);
-    const docSnap = await getDoc(likesRef);
+    const likedByRef = doc(db, "users", imageDocData.userId, "images", imageDocData.fileId, "likedBy", uid);
+    const docSnap = await getDoc(likedByRef);
     setLiked(docSnap.exists());
   };
 
   useEffect(() => {
     const imageRef = doc(db, "users", imageDocData.userId, "images", imageDocData.fileId);
     const unsubscribe = onSnapshot(imageRef, (doc) => {
-      setLikeCount(doc.data().likeCount);
+      if (doc.exists()) {
+        setLikeCount(doc.data().likeCount);
+      }
     });
 
     const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
@@ -37,35 +39,39 @@ const LikeButton = ({imageDocData, isLoggedIn}) => {
     };
   }, [imageDocData]);
 
-  const handleLikeButtonClick = async (e) => {
-    e.preventDefault();
+const handleLikeButtonClick = async (e) => {
+  e.preventDefault();
 
-    if (!auth.currentUser) {
-      return ;
-    }
-    
-    setProcessing(true);
-    
-    const loginUserId = auth.currentUser.uid;
-    const likesRef = doc(db, "users", imageDocData.userId, "images", imageDocData.fileId, "likes", loginUserId);
-    const imageRef = doc(db, "users", imageDocData.userId, "images", imageDocData.fileId);
+  if (!auth.currentUser) {
+    return ;
+  }
   
-    const docSnap = await getDoc(likesRef);
+  setProcessing(true);
   
-    if (docSnap.exists()) {
-      setLiked(false);
-      setLikeCount(likeCount - 1);
-      await deleteDoc(likesRef);
-      await updateDoc(imageRef, { likeCount: increment(-1) });
-    } else {
-      setLiked(true);
-      setLikeCount(likeCount + 1);
-      await setDoc(likesRef, { likedAt: serverTimestamp() }, { merge: true });
-      await updateDoc(imageRef, { likeCount: increment(1) });
-    }
+  const loginUserId = auth.currentUser.uid;
+  const likedByRef = doc(db, "users", imageDocData.userId, "images", imageDocData.fileId, "likedBy", loginUserId);
+  const userLikedImagesRef = doc(db, "users", loginUserId, "userLikedImages", imageDocData.fileId);  // ユーザーが「いいね」した画像を追跡するためのリファレンス
+  const imageRef = doc(db, "users", imageDocData.userId, "images", imageDocData.fileId);
+
+  const docSnap = await getDoc(likedByRef);
   
-    setProcessing(false);
-  };
+  if (docSnap.exists()) {
+    setLiked(false);
+    setLikeCount(likeCount - 1);
+    await deleteDoc(likedByRef);
+    await deleteDoc(userLikedImagesRef);  // ユーザーが「いいね」を取り消したときに、userLikedImagesコレクションから該当のドキュメントを削除します
+    await updateDoc(imageRef, { likeCount: increment(-1) });
+  } else {
+    setLiked(true);
+    setLikeCount(likeCount + 1);
+    await setDoc(likedByRef, { likedAt: serverTimestamp() }, { merge: true });
+    await setDoc(userLikedImagesRef, { likedAt: serverTimestamp() }, { merge: true });  // ユーザーが画像を「いいね」したときに、userLikedImagesコレクションに新しいドキュメントを追加します
+    await updateDoc(imageRef, { likeCount: increment(1) });
+  }
+  
+  setProcessing(false);
+};
+
   
   return (
     <Flex alignItems="center">

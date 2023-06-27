@@ -117,13 +117,13 @@ const ImageUploader = memo(({fileSelected, wandSpells, videoDescription, videoTi
       <Button colorScheme='teal' variant='solid' onClick={OnFileUploadToFirebase} isLoading={isUploading}>
         {isUploading ? <CircularProgress isIndeterminate color="green.300" /> : "Upload Video!"}
       </Button>
-
       <Modal isOpen={isOpen} onClose={onClose} isCentered closeOnOverlayClick={false}>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Thank you for your upload:)</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
+            It may take up to 10 minutes for the actual reflection of the data <br /><br />
             Keep : remain your input data <br />
             Reset : reset your input data
           </ModalBody>

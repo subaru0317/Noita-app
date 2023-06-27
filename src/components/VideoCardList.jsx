@@ -1,6 +1,6 @@
 import { storage, db, auth } from '../firebase';
 import { ref, getDownloadURL, deleteObject } from 'firebase/storage';
-import { collectionGroup, collection, query, orderBy, where, getDocs, doc, deleteDoc } from "firebase/firestore";
+import { collectionGroup, collection, query, orderBy, where, getDocs, doc, deleteDoc, writeBatch } from "firebase/firestore";
 import { Grid, GridItem, Spinner, Container, useMediaQuery, useToast } from "@chakra-ui/react";
 import React, { useEffect, useState } from 'react';
 import ReactPaginate from "react-paginate";
@@ -165,12 +165,34 @@ const VideoCardList = ({videoCardMode, fetchMode, selectedSpells, selectedSpells
       await deleteObject(fileRef);
       console.log("File successfully deleted from Firebase Storage!");
 
+
+      const likedByQuery = query(collection(db, 'users', userId, 'images', imageDocData.fileId, 'likedBy'));
+      const likedBySnapshot = await getDocs(likedByQuery);
+
+      const batch = writeBatch(db); // Use batch to perform multiple operations
+
+      // For each user that liked the image, delete the image from their 'userLikedImages' collection
+      likedBySnapshot.docs.forEach((docSnapshot) => {
+        const userLikedImageRef = doc(db, 'users', docSnapshot.id, 'userLikedImages', imageDocData.fileId);
+        batch.delete(userLikedImageRef);
+      });
+
+      // Finally, delete the documents from the 'likedBy' subcollection
+      likedBySnapshot.docs.forEach((docSnapshot) => {
+        batch.delete(docSnapshot.ref);
+      });
+
+      // Commit the batch
+      await batch.commit();
+
+
       const docRef = doc(db, 'users', userId, 'images', imageDocData.fileId);
       await deleteDoc(docRef);
       console.log("Document successfully deleted!");
 
+
+
       // Update the state to remove the deleted card
-      console.log("imageDocDatas: ", imageDocDatas);
       const newImageDocDatas = imageDocDatas.filter(docData => docData.fileId !== imageDocData.fileId);
       setImageDocDatas(newImageDocDatas);
 
