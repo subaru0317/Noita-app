@@ -1,17 +1,21 @@
 import React, { memo } from "react";
-import { Box } from '@chakra-ui/react';
+import { IconButton } from "@chakra-ui/react";
 import SpellIcon from './SpellIcon';
+import { darken } from "polished";
 
 const SpellAddButton = memo(({ spell, onAddToBoard }) => {
+  const bgColor = "#595959";
+  const hoverColor = darken(0.2, bgColor);
+
   return (
-    <div
+    <IconButton
+      aria-label="Add to board"
+      icon={<SpellIcon spell={spell} bg={bgColor} size="35px"/>}
       onClick={() => { if (onAddToBoard) onAddToBoard(spell) }}
-    >
-      <SpellIcon
-        spell={spell}
-        size="35px"
-      />
-    </div>
+      _hover={{ bg: hoverColor }}
+      boxSize="35px"
+      borderRadius="2px"
+    />
   );
 });
 

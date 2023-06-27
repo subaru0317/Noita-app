@@ -1,7 +1,7 @@
 import { storage, db, auth } from '../firebase';
-import { ref, getDownloadURL } from 'firebase/storage';
-import { collectionGroup, collection, query, orderBy, getDocs } from "firebase/firestore";
-import { Grid, GridItem, Spinner, Container, useMediaQuery } from "@chakra-ui/react";
+import { ref, getDownloadURL, deleteObject } from 'firebase/storage';
+import { collectionGroup, collection, query, orderBy, where, getDocs, doc, deleteDoc } from "firebase/firestore";
+import { Grid, GridItem, Spinner, Container, useMediaQuery, useToast } from "@chakra-ui/react";
 import React, { useEffect, useState } from 'react';
 import ReactPaginate from "react-paginate";
 import VideoCard from "./VideoCard";
@@ -21,8 +21,20 @@ import "./Pagination.css";
 //   wandSpells: Array() Object {id, name, path, type}
 // }
 
+const DisplayCard = ({imageDocData, videoCardMode, onDelete}) => {
+  console.log("DisplayCard");
+
+  switch (videoCardMode) {
+    case "editable":
+      return (<EditableVideoCard imageDocData={imageDocData} onDelete={onDelete}/>);
+    case "normal":
+    default:
+      return (<VideoCard imageDocData={imageDocData} />);
+  }
+}
+
 const VideoCardList = ({videoCardMode, fetchMode, selectedSpells, selectedSpellsMode, videoTag, videoTagMode, search, setSearch}) => {
-  console.log("VideoCardList");
+  // console.log("VideoCardList");
   const ITEMS_PER_PAGE = 24;
   const [allImageDocDatas, setAllImageDocDatas] = useState([]);
   const [imageDocDatas, setImageDocDatas] = useState([]);
@@ -33,27 +45,42 @@ const VideoCardList = ({videoCardMode, fetchMode, selectedSpells, selectedSpells
   useEffect(() => {
     if (search) {
       const fetchImages = async () => {
+        const userId = auth.currentUser?.uid;
         let imageCollectionRef;
-
+        
         switch (fetchMode) {
-          case "userUploads":
-            const userId = auth.currentUser.uid;
-            imageCollectionRef = collection(db, `users/${userId}/images`);
-            break;
           case "userLiked":
-            // if likes mode is added in the future
+            imageCollectionRef = collection(db, `users/${userId}/userLikedImages`);
+            break;
+          case "userUploads":
+            imageCollectionRef = collection(db, `users/${userId}/images`);
             break;
           case "allImages":
           default:
             imageCollectionRef = collectionGroup(db, "images");
         }
-        // const imagesCollectionGroup = collectionGroup(db, "images");
-        // const imagesQuery = query(imagesCollectionGroup, orderBy('timestamp', 'desc'));
-        const imagesQuery = query(imageCollectionRef, orderBy('timestamp', 'desc'));
+        let imageDocs;
+        if (fetchMode === "userLiked") {
+          const likedImagesQuery = query(imageCollectionRef, orderBy('likedAt', 'desc'));
+          let querySnapshot = await getDocs(likedImagesQuery);
+          let imageIds = querySnapshot.docs.map(doc => doc.id);
+
+          imageDocs = [];
+          for (let imageId of imageIds) {
+            const imagesQuery = query(collectionGroup(db, "images"), where('fileId', '==', imageId));
+            let imageQuerySnapshot = await getDocs(imagesQuery);
+
+            if (!imageQuerySnapshot.empty) {
+              imageDocs.push(imageQuerySnapshot.docs[0]);
+            }
+          }
+        } else {
+          const imagesQuery = query(imageCollectionRef, orderBy('timestamp', 'desc'));
+          const querySnapshot = await getDocs(imagesQuery);
+          imageDocs = querySnapshot.docs;
+        }
         
-        const querySnapshot = await getDocs(imagesQuery);
-        
-        const downloadPromises = querySnapshot.docs.map(async (doc) => {
+        const downloadPromises = imageDocs.map(async (doc) => {
           try {
             const filePath = doc.data().filePath;
             const userDefinedWandSpellPaths = doc.data().wandSpells.map(spell => spell.path);
@@ -91,7 +118,6 @@ const VideoCardList = ({videoCardMode, fetchMode, selectedSpells, selectedSpells
           }
         });
 
-      
         const allImageUrls = await Promise.all(downloadPromises);
         const filteredImageUrls = allImageUrls.filter(url => url);
         setAllImageDocDatas(filteredImageUrls);
@@ -130,13 +156,45 @@ const VideoCardList = ({videoCardMode, fetchMode, selectedSpells, selectedSpells
     setCurrentPage(selected);
   };
 
-  const DisplayCard = ({imageDocData, videoCardMode}) => {
-    switch (videoCardMode) {
-      case "editable":
-        return (<EditableVideoCard imageDocData={imageDocData} />);
-      case "normal":
-      default:
-        return (<VideoCard imageDocData={imageDocData} />);
+  const toast = useToast();
+  
+  const handleDelete = async (imageDocData) => {
+    const userId = auth.currentUser.uid;
+    try {
+      const fileRef = ref(storage, imageDocData.filePath);
+      await deleteObject(fileRef);
+      console.log("File successfully deleted from Firebase Storage!");
+
+      const docRef = doc(db, 'users', userId, 'images', imageDocData.fileId);
+      await deleteDoc(docRef);
+      console.log("Document successfully deleted!");
+
+      // Update the state to remove the deleted card
+      console.log("imageDocDatas: ", imageDocDatas);
+      const newImageDocDatas = imageDocDatas.filter(docData => docData.fileId !== imageDocData.fileId);
+      setImageDocDatas(newImageDocDatas);
+
+      // Show a success toast
+      toast({
+        title: "Success",
+        description: "Deleted!",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+        position: "bottom-right"
+      });
+    } catch (error) {
+      console.error("Error removing document: ", error);
+
+      // Optionally, you could show an error toast if the deletion failed
+      toast({
+        title: "Error",
+        description: "Failed to delete.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+        position: "bottom-right"
+      });
     }
   }
 
@@ -145,11 +203,13 @@ const VideoCardList = ({videoCardMode, fetchMode, selectedSpells, selectedSpells
       {loading && <Spinner size="lg" color="blue.500" />}
       <Container centerContent>
         <Grid templateColumns={gridTemplateColumns} gap={6}>
-          {imageDocDatas.map((imageDocData, index) => (
+          {imageDocDatas.map((imageDocData, index) => 
+            imageDocData && (
             <GridItem key={index}>
-              <DisplayCard videoCardMode={videoCardMode} imageDocData={imageDocData} />
+              <DisplayCard videoCardMode={videoCardMode} imageDocData={imageDocData} onDelete={handleDelete}/>
             </GridItem>
-          ))}
+            )
+          )}
         </Grid>
         <ReactPaginate
           nextLabel="next >"

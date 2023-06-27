@@ -9,6 +9,7 @@
   grid-template-columns: repeat(12, 35px);
   grid-auto-rows: auto;
   justify-items: center;
+  grid-gap: 7px;
 }
 
 .SpellAddButton > div {
@@ -16,11 +17,19 @@
 }
 
 .SortableSpellWand {
+  position: fixed;
+  bottom: 10px;
   display: flex;
   justify-content: start;
   width: 913px;
   height: 39px;
-  border: 2px solid black;
+  border: 3px dotted brown;
+  background-color:#453B3A;
+}
+
+.SortableSpellWand.sticky {
+  position: sticky;
+  bottom: 100px;
 }
 
 .board-transition-group {

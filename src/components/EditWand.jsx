@@ -1,4 +1,4 @@
-import React, { useState, useCallback, memo } from "react";
+import { useState, useEffect, useCallback, memo } from "react";
 import SpellAddButton from "./SpellAddButton";
 import { v4 as uuidv4 } from "uuid";
 import SpellList from "./SpellList";
@@ -43,43 +43,42 @@ const SortableSpellWand = ({ wandSpells, setWandSpells }) => {
       transition
     };
 
-  let borderColor;
-  switch (spell.type) {
-    case 'projectile':
-      borderColor = "#5A2323";
-      break;
-    case 'static_projectile':
-      borderColor = "#8D3F18";
-      break;
-    case 'passive':
-      borderColor = "#212F26";
-      break;
-    case 'utility':
-      borderColor = "#7B2A74";
-      break;
-    case 'projectile_modifier':
-      borderColor = "#2D3A72";
-      break;
-    case 'material':
-      borderColor = "#356F44";
-      break;
-    case 'multicast':
-      borderColor = "#1C6D73";
-      break;
-    case 'other':
-      borderColor = "#714B33";
-      break;
-    default:
-      borderColor = "#714B33";
-  }
+    let borderColor;
+    switch (spell.type) {
+      case 'projectile':
+        borderColor = "#5A2323";
+        break;
+      case 'static_projectile':
+        borderColor = "#8D3F18";
+        break;
+      case 'passive':
+        borderColor = "#212F26";
+        break;
+      case 'utility':
+        borderColor = "#7B2A74";
+        break;
+      case 'projectile_modifier':
+        borderColor = "#2D3A72";
+        break;
+      case 'material':
+        borderColor = "#356F44";
+        break;
+      case 'multicast':
+        borderColor = "#1C6D73";
+        break;
+      case 'other':
+        borderColor = "#714B33";
+        break;
+      default:
+        borderColor = "#714B33";
+    }
 
     return (
       <Box position="relative" display="inline-block">
         <Image
           ref={setNodeRef}
           boxSize="35px"
-          bg="#4f4f4f"
-          _hover={{ bg: "gray.900" }}
+          bg="#595959"
           border={`2px solid ${borderColor}`}
           src={spell.path}
           alt={spell.name}
@@ -123,10 +122,27 @@ const SortableSpellWand = ({ wandSpells, setWandSpells }) => {
     setWandSpells(wandSpells.filter(spell => spell.id !== id));
   }
 
+  const [sticky, setSticky] = useState(false);
+
+  useEffect(() => {
+    const checkScrollTop = () => {
+      if (!sticky && window.pageYOffset > 1500){  // 200px以上スクロールしたら
+        setSticky(true);
+      } else if (sticky && window.pageYOffset <= 1500){  // 200px以下に戻ったら
+        setSticky(false);
+      }
+    };
+
+    window.addEventListener('scroll', checkScrollTop);
+    return () => {
+      window.removeEventListener('scroll', checkScrollTop);
+    };
+  }, [sticky]);
+
   return (
     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
       <SortableContext items={wandSpells.map(({ id }) => id)} strategy={rectSortingStrategy}>
-        <div className="SortableSpellWand">
+        <div className={sticky ? "SortableSpellWand sticky" : "SortableSpellWand"}>
           {wandSpells.map((spell) => (
             <SortableSpell key={spell.id} id={spell.id} spell={spell} />
           ))}
