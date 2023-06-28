@@ -16,7 +16,6 @@ import "./Pagination.css";
 //   filePath: string
 //   likeCount: int
 //   timestamp: Object { seconds: int, nanoseconds: int }
-//   url: string
 //   userId: string
 //   wandSpells: Array() Object {id, name, path, type}
 // }
@@ -41,6 +40,10 @@ const VideoCardList = ({videoCardMode, fetchMode, selectedSpells, selectedSpells
   const [currentPage, setCurrentPage] = useState(0);
   const [pageCount, setPageCount] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [firstRender, setFirstRender] = useState(true);
+
+
+  const toast = useToast();
 
   useEffect(() => {
     if (search) {
@@ -123,6 +126,21 @@ const VideoCardList = ({videoCardMode, fetchMode, selectedSpells, selectedSpells
         setAllImageDocDatas(filteredImageUrls);
         setPageCount(Math.ceil(filteredImageUrls.length / ITEMS_PER_PAGE));
         setLoading(false);
+
+
+        if (!firstRender) {
+          // ここで Toast を表示します
+          toast({
+            title: "Search Complete",
+            description: "The image search has been completed.",
+            status: "success",
+            duration: 3000,
+            isClosable: true,
+            position: "bottom-right",
+          });
+        }
+
+        setFirstRender(false);
       };
     
       fetchImages();
@@ -156,7 +174,6 @@ const VideoCardList = ({videoCardMode, fetchMode, selectedSpells, selectedSpells
     setCurrentPage(selected);
   };
 
-  const toast = useToast();
   
   const handleDelete = async (imageDocData) => {
     const userId = auth.currentUser.uid;
@@ -201,7 +218,7 @@ const VideoCardList = ({videoCardMode, fetchMode, selectedSpells, selectedSpells
         title: "Success",
         description: "Deleted!",
         status: "success",
-        duration: 3000,
+        duration: 5000,
         isClosable: true,
         position: "bottom-right"
       });
@@ -213,7 +230,7 @@ const VideoCardList = ({videoCardMode, fetchMode, selectedSpells, selectedSpells
         title: "Error",
         description: "Failed to delete.",
         status: "error",
-        duration: 3000,
+        duration: 5000,
         isClosable: true,
         position: "bottom-right"
       });

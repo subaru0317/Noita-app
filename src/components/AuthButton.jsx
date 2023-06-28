@@ -1,5 +1,6 @@
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import { auth } from "../firebase";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import { auth, db } from "../firebase";
 import { Button, Icon, IconButton } from '@chakra-ui/react';
 import { HamburgerIcon } from '@chakra-ui/icons';
 import { ChevronDownIcon } from '@chakra-ui/icons';
@@ -10,7 +11,7 @@ import { MdFavorite } from "react-icons/md";
 import { RiLogoutBoxRLine } from "react-icons/ri";
 import { RiAccountCircleLine } from "react-icons/ri";
 import { MdFolderSpecial } from "react-icons/md";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 const provider = new GoogleAuthProvider();
 
 const UserMenu = () => {
@@ -49,7 +50,7 @@ const UserMenu = () => {
         <IconText
           icon={RiAccountCircleLine}
           color="black"
-          text="My Account"
+          text="My Page"
           path={`/mypage/${auth.currentUser.uid}`}
         />
         <MenuDivider />
@@ -84,26 +85,27 @@ const UserMenu = () => {
 }
 
 const SignInButton = () => {
-  const handleLogin = () => {
-    signInWithPopup(auth, provider)
-      .then((result) => {
-        // This gives you a Google Access Token. You can use it to access the Google API.
-        const credential = GoogleAuthProvider.credentialFromResult(result);
-        const token = credential.accessToken;
-        // The signed-in user info.
-        const user = result.user;
-        // IdP data available using getAdditionalUserMenu(result)
-        // ...
-      }).catch((error) => {
-        // Handle Errors here.
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        // The email of the user's account used.
-        const email = error.customData.email;
-        // The AuthCredential type that was used.
-        const credential = GoogleAuthProvider.credentialFromError(error);
-        // ...
-    });
+  const navigate = useNavigate();
+  const handleLogin = async () => {
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+      const userRef = doc(db, 'users', user.uid);
+      const docSnap = await getDoc(userRef);
+      if (!docSnap.exists()) {
+        // User is signing in for the first time. 
+        // Let's set their name and icon to the values from the provider
+        await setDoc(userRef, {
+          userName: user.displayName,
+          userId: user.uid,
+          icon: user.photoURL
+        });
+        // Navigate to the user's user page
+        navigate(`/mypage/${user.uid}`);
+      }
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   return (

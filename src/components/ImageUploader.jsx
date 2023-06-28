@@ -33,8 +33,6 @@ const ImageUploader = memo(({fileSelected, wandSpells, videoDescription, videoTi
     const imagesCollectionRef = collection(userDocRef, "images");
     const newImageDocRef = doc(imagesCollectionRef);
 
-    const startTime = Date.now(); //
-
     const uploadImage = uploadBytesResumable(storageRef, file, {
       metadata: {
         customMetadata: {
@@ -70,10 +68,6 @@ const ImageUploader = memo(({fileSelected, wandSpells, videoDescription, videoTi
           const webmFileRef = ref(storage, webmFilePath);
           const webmFileURL = await getDownloadURL(webmFileRef);
           
-          const userInfo = {
-            userId: userId,
-            userName: auth.currentUser.displayName,
-          }
           const fileInfo = {
             userId: userId,
             fileId: newImageDocRef.id,
@@ -88,7 +82,6 @@ const ImageUploader = memo(({fileSelected, wandSpells, videoDescription, videoTi
           };
           
           console.log('Adding document to Firestore...');
-          await setDoc(userDocRef, userInfo);
           await setDoc(newImageDocRef, fileInfo);
 
           // Delete the original gif file

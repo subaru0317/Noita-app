@@ -1,4 +1,4 @@
-import { Button, useDisclosure, IconButton, Icon } from '@chakra-ui/react';
+import { Button, useDisclosure, IconButton, Icon, SimpleGrid } from '@chakra-ui/react';
 import {
   Modal,
   ModalOverlay,
@@ -51,9 +51,11 @@ const SpellIconButton = memo(({spell, setSpells}) => {
 
 const SpellButtonBoard = ({setSpells}) => {
   return (
-    SpellList.map((spell) => (
-      <SpellIconButton spell={spell} key={spell.id} setSpells={setSpells}/>
-    ))
+    <SimpleGrid columns={{ base: 12 }}>
+      {SpellList.map((spell) => (
+        <SpellIconButton spell={spell} key={spell.id} setSpells={setSpells}/>
+      ))}
+    </SimpleGrid>
   )
 };
 
