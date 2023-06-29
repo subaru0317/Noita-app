@@ -98,7 +98,7 @@ const SignInButton = () => {
         await setDoc(userRef, {
           userName: user.displayName,
           userId: user.uid,
-          icon: user.photoURL
+          userIcon: user.photoURL
         });
         // Navigate to the user's user page
         navigate(`/mypage/${user.uid}`);

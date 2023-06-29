@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Box, Button, Image, Input, VStack, Stack, Text, Flex, Heading } from "@chakra-ui/react";
+import { Avatar, Box, Button, Input, VStack, Stack, Text, Flex, Heading, IconButton, useColorModeValue, Center, HStack, Tooltip, FormControl, FormErrorMessage } from "@chakra-ui/react";
+import { BiLink, BiUser, BiEditAlt, BiTrash } from "react-icons/bi";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { useParams } from "react-router-dom";
 import { getFirestore } from "firebase/firestore";
@@ -10,8 +11,13 @@ const MyPage = () => {
   const { userId } = useParams();
   const [userName, setUserName] = useState("");
   const [userIcon, setUserIcon] = useState("");
-  const [isEditingName, setIsEditingName] = useState(false);
-  const [isEditingIcon, setIsEditingIcon] = useState(false);
+  const [previousUserName, setPreviousUserName] = useState("");
+  const [previousUserIcon, setPreviousUserIcon] = useState("");
+  const [isEditing, setIsEditing] = useState(false);
+  const [isValidUrl, setIsValidUrl] = useState(true);
+  const [urlErrorMessage, setUrlErrorMessage] = useState("");
+  const [isValidName, setIsValidName] = useState(true);
+  const [nameErrorMessage, setNameErrorMessage] = useState("");
 
   useEffect(() => {
     const db = getFirestore();
@@ -20,25 +26,64 @@ const MyPage = () => {
       const docSnap = await getDoc(docRef);
 
       if (docSnap.exists()) {
-        setUserName(docSnap.data().name);
-        setUserIcon(docSnap.data().icon);
+        setUserName(docSnap.data().userName);
+        setUserIcon(docSnap.data().userIcon);
       }
     };
 
     fetchData();
   }, [userId]);
 
-  const updateUserInfo = async (field, value) => {
-    const db = getFirestore();
-    const docRef = doc(db, "users", getAuth().currentUser.uid);
-    await updateDoc(docRef, { [field]: value });
+  const validateUrl = (url) => {
+    const urlPattern = /^(ftp|http|https):\/\/[^ "]+$/;
+    const isValid = urlPattern.test(url);
+    setIsValidUrl(isValid);
 
-    if (field === "name") {
-      setUserName(value);
-      setIsEditingName(false);
-    } else if (field === "icon") {
-      setUserIcon(value);
-      setIsEditingIcon(false);
+    if (!isValid) {
+      setUrlErrorMessage("Invalid URL");
+    } else {
+      setUrlErrorMessage("");
+    }
+  }
+
+  const validateName = (name) => {
+    if (name.trim() === '' || name.includes('\n')) {
+      setIsValidName(false);
+      setNameErrorMessage('Name cannot be empty, consist only of white spaces or contain newline');
+    } else {
+      setIsValidName(true);
+      setNameErrorMessage('');
+    }
+  };
+
+  const handleEdit = () => {
+    setPreviousUserName(userName);
+    setPreviousUserIcon(userIcon);
+    setIsValidName(true);
+    setNameErrorMessage('');
+    setIsValidUrl(true);
+    setUrlErrorMessage('');
+    setIsEditing(true);
+  };
+
+  const cancelEdit = () => {
+    setUserName(previousUserName);
+    setUserIcon(previousUserIcon);
+    setIsValidName(true);
+    setNameErrorMessage('');
+    setIsValidUrl(true);
+    setUrlErrorMessage('');
+    setIsEditing(false);
+  };
+
+  const updateUserInfo = async () => {
+    validateUrl(userIcon);
+    validateName(userName);
+    if (isValidUrl && isValidName) {
+      const db = getFirestore();
+      const docRef = doc(db, "users", getAuth().currentUser.uid);
+      await updateDoc(docRef, { "userName": userName, "userIcon": userIcon });
+      setIsEditing(false);
     }
   };
 
@@ -48,42 +93,84 @@ const MyPage = () => {
       <Heading as='h2' size='xl'> My Page </Heading>
     </Box>
     <SpacingDivider />
-    <Flex direction="column" align="center" justify="center" m={5}>
-      <Box mb={5}>
-        <Image borderRadius="full" boxSize="150px" src={userIcon} alt={userName} />
-        {isEditingIcon && (
-          <Input
-            value={userIcon}
-            onChange={(e) => setUserIcon(e.target.value)}
-            onBlur={() => updateUserInfo("icon", userIcon)}
-          />
-        )}
-        <Button onClick={() => setIsEditingIcon(!isEditingIcon)}>
-          Edit Icon
-        </Button>
+    <Center>
+      <Box
+        w={['90%', '60%', '40%']}
+        bg={useColorModeValue('white', 'gray.900')}
+        boxShadow={'2xl'}
+        rounded={'md'}
+        overflow={'hidden'}
+        m={5}>
+        <Flex direction='column' align='center' p={6}>
+          <Box align="center">
+            <Avatar size="md" src={userIcon} />
+            {isEditing && (
+              <HStack mt={3}>
+                <Tooltip hasArrow label="Paste the image URL" fontSize="md" placement="top">
+                  <span>
+                    <BiLink size="24px"/>
+                  </span>
+                </Tooltip>
+                <FormControl isInvalid={!isValidUrl}>
+                  <Input
+                    value={userIcon}
+                    onChange={(e) => {
+                      setUserIcon(e.target.value);
+                      validateUrl(e.target.value);
+                    }}
+                  />
+                  <FormErrorMessage>{urlErrorMessage}</FormErrorMessage>
+                </FormControl>
+              </HStack>
+            )}
+          </Box>
+          <Box mt={5}>
+            {isEditing ? (
+              <VStack spacing={2}>
+                <HStack>
+                  <Tooltip hasArrow label="Enter a display name for use on this website." fontSize="md" placement="top">
+                    <span>
+                      <BiUser size="24px"/>
+                    </span>
+                  </Tooltip>
+                  <FormControl isInvalid={!isValidName}>
+                    <Input
+                      value={userName}
+                      onChange={(e) => {
+                        setUserName(e.target.value);
+                        validateName(e.target.value);
+                      }}
+                    />
+                    <FormErrorMessage>{nameErrorMessage}</FormErrorMessage>
+                  </FormControl>
+                </HStack>
+              </VStack>
+            ) : (
+              <Stack spacing={1}>
+                <Text fontSize="2xl">{userName}</Text>
+              </Stack>
+            )}
+          </Box>
+        </Flex>
+        <Box p={6}>
+          {isEditing ? (
+            <HStack spacing={3} justify='flex-end'>
+              <Button size="sm" onClick={cancelEdit}>
+                Cancel
+              </Button>
+              <Button size="sm" colorScheme="blue" onClick={updateUserInfo}>
+                Save changes
+              </Button>
+            </HStack>
+          ) : (
+            <HStack spacing={3} justify='flex-end'>
+              <IconButton icon={<BiEditAlt />} onClick={handleEdit} />
+              <IconButton icon={<BiTrash />} />
+            </HStack>
+          )}
+        </Box>
       </Box>
-      <Box>
-        {!isEditingName ? (
-          <Stack spacing={1} align="center">
-            <Text fontSize="2xl">{userName}</Text>
-            <Button size="sm" onClick={() => setIsEditingName(true)}>
-              Edit Name
-            </Button>
-          </Stack>
-        ) : (
-          <VStack spacing={2}>
-            <Input
-              value={userName}
-              onChange={(e) => setUserName(e.target.value)}
-              onBlur={() => updateUserInfo("name", userName)}
-            />
-            <Button size="sm" onClick={() => setIsEditingName(false)}>
-              Done
-            </Button>
-          </VStack>
-        )}
-      </Box>
-    </Flex>
+    </Center>
     </>
   );
 };

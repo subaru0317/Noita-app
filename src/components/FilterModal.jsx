@@ -12,7 +12,6 @@ import { useState, useCallback, memo, useEffect } from 'react';
 import { darken } from "polished";
 import SpellIcon from "./SpellIcon";
 import SpellList from "./SpellList";
-import { GiBoltSpellCast } from "react-icons/gi";
 import { GiSpellBook } from "react-icons/gi";
 
 const Overlay = () => (
@@ -79,7 +78,6 @@ const FilterModal = ({ setSelectedSpells }) => {
         onClick={onOpen} 
         colorScheme='blue' 
         size='md' 
-        // leftIcon={<Icon as={GiBoltSpellCast} boxSize={6} />}
         leftIcon={<Icon as={GiSpellBook} boxSize={6} />}
       >
         Select Spell
