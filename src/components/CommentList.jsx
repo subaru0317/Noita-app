@@ -35,12 +35,12 @@ const CommentItem = memo(({comment: originalComment}) => {
 
   return (
     <Flex mb={3} position="relative">
-      <Avatar src={comment.userPhoto} size="sm" mt={1}/>
+      <Avatar src={comment.userIcon} size="sm" mt={1}/>
       <Box ml={3} flexGrow={1}>
         <Flex>
           <Box>
             <HStack>
-              <Text fontWeight="bold">{comment.username}</Text>
+              <Text fontWeight="bold">{comment.userName}</Text>
               <Text color="gray.400" fontSize="sm">
                 {formatDistanceToNow(comment.timestamp?.toDate() ?? new Date(), { addSuffix: true })}
               </Text>
@@ -66,11 +66,10 @@ const CommentItem = memo(({comment: originalComment}) => {
             )}
           </Box>
           <Spacer />
-          {console.log("comment.commentId", comment.commentId)}
             {comment.commentId && 
             !editing && 
             <CommentActions
-              userId={comment.userid}
+              userId={comment.userId}
               commentId={comment.commentId}
               commentText={comment.text}
               setEditing={setEditing}

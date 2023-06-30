@@ -1,11 +1,10 @@
-import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { useState, useEffect } from "react";
+import { GoogleAuthProvider, onAuthStateChanged, signInWithPopup } from "firebase/auth";
+import { doc, getDoc, onSnapshot, setDoc } from "firebase/firestore";
 import { auth, db } from "../firebase";
-import { Button, Icon, IconButton } from '@chakra-ui/react';
-import { HamburgerIcon } from '@chakra-ui/icons';
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import { useAuthState } from "react-firebase-hooks/auth";
-import { Menu, MenuButton, MenuList, MenuItem, MenuDivider, Avatar } from "@chakra-ui/react";
+import { Menu, MenuButton, MenuList, MenuItem, MenuDivider, Avatar, Button, Icon, Box } from "@chakra-ui/react";
 import { GiFairyWand } from "react-icons/gi";
 import { MdFavorite } from "react-icons/md";
 import { RiLogoutBoxRLine } from "react-icons/ri";
@@ -15,6 +14,20 @@ import { Link, useNavigate } from 'react-router-dom';
 const provider = new GoogleAuthProvider();
 
 const UserMenu = () => {
+  const [userData, setUserData] = useState({});
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const userRef = doc(db, 'users', auth.currentUser.uid);
+
+      onSnapshot(userRef, (docSnapshot) => {
+        setUserData(docSnapshot.data());
+      });
+    };
+
+    fetchUser();
+  }, []);
+
   const IconText = ({icon, color, text, path}) => {
     return (
       <Link to={path}>
@@ -39,8 +52,8 @@ const UserMenu = () => {
         alignItems='center'
       >
         <Avatar
-          name={auth.currentUser.displayName}
-          src={auth.currentUser.photoURL}
+          name={userData.userName}
+          src={userData.userIcon}
           referrerPolicy="no-referrer"
           size='md'
         />
@@ -96,9 +109,9 @@ const SignInButton = () => {
         // User is signing in for the first time. 
         // Let's set their name and icon to the values from the provider
         await setDoc(userRef, {
-          userName: user.displayName,
           userId: user.uid,
-          userIcon: user.photoURL
+          userName: user.displayName,
+          userIcon: user.photoURL 
         });
         // Navigate to the user's user page
         navigate(`/mypage/${user.uid}`);
@@ -131,5 +144,24 @@ const AuthButton = () => {
     </div>
   )
 }
+
+// const AuthButton = () => {
+//   const [userSignedIn, setUserSignedIn] = useState(false);
+  
+//   useEffect(() => {
+//     const unsubscribe = onAuthStateChanged(auth, (user) => {
+//       setUserSignedIn(!!user);
+//     });
+
+//     // Clean up subscription on unmount
+//     return () => unsubscribe();
+//   }, []);
+  
+//   return (
+//     <Box minHeight="40px">
+//       {userSignedIn ? <UserMenu /> : <SignInButton />}
+//     </Box>
+//   )
+// }
 
 export default AuthButton;

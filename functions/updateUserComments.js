@@ -1,6 +1,5 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
-admin.initializeApp();
 
 exports.updateUserComments = functions.https.onCall(async (data, context) => {
   const userId = data.userId;

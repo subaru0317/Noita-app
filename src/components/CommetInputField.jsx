@@ -19,11 +19,10 @@ const CommentInputField = ({ imageId }) => {
       const docRef = await addDoc(collection(db, 'comments'), {
         text: newCommentCopy,
         imageId,
-        username: auth.currentUser.displayName,
-        userPhoto: auth.currentUser?.photoURL,
-        userid: auth.currentUser.uid,
+        userName: auth.currentUser.displayName,
+        userIcon: auth.currentUser.photoURL,
+        userId: auth.currentUser.uid,
         timestamp: serverTimestamp()
-        
       });
 
       await updateDoc(docRef, {

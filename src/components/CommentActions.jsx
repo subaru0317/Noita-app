@@ -6,6 +6,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { collection, doc, getDoc, updateDoc, deleteDoc } from "firebase/firestore";
 
 const CommentActions = ({userId, commentId, commentText, setEditing}) => {
+  console.log("CommentActions");
   const [currentUser, setCurrentUser] = useState(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const cancelRef = useRef();
