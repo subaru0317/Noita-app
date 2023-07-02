@@ -8,7 +8,9 @@ if (admin.apps.length === 0) {
 const { convertGifToWebm } = require('./convertGifToWebm');
 const { updateUserComments } = require('./updateUserComments');
 const { saveImage } = require('./saveImage');
+const { deleteUserIcon } = require('./deleteUserIcon');
 
 exports.convertGifToWebm = convertGifToWebm;
 exports.updateUserComments = updateUserComments;
 exports.saveImage = saveImage;
+exports.deleteUserIcon = deleteUserIcon;
