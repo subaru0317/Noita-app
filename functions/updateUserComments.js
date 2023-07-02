@@ -16,10 +16,18 @@ exports.updateUserComments = functions.https.onCall(async (data, context) => {
     
   userCommentsSnapshot.docs.forEach((doc) => {
     const commentRef = admin.firestore().collection("comments").doc(doc.id);
-    batch.update(commentRef, {
-      userName: newDisplayName,
-      userIcon: newPhotoURL,
-    });
+
+    let updateObject = {};
+    if (newDisplayName) {
+      updateObject.userName = newDisplayName;
+    }
+    if (newPhotoURL) {
+      updateObject.userIcon = newPhotoURL;
+    }
+
+    if (Object.keys(updateObject).length > 0) {
+      batch.update(commentRef, updateObject);
+    }
   });
   
   await batch.commit();
