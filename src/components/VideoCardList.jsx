@@ -1,7 +1,7 @@
 import { storage, db, auth } from '../firebase';
 import { ref, getDownloadURL, deleteObject } from 'firebase/storage';
 import { collectionGroup, collection, query, orderBy, where, getDocs, doc, deleteDoc, writeBatch } from "firebase/firestore";
-import { Grid, GridItem, Spinner, Container, useMediaQuery, useToast } from "@chakra-ui/react";
+import { Grid, GridItem, Spinner, Container, useMediaQuery, useToast, Box } from "@chakra-ui/react";
 import React, { useEffect, useState } from 'react';
 import ReactPaginate from "react-paginate";
 import VideoCard from "./VideoCard";
@@ -175,6 +175,7 @@ const VideoCardList = ({videoCardMode, fetchMode, selectedSpells, selectedSpells
   };
 
   
+
   const handleDelete = async (imageDocData) => {
     const userId = auth.currentUser.uid;
     try {
@@ -202,12 +203,9 @@ const VideoCardList = ({videoCardMode, fetchMode, selectedSpells, selectedSpells
       // Commit the batch
       await batch.commit();
 
-
       const docRef = doc(db, 'users', userId, 'images', imageDocData.fileId);
       await deleteDoc(docRef);
       console.log("Document successfully deleted!");
-
-
 
       // Update the state to remove the deleted card
       const newImageDocDatas = imageDocDatas.filter(docData => docData.fileId !== imageDocData.fileId);
@@ -236,41 +234,47 @@ const VideoCardList = ({videoCardMode, fetchMode, selectedSpells, selectedSpells
       });
     }
   }
-
   return (
     <>
-      {loading && <Spinner size="lg" color="blue.500" />}
-      <Container centerContent>
-        <Grid templateColumns={gridTemplateColumns} gap={6}>
-          {imageDocDatas.map((imageDocData, index) => 
-            imageDocData && (
-            <GridItem key={index}>
-              <DisplayCard videoCardMode={videoCardMode} imageDocData={imageDocData} onDelete={handleDelete}/>
-            </GridItem>
-            )
-          )}
-        </Grid>
-        <ReactPaginate
-          nextLabel="next >"
-          onPageChange={handlePageClick}
-          pageRangeDisplayed={2}
-          marginPagesDisplayed={2}
-          pageCount={pageCount}
-          previousLabel="< prev"
-          pageClassName="page-item"
-          pageLinkClassName="page-link"
-          previousClassName="page-item"
-          previousLinkClassName="page-link"
-          nextClassName="page-item"
-          nextLinkClassName="page-link"
-          breakLabel="..."
-          breakClassName="page-item"
-          breakLinkClassName="page-link"
-          containerClassName="pagination"
-          activeClassName="active"
-          renderOnZeroPageCount={null}
-        />
-      </Container>
+      {loading ? (
+        <Spinner size="lg" color="blue.500" />
+      ) : (
+        <Container centerContent>
+          <Grid templateColumns={gridTemplateColumns} gap={6}>
+            {imageDocDatas.length > 0 ? (
+              imageDocDatas.map((imageDocData, index) => 
+                imageDocData && (
+                  <GridItem key={index}>
+                    <DisplayCard videoCardMode={videoCardMode} imageDocData={imageDocData} onDelete={handleDelete}/>
+                  </GridItem>
+                )
+              )
+            ) : (
+              <Box>No items matched your criteria</Box>
+            )}
+          </Grid>
+          <ReactPaginate
+            nextLabel="next >"
+            onPageChange={handlePageClick}
+            pageRangeDisplayed={2}
+            marginPagesDisplayed={2}
+            pageCount={pageCount}
+            previousLabel="< prev"
+            pageClassName="page-item"
+            pageLinkClassName="page-link"
+            previousClassName="page-item"
+            previousLinkClassName="page-link"
+            nextClassName="page-item"
+            nextLinkClassName="page-link"
+            breakLabel="..."
+            breakClassName="page-item"
+            breakLinkClassName="page-link"
+            containerClassName="pagination"
+            activeClassName="active"
+            renderOnZeroPageCount={null}
+          />
+        </Container>
+      )}
     </>
   );
 }

@@ -19,7 +19,7 @@ const SelectedFilePreview = memo(({ setFileSelected, setPreviewSrc, previewSrc }
 
   return (
     <>
-      <input type="file" onChange={previewFile} />
+      <input type="file" onChange={previewFile} accept=".gif" />
       <Image src={previewSrc} width="480px" height="270px"/>
       
     </>

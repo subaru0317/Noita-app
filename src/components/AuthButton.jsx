@@ -4,7 +4,7 @@ import { doc, getDoc, onSnapshot, setDoc } from "firebase/firestore";
 import { auth, db } from "../firebase";
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import { useAuthState } from "react-firebase-hooks/auth";
-import { Menu, MenuButton, MenuList, MenuItem, MenuDivider, Avatar, Button, Icon, Box } from "@chakra-ui/react";
+import { Menu, MenuButton, MenuList, MenuItem, MenuDivider, Avatar, Button, Icon, Text, Flex, Box } from "@chakra-ui/react";
 import { GiFairyWand } from "react-icons/gi";
 import { MdFavorite } from "react-icons/md";
 import { RiLogoutBoxRLine } from "react-icons/ri";
@@ -17,11 +17,14 @@ const UserMenu = () => {
   const [userData, setUserData] = useState({});
 
   useEffect(() => {
+
     const fetchUser = async () => {
       const userRef = doc(db, 'users', auth.currentUser.uid);
-
       onSnapshot(userRef, (docSnapshot) => {
         setUserData(docSnapshot.data());
+      },
+      (error) => {
+        console.log("UserMenu error: ", error);
       });
     };
 
@@ -42,59 +45,64 @@ const UserMenu = () => {
   }
   
   return (
-    <Menu>
-      <MenuButton
-        _hover={{ borderRadius: 'full', transition: "border-radius 0.3s"}}
-        _focus={{ outline: "none" }}
-        minHeight='40px'
-        p={2}
-        display='flex'
-        alignItems='center'
-      >
-        <Avatar
-          name={userData.userName}
-          src={userData.userIcon}
-          referrerPolicy="no-referrer"
-          size='md'
-        />
-        <ChevronDownIcon boxSize={10} style={{marginTop: '6px'}} />
-      </MenuButton>
-      <MenuList>
-        <IconText
-          icon={RiAccountCircleLine}
-          color="black"
-          text="My Page"
-          path={`/mypage/${auth.currentUser.uid}`}
-        />
-        <MenuDivider />
-        <IconText
-          icon={GiFairyWand}
-          color="blue.500"
-          text="Upload Video"
-          path="/uploadvideo"
-        />
-        <IconText
-          icon={MdFolderSpecial}
-          color="green"
-          text="My Videos"
-          path={`/myvideos/${auth.currentUser.uid}`}
-        />
-        <IconText
-          icon={MdFavorite}
-          color="red"
-          text="Favorite"
-          path={`/favorite/${auth.currentUser.uid}`}
-        />
-        <MenuDivider />
-        <MenuItem onClick={() => auth.signOut()}>
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <Icon as={RiLogoutBoxRLine} boxSize={5} color="black" style={{ verticalAlign: 'middle' }}/>
-            <span style={{ marginLeft: '0.4rem', verticalAlign: 'middle', marginTop: '-3px' }}>Log out</span>
-          </div>
-        </MenuItem>
-      </MenuList>
-    </Menu>
-  )
+    userData ? (
+      <Menu>
+        <MenuButton 
+          as={Button} 
+          rightIcon={<ChevronDownIcon boxSize="24px"/>} 
+          variant="outline"
+          borderColor="transparent"
+          borderRadius="full"
+          p="24px 2px" // 上下に2px、左右に5pxのパディング
+          _hover={{ bg: 'gray.200' }} 
+          _focus={{ boxShadow: 'none' }}
+          _active={{ boxShadow: 'none' }}
+        >
+          <Flex alignItems="center">
+            <Avatar src={userData.userIcon} name={userData.userName} />
+            <Box width="4px" />
+            <Text>{userData.userName}</Text>
+          </Flex>
+        </MenuButton>
+        <MenuList>
+          <IconText
+            icon={RiAccountCircleLine}
+            color="black"
+            text="My Page"
+            path={`/mypage/${auth.currentUser.uid}`}
+          />
+          <MenuDivider />
+          <IconText
+            icon={GiFairyWand}
+            color="blue.500"
+            text="Upload Video"
+            path="/uploadvideo"
+          />
+          <IconText
+            icon={MdFolderSpecial}
+            color="green"
+            text="My Videos"
+            path={`/myvideos/${auth.currentUser.uid}`}
+          />
+          <IconText
+            icon={MdFavorite}
+            color="red"
+            text="Favorite"
+            path={`/favorite/${auth.currentUser.uid}`}
+          />
+          <MenuDivider />
+          <MenuItem onClick={() => auth.signOut()}>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <Icon as={RiLogoutBoxRLine} boxSize={5} color="black" style={{ verticalAlign: 'middle' }}/>
+              <span style={{ marginLeft: '0.4rem', verticalAlign: 'middle', marginTop: '-3px' }}>Log out</span>
+            </div>
+          </MenuItem>
+        </MenuList>
+      </Menu>
+    ) : (
+      <SignInButton />
+    )
+  );
 }
 
 const SignInButton = () => {
@@ -144,24 +152,5 @@ const AuthButton = () => {
     </div>
   )
 }
-
-// const AuthButton = () => {
-//   const [userSignedIn, setUserSignedIn] = useState(false);
-  
-//   useEffect(() => {
-//     const unsubscribe = onAuthStateChanged(auth, (user) => {
-//       setUserSignedIn(!!user);
-//     });
-
-//     // Clean up subscription on unmount
-//     return () => unsubscribe();
-//   }, []);
-  
-//   return (
-//     <Box minHeight="40px">
-//       {userSignedIn ? <UserMenu /> : <SignInButton />}
-//     </Box>
-//   )
-// }
 
 export default AuthButton;

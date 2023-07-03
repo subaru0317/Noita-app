@@ -11,7 +11,7 @@ const cors = require('cors')({origin: true});
 
 const gcs = new Storage();
 
-exports.convertGifToWebm = functions.runWith({timeoutSeconds: 540}).https.onRequest((req, res) => {
+exports.convertGifToWebm = functions.runWith({timeoutSeconds: 300}).https.onRequest((req, res) => {
   // Enable CORS using the `cors` express middleware.
   cors(req, res, async () => {
     if (req.method !== "POST") {

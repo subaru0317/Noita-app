@@ -1,9 +1,9 @@
-import { Text, ButtonGroup, IconButton, Input, Tooltip, Box, Kbd, Spacer, useDisclosure, AlertDialog, AlertDialogBody, AlertDialogFooter, AlertDialogHeader, AlertDialogContent, AlertDialogOverlay, Button } from "@chakra-ui/react";
+import { ButtonGroup, IconButton, Tooltip, Box, useDisclosure, AlertDialog, AlertDialogBody, AlertDialogFooter, AlertDialogHeader, AlertDialogContent, AlertDialogOverlay, Button } from "@chakra-ui/react";
 import { auth, db } from "../firebase";
 import { BiEditAlt, BiTrash } from "react-icons/bi";
 import { useState, useEffect, useRef } from 'react';
 import { onAuthStateChanged } from "firebase/auth";
-import { collection, doc, getDoc, updateDoc, deleteDoc } from "firebase/firestore";
+import { collection, doc, deleteDoc } from "firebase/firestore";
 
 const CommentActions = ({userId, commentId, commentText, setEditing}) => {
   console.log("CommentActions");

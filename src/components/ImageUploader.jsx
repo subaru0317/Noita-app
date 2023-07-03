@@ -21,6 +21,7 @@ const ImageUploader = memo(({fileSelected, wandSpells, videoDescription, videoTi
         status: "error",
         duration: 9000,
         isClosable: true,
+        position: "bottom-right",
       });
       return;
     }
@@ -49,6 +50,15 @@ const ImageUploader = memo(({fileSelected, wandSpells, videoDescription, videoTi
       },
       (error) => {
         console.log(error);
+        setUploading(false);
+        toast({
+          title: "An error occurred.",
+          description: "There was a problem with the upload. Please try again later.",
+          status: "error",
+          duration: 9000,
+          isClosable: true,
+          position: "bottom-right",
+        });
       },
       async () => {
         try {
@@ -89,6 +99,16 @@ const ImageUploader = memo(({fileSelected, wandSpells, videoDescription, videoTi
           setUploadProgress(0);
           console.log("Upload File!");
         } catch (error) {
+          setUploading(false);
+          setUploadProgress(0);
+          toast({
+            title: "An error occurred.",
+            description: "There was a problem with the upload. Please try again later.",
+            status: "error",
+            duration: 9000,
+            isClosable: true,
+            position: "bottom-right",
+          });
           console.error("Error: ", error);
         }
       }
