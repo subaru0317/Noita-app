@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { GoogleAuthProvider, onAuthStateChanged, signInWithPopup } from "firebase/auth";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { doc, getDoc, onSnapshot, setDoc } from "firebase/firestore";
-import { auth, db } from "../firebase";
+import { ref, getDownloadURL } from "firebase/storage";
+import { auth, db, storage } from "../firebase";
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import { useAuthState } from "react-firebase-hooks/auth";
 import { Menu, MenuButton, MenuList, MenuItem, MenuDivider, Avatar, Button, Icon, Text, Flex, Box } from "@chakra-ui/react";
@@ -105,6 +106,12 @@ const UserMenu = () => {
   );
 }
 
+const getIconUrl = async () => {
+  const defaultIconRef = ref(storage, 'defaultIcons/DefaultUserIcon.webp');
+  const url = await getDownloadURL(defaultIconRef);
+  return url;
+};
+
 const SignInButton = () => {
   const navigate = useNavigate();
   const handleLogin = async () => {
@@ -116,10 +123,12 @@ const SignInButton = () => {
       if (!docSnap.exists()) {
         // User is signing in for the first time. 
         // Let's set their name and icon to the values from the provider
+        const defaultIconUrl = await getIconUrl();
+        auth.currentUser.photoURL = defaultIconUrl;
         await setDoc(userRef, {
           userId: user.uid,
           userName: user.displayName,
-          userIcon: user.photoURL 
+          userIcon: defaultIconUrl
         });
         // Navigate to the user's user page
         navigate(`/mypage/${user.uid}`);

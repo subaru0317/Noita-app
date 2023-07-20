@@ -46,7 +46,60 @@ const ProfileControls = ({isEditing, handleEdit, cancelEdit, updateUserInfo, del
   );
 }
 
+const EditUserName = ({isValidName, userName, nameErrorMessage}) => {
+  return (
+    <VStack spacing={2}>
+      <HStack>
+        <Tooltip hasArrow label="Enter a display name for use on this website." fontSize="md" placement="top">
+          <span>
+            <BiUser size="24px"/>
+          </span>
+        </Tooltip>
+        <FormControl isInvalid={!isValidName}>
+          <Input
+            value={userName}
+            onChange={(e) => {
+              setUserName(e.target.value);
+              validateName(e.target.value);
+            }}
+          />
+          <FormErrorMessage>{nameErrorMessage}</FormErrorMessage>
+        </FormControl>
+      </HStack>
+    </VStack>
+  );
+}
 
+const DisplayUserName = ({userName}) => {
+  console.log("userName: ", userName);
+  return (
+    <Stack spacing={1}>
+      <Text fontSize="2xl">{userName}</Text>
+    </Stack>
+  );
+}
+
+const InputUserIconURL = ({isValidUrl, urlErrorMessage, setUserIcon, validateUrl}) => {
+  return (
+    <HStack mt={3}>
+      <Tooltip hasArrow label="Paste the image URL" fontSize="md" placement="top">
+        <span>
+          <BiLink size="24px"/>
+        </span>
+      </Tooltip>
+      <FormControl isInvalid={!isValidUrl}>
+        <Input
+          // value={userIcon}
+          onChange={(e) => {
+            setUserIcon(e.target.value);
+            validateUrl(e.target.value);
+          }}
+        />
+        <FormErrorMessage>{urlErrorMessage}</FormErrorMessage>
+      </FormControl>
+    </HStack>
+  );
+}
 
 const MyPage = () => {
   const { userId } = useParams();
@@ -247,7 +300,7 @@ const deleteUserInfo = async () => {
     <SpacingDivider />
     <Center>
       <Box
-        w={['90%', '60%', '40%']}
+        w='400px'
         bg={useColorModeValue('white', 'gray.900')}
         boxShadow={'2xl'}
         rounded={'md'}
@@ -255,53 +308,14 @@ const deleteUserInfo = async () => {
         m={5}>
         <Flex direction='column' align='center' p={6}>
           <Box align="center">
-            <Avatar size="md" src={userIcon} />
-            {isEditing && (
-              <HStack mt={3}>
-                <Tooltip hasArrow label="Paste the image URL" fontSize="md" placement="top">
-                  <span>
-                    <BiLink size="24px"/>
-                  </span>
-                </Tooltip>
-                <FormControl isInvalid={!isValidUrl}>
-                  <Input
-                    value={userIcon}
-                    onChange={(e) => {
-                      setUserIcon(e.target.value);
-                      validateUrl(e.target.value);
-                    }}
-                  />
-                  <FormErrorMessage>{urlErrorMessage}</FormErrorMessage>
-                </FormControl>
-              </HStack>
-            )}
+            <Avatar size="md" src={auth.currentUser.photoURL} />
+            {isEditing && <InputUserIconURL isValidUrl={isValidUrl} urlErrorMessage={urlErrorMessage} setUserIcon={setUserIcon} validateUrl={validateUrl}/>}
           </Box>
           <Box mt={5}>
-            {isEditing ? (
-              <VStack spacing={2}>
-                <HStack>
-                  <Tooltip hasArrow label="Enter a display name for use on this website." fontSize="md" placement="top">
-                    <span>
-                      <BiUser size="24px"/>
-                    </span>
-                  </Tooltip>
-                  <FormControl isInvalid={!isValidName}>
-                    <Input
-                      value={userName}
-                      onChange={(e) => {
-                        setUserName(e.target.value);
-                        validateName(e.target.value);
-                      }}
-                    />
-                    <FormErrorMessage>{nameErrorMessage}</FormErrorMessage>
-                  </FormControl>
-                </HStack>
-              </VStack>
-            ) : (
-              <Stack spacing={1}>
-                <Text fontSize="2xl">{userName}</Text>
-              </Stack>
-            )}
+            {isEditing ? 
+              <EditUserName isValidName={isValidName} userName={userName} /> : 
+              <DisplayUserName userName={userName} />
+            }
           </Box>
         </Flex>
         <ProfileControls 

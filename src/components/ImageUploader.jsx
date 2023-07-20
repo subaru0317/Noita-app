@@ -1,10 +1,10 @@
 import { Button, useToast, CircularProgress, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, useDisclosure } from "@chakra-ui/react";
-import React, { useState, memo } from "react";
+import { useState, memo } from "react";
 import "./ImageUpload.css";
-import { storage, db, auth, functionsURL, bucket } from "../firebase";
+import { storage, db, auth, functions } from "../firebase";
 import { ref, uploadBytesResumable, getDownloadURL, deleteObject } from "firebase/storage";
 import { collection, setDoc, serverTimestamp, doc } from "firebase/firestore";
-import axios from 'axios';
+import { httpsCallable } from 'firebase/functions';
 
 const ImageUploader = memo(({fileSelected, wandSpells, videoDescription, videoTitle, videoTag, setFileSelected, setWandSpells, setVideoDescription, setVideoTitle, setVideoTag, setPreviewSrc}) => {
   const [isUploading, setUploading] = useState(false);
@@ -33,15 +33,7 @@ const ImageUploader = memo(({fileSelected, wandSpells, videoDescription, videoTi
     const userDocRef = doc(db, "users", userId);
     const imagesCollectionRef = collection(userDocRef, "images");
     const newImageDocRef = doc(imagesCollectionRef);
-
-    const uploadImage = uploadBytesResumable(storageRef, file, {
-      metadata: {
-        customMetadata: {
-          'userId': userId,
-          'fileId': newImageDocRef.id,
-        },
-      },
-    });
+    const uploadImage = uploadBytesResumable(storageRef, file);
 
     uploadImage.on("state_changed", (snapshot) => {
         const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
@@ -67,11 +59,10 @@ const ImageUploader = memo(({fileSelected, wandSpells, videoDescription, videoTi
           onOpen(); // Open the modal
           const filePath = 'images/' + fileName;
           console.log("Modal Open!");
-          // make HTTP request to your Cloud Function
-          const response = await axios.post(functionsURL, {
-            filePath: filePath,
-            bucket: bucket
-          });
+          // Cloud Functionの呼び出し
+          const convertGifToWebm = httpsCallable(functions, 'convertGifToWebm');
+          const response = await convertGifToWebm({ filePath: filePath });
+
           console.log("Gif to Webm!");
           const webmFilePath = response.data.filePath;
           

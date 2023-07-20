@@ -36,5 +36,3 @@ firestore-memo
 todo
 # config
 vite.config.js
-#backend
-functions/*

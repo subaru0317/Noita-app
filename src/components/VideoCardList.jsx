@@ -1,12 +1,13 @@
-import { storage, db, auth } from '../firebase';
+import { storage, db, auth, functions } from '../firebase';
 import { ref, getDownloadURL, deleteObject } from 'firebase/storage';
 import { collectionGroup, collection, query, orderBy, where, getDocs, doc, deleteDoc, writeBatch } from "firebase/firestore";
 import { Grid, GridItem, Spinner, Container, useMediaQuery, useToast, Box } from "@chakra-ui/react";
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import ReactPaginate from "react-paginate";
 import VideoCard from "./VideoCard";
 import EditableVideoCard from "./EditableVideoCard";
 import "./Pagination.css";
+import { httpsCallable } from 'firebase/functions';
 
 // imageDocData = {
 //   description: string
@@ -174,42 +175,45 @@ const VideoCardList = ({videoCardMode, fetchMode, selectedSpells, selectedSpells
     setCurrentPage(selected);
   };
 
-  
-
   const handleDelete = async (imageDocData) => {
     const userId = auth.currentUser.uid;
+    const deleteWebmVideo = httpsCallable(functions, 'deleteWebmVideo');
     try {
-      const fileRef = ref(storage, imageDocData.filePath);
-      await deleteObject(fileRef);
-      console.log("File successfully deleted from Firebase Storage!");
+      const response = await deleteWebmVideo({imageDocData: imageDocData});
+      if (response.data.result === 'success') {
+        console.log("File successfully deleted from Firebase Storage!");
+      } else {
+        const errorMessage = response.data.error.message || "Unknown error occurred";
+        console.error("Error removing document: ", response.data.error);
+        throw new Error(errorMessage);
+      }
 
+      // const likedByQuery = query(collection(db, 'users', userId, 'images', imageDocData.fileId, 'likedBy'));
+      // const likedBySnapshot = await getDocs(likedByQuery);
 
-      const likedByQuery = query(collection(db, 'users', userId, 'images', imageDocData.fileId, 'likedBy'));
-      const likedBySnapshot = await getDocs(likedByQuery);
+      // const batch = writeBatch(db); // Use batch to perform multiple operations
 
-      const batch = writeBatch(db); // Use batch to perform multiple operations
+      // // For each user that liked the image, delete the image from their 'userLikedImages' collection
+      // likedBySnapshot.docs.forEach((docSnapshot) => {
+      //   const userLikedImageRef = doc(db, 'users', docSnapshot.id, 'userLikedImages', imageDocData.fileId);
+      //   batch.delete(userLikedImageRef);
+      // });
 
-      // For each user that liked the image, delete the image from their 'userLikedImages' collection
-      likedBySnapshot.docs.forEach((docSnapshot) => {
-        const userLikedImageRef = doc(db, 'users', docSnapshot.id, 'userLikedImages', imageDocData.fileId);
-        batch.delete(userLikedImageRef);
-      });
+      // // Finally, delete the documents from the 'likedBy' subcollection
+      // likedBySnapshot.docs.forEach((docSnapshot) => {
+      //   batch.delete(docSnapshot.ref);
+      // });
 
-      // Finally, delete the documents from the 'likedBy' subcollection
-      likedBySnapshot.docs.forEach((docSnapshot) => {
-        batch.delete(docSnapshot.ref);
-      });
+      // // Commit the batch
+      // await batch.commit();
 
-      // Commit the batch
-      await batch.commit();
+      // const docRef = doc(db, 'users', userId, 'images', imageDocData.fileId);
+      // await deleteDoc(docRef);
+      // console.log("Document successfully deleted!");
 
-      const docRef = doc(db, 'users', userId, 'images', imageDocData.fileId);
-      await deleteDoc(docRef);
-      console.log("Document successfully deleted!");
-
-      // Update the state to remove the deleted card
-      const newImageDocDatas = imageDocDatas.filter(docData => docData.fileId !== imageDocData.fileId);
-      setImageDocDatas(newImageDocDatas);
+      // // Update the state to remove the deleted card
+      // const newImageDocDatas = imageDocDatas.filter(docData => docData.fileId !== imageDocData.fileId);
+      // setImageDocDatas(newImageDocDatas);
 
       // Show a success toast
       toast({

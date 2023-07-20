@@ -1,60 +1,70 @@
 'use strict';
 
 const functions = require('firebase-functions');
-const { Storage } = require('@google-cloud/storage');
+const admin = require('firebase-admin');
 const path = require('path');
 const os = require('os');
 const fs = require('fs');
 const ffmpeg = require('fluent-ffmpeg');
 const ffmpeg_static = require('ffmpeg-static');
-const cors = require('cors')({origin: true});
 
-const gcs = new Storage();
+const bucket = admin.storage().bucket();
 
-exports.convertGifToWebm = functions.runWith({timeoutSeconds: 300}).https.onRequest((req, res) => {
-  // Enable CORS using the `cors` express middleware.
-  cors(req, res, async () => {
-    if (req.method !== "POST") {
-      res.status(400).send('Please send a POST request');
-      return;
-    }
+exports.convertGifToWebm = functions.runWith({timeoutSeconds: 300}).https.onCall(async (data, context) => {
+  const filePath = data.filePath;
+  const fileName = path.basename(filePath);
+  const userId = context.auth.uid; // Here you get the userId from the authenticated user
 
-    const filePath = req.body.filePath; // Expected to receive the filePath in the request body
-    const fileName = path.basename(filePath);
-    const fileBucket = req.body.bucket; // Expected to receive the bucket name in the request body
+  const tempFilePath = path.join(os.tmpdir(), fileName);
+  const targetTempFileName = fileName.replace(/\.[^/.]+$/, '') + '.webm';
+  const targetTempFilePath = path.join(os.tmpdir(), targetTempFileName);
+  const targetStorageFilePath = path.join(path.dirname(filePath), targetTempFileName);
 
-    const bucket = gcs.bucket(fileBucket);
-    const tempFilePath = path.join(os.tmpdir(), fileName);
-    const targetTempFileName = fileName.replace(/\.[^/.]+$/, '') + '.webm';
-    const targetTempFilePath = path.join(os.tmpdir(), targetTempFileName);
-    const targetStorageFilePath = path.join(path.dirname(filePath), targetTempFileName);
+  try {
+    await bucket.file(filePath).download({destination: tempFilePath});
+    console.log('Gif file downloaded locally to', tempFilePath);
 
-    try {
-      await bucket.file(filePath).download({destination: tempFilePath});
-      console.log('Gif file downloaded locally to', tempFilePath);
-    
-      await new Promise((resolve, reject) => {
-        ffmpeg(tempFilePath)
-          .setFfmpegPath(ffmpeg_static)
-          .outputFormat('webm')
-          .output(targetTempFilePath)
-          .on('end', resolve)
-          .on('error', reject)
-          .run();
-      });
-      console.log('Output file created at', targetTempFilePath);
-    
-      // Upload converted file
-      await bucket.upload(targetTempFilePath, {destination: targetStorageFilePath}).then(() => {
-        console.log('Output file uploaded to', targetStorageFilePath);
-        fs.unlinkSync(tempFilePath);
-        fs.unlinkSync(targetTempFilePath);
-      });
-    
-      res.status(200).send({ filePath: targetStorageFilePath }); // send back the storage path of the converted file
-    } catch (error) {
-      console.error('Error in converting gif to webm: ', error);
-      res.status(500).send('Error in converting gif to webm');
-    }
-  });
+    await new Promise((resolve, reject) => {
+      ffmpeg(tempFilePath)
+        .setFfmpegPath(ffmpeg_static)
+        .outputFormat('webm')
+        .output(targetTempFilePath)
+        .on('end', resolve)
+        .on('error', reject)
+        .run();
+    });
+    console.log('Output file created at', targetTempFilePath);
+
+    const fileMetadata = {
+      metadata: {
+        'owner': userId,
+      }
+    };
+
+    console.log('fileMetadata to be uploaded:', fileMetadata); // Debug: Log metadata
+
+    await bucket.upload(targetTempFilePath, {
+      destination: targetStorageFilePath,
+      metadata: fileMetadata, // Set metadata at the time of upload
+    }).then(async () => {
+      console.log('Output file uploaded to', targetStorageFilePath);
+
+      // Check metadata after upload
+      const file = bucket.file(targetStorageFilePath);
+      const [metadata] = await file.getMetadata();
+      console.log('Uploaded file metadata:', metadata);
+
+      fs.unlinkSync(tempFilePath);
+      fs.unlinkSync(targetTempFilePath);
+
+    }).catch((error) => {
+      console.error('Error in uploading the file: ', error);
+      throw new functions.https.HttpsError('internal', 'Error in uploading the file');
+    });
+
+    return { filePath: targetStorageFilePath }; // Return the storage path of the converted file
+  } catch (error) {
+    console.error('Error in converting gif to webm: ', error);
+    throw new functions.https.HttpsError('internal', 'Error in converting gif to webm');
+  }
 });
