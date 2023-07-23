@@ -1,38 +1,67 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
-
-// 削除可能条件
-// ・webmVideoのメタ情報のユーザIDと削除しようとしているユーザIDが一致している
-// ・権限
-// ・Videoが存在している
-// ・依存関係の確認(FirebaseStore)
-
 const bucket = admin.storage().bucket();
+const firestore = admin.firestore();
 
 exports.deleteWebmVideo = functions.https.onCall(async (data, context) => {
   const userId = context.auth.uid;
   const imageDocData = data.imageDocData;
 
-  if (!imageDocData || !imageDocData.fileName) {
+  if (!imageDocData || !imageDocData.filePath) {
     console.error("Error: Invalid image document data");
     return { result: 'error', error: 'Invalid image document data' };
   }
 
-  const webmVideoFileRef = bucket.file(imageDocData.fileName);
-  
   try {
-    const webmMetadata = await webmVideoFileRef.getMetadata();
-    const owner = webmMetadata[0].metadata.owner;
+    await deleteWebmVideoFile(userId, imageDocData.filePath);
 
-    if (owner !== userId) {
-      console.error("Error: User ID mismatch");
-      return { result: 'erorr', error: 'User ID mismatch' };
-    }
-
-    await webmVideoFileRef.delete();
+    // After deleting the webmVideoFile, proceed to delete associated Firestore documents
+    await deleteLikedByAndImageDocs(imageDocData);
+    
     return { result: 'success' };
   } catch (error) {
-    console.error("Error removing document: ", error);
+    console.error("Error removing documents: ", error);
     return { result: 'error', error: error.message };
   }
 });
+
+async function deleteWebmVideoFile(userId, filePath) {
+  const webmVideoFileRef = bucket.file(filePath);
+  
+  // webm video delete
+  const webmMetadata = await webmVideoFileRef.getMetadata();
+  const owner = webmMetadata[0].metadata.owner;
+
+  if (owner !== userId) {
+    console.error("Error: User ID mismatch");
+    throw new Error('User ID mismatch');
+  }
+
+  await webmVideoFileRef.delete();
+}
+
+async function deleteLikedByAndImageDocs(imageDocData) {
+  const likedByQuery = firestore.collection('users').doc(imageDocData.userId).collection('images').doc(imageDocData.fileId).collection('likedBy');
+  const likedBySnapshot = await likedByQuery.get();
+
+  const batch = firestore.batch(); // Use batch to perform multiple operations
+
+  // For each user that liked the image, delete the image from their 'userLikedImages' collection
+  likedBySnapshot.docs.forEach((docSnapshot) => {
+    const userLikedImageRef = firestore.collection('users').doc(docSnapshot.id).collection('userLikedImages').doc(imageDocData.fileId);
+    batch.delete(userLikedImageRef);
+  });
+
+  // Finally, delete the documents from the 'likedBy' subcollection
+  likedBySnapshot.docs.forEach((docSnapshot) => {
+    batch.delete(docSnapshot.ref);
+  });
+
+  // Commit the batch
+  await batch.commit();
+
+  const docRef = firestore.collection('users').doc(imageDocData.userId).collection('images').doc(imageDocData.fileId);
+  await docRef.delete();
+
+  console.log("Documents successfully deleted!");
+}
