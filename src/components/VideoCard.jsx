@@ -1,17 +1,21 @@
-import React, { useEffect, useState, useMemo, memo } from 'react';
+import { useEffect, useState, useMemo, memo } from 'react';
 import { Link } from "react-router-dom";
 import { Box, Flex, Text, Wrap, WrapItem } from "@chakra-ui/react";
-import { auth } from '../firebase';
+import { auth, storage } from '../firebase';
+import { ref } from 'firebase/storage';
 import { onAuthStateChanged } from "firebase/auth";
 import LikeButton from "./LikeButton";
 import SpellIcon from './SpellIcon';
 import VideoTagItem from "./VideoTagItem";
 
 const VideoCard = memo(({ imageDocData, isLinkActive = true }) => {
-  const timestampSeconds = imageDocData.timestamp.seconds;
-  const date = new Date(timestampSeconds * 1000); 
-  const dateString = date.toLocaleDateString();
-  const timeString = date.toLocaleTimeString();
+  const date = new Date(imageDocData.timestamp);
+
+  const year = date.getFullYear();
+  const month = ("0" + (date.getMonth() + 1)).slice(-2); // JavaScriptの月は0から始まるため1を追加します
+  const day = ("0" + date.getDate()).slice(-2);
+
+  const dateString = `${year}/${month}/${day}`;
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -33,10 +37,11 @@ const VideoCard = memo(({ imageDocData, isLinkActive = true }) => {
   } : {};
 
   const videoDetailUrl = useMemo(() => `/list/${imageDocData.fileId}`, [imageDocData.fileId]);
-
+  console.log("imageDocData: ", imageDocData);
+  console.log("imageDocData.wandSpells: ", imageDocData.wandSpells);
   const cardContent = (
     <Box minW="382px" maxW="sm" borderWidth="1px" borderRadius="lg" overflow="hidden" mb={6} {...hoverAndClickStyles}>
-      <video src={imageDocData.filePath} alt="Video description" controls loop autoPlay muted/>
+      <video src={imageDocData.url} alt="Video description" controls loop autoPlay muted/>
       <Box p="6">
         <Wrap spacing={0} justify="start">
           <Text ab='b'>
@@ -44,22 +49,22 @@ const VideoCard = memo(({ imageDocData, isLinkActive = true }) => {
           </Text>
         </Wrap>
         <Wrap spacing={0} justify="start">
-          {imageDocData.wandSpells.map((spell, index) => (
+          {imageDocData.wandSpells.map((spellName, index) => (
             <WrapItem key={index} mb="3px">
-              <SpellIcon spell={spell} size="25px" />
+              <SpellIcon spellName={spellName} size="25px" />
             </WrapItem>
           ))}
         </Wrap>
         <Wrap spacing={0} justify="start">
-          {imageDocData.videoTag.map((tag, index) => (
+          {imageDocData.videoTag.map((tagName, index) => (
             <WrapItem key={index} mb="3px">
-              <VideoTagItem tag={tag} withTooltip={false} />
+              <VideoTagItem tagName={tagName} withTooltip={false} />
             </WrapItem>
           ))}
         </Wrap>
         <Flex justifyContent="space-between" alignItems="center" mt="2">
           <Text color="#747474">
-            {`${dateString} ${timeString}`}
+            {`${dateString}`}
           </Text>
           <LikeButton imageDocData={imageDocData} isLoggedIn={isLoggedIn}/>
         </Flex>

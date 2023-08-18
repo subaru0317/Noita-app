@@ -21,8 +21,8 @@ const SelectedVideoTag = memo(({ videoTag, setVideoTag }) => {
       <Box display="flex" flexDirection="row" flexWrap="wrap">
         {TagList.map((tag, index) => (
           <VideoTagItem
-            key={tag.id}
-            tag={tag}
+            key={index}
+            tagName={tag.name}
             isSelected={!!videoTag.find(item => item.id === tag.id)}
             onClick={handleTagClick}
           />

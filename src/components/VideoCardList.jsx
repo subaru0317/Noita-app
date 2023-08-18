@@ -1,6 +1,5 @@
-import { storage, db, auth, functions } from '../firebase';
-import { ref, getDownloadURL, deleteObject } from 'firebase/storage';
-import { collectionGroup, collection, query, orderBy, where, getDocs, doc, deleteDoc, writeBatch } from "firebase/firestore";
+import { storage, functions } from '../firebase';
+import { ref, getDownloadURL } from 'firebase/storage';
 import { Grid, GridItem, Spinner, Container, useMediaQuery, useToast, Box } from "@chakra-ui/react";
 import { useEffect, useState } from 'react';
 import ReactPaginate from "react-paginate";
@@ -8,12 +7,12 @@ import VideoCard from "./VideoCard";
 import EditableVideoCard from "./EditableVideoCard";
 import "./Pagination.css";
 import { httpsCallable } from 'firebase/functions';
+import algoliasearch from 'algoliasearch';
 
 // imageDocData = {
 //   description: string
 //   title: string
 //   fileId: string
-//   fileName: string
 //   filePath: string
 //   likeCount: int
 //   timestamp: Object { seconds: int, nanoseconds: int }
@@ -23,7 +22,6 @@ import { httpsCallable } from 'firebase/functions';
 
 const DisplayCard = ({imageDocData, videoCardMode, onDelete}) => {
   console.log("DisplayCard");
-
   switch (videoCardMode) {
     case "editable":
       return (<EditableVideoCard imageDocData={imageDocData} onDelete={onDelete}/>);
@@ -34,102 +32,60 @@ const DisplayCard = ({imageDocData, videoCardMode, onDelete}) => {
 }
 
 const VideoCardList = ({videoCardMode, fetchMode, selectedSpells, selectedSpellsMode, videoTag, videoTagMode, search, setSearch}) => {
-  // console.log("VideoCardList");
   const ITEMS_PER_PAGE = 24;
-  const [allImageDocDatas, setAllImageDocDatas] = useState([]);
   const [imageDocDatas, setImageDocDatas] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [pageCount, setPageCount] = useState(0);
+  const [pageChagne, setPageChange] = useState(false);
   const [loading, setLoading] = useState(true);
   const [firstRender, setFirstRender] = useState(true);
 
-
+  const client = algoliasearch('RTARA2D6OV', '9d33e041c943d00c8ec1028ac2dc79b2');
+  const index = client.initIndex('user_videos');
   const toast = useToast();
 
   useEffect(() => {
-    if (search) {
-      const fetchImages = async () => {
-        const userId = auth.currentUser?.uid;
-        let imageCollectionRef;
-        
-        switch (fetchMode) {
-          case "userLiked":
-            imageCollectionRef = collection(db, `users/${userId}/userLikedImages`);
-            break;
-          case "userUploads":
-            imageCollectionRef = collection(db, `users/${userId}/images`);
-            break;
-          case "allImages":
-          default:
-            imageCollectionRef = collectionGroup(db, "images");
-        }
-        let imageDocs;
-        if (fetchMode === "userLiked") {
-          const likedImagesQuery = query(imageCollectionRef, orderBy('likedAt', 'desc'));
-          let querySnapshot = await getDocs(likedImagesQuery);
-          let imageIds = querySnapshot.docs.map(doc => doc.id);
+    if (search || pageChagne) {
+      const selectedVideoTagNames = videoTag.map(tag => tag.name);
+      const videoTagFilter = selectedVideoTagNames.map(tagName => `videoTag:"${tagName}"`).join(` ${videoTagMode} `);
+      const selectedSpellNames = selectedSpells.map(spell => spell.name);
+      const spellFilter = selectedSpellNames.map(spellName => `wandSpells:"${spellName}"`).join(` ${selectedSpellsMode} `);
 
-          imageDocs = [];
-          for (let imageId of imageIds) {
-            const imagesQuery = query(collectionGroup(db, "images"), where('fileId', '==', imageId));
-            let imageQuerySnapshot = await getDocs(imagesQuery);
+      let combinedFilter = "";
 
-            if (!imageQuerySnapshot.empty) {
-              imageDocs.push(imageQuerySnapshot.docs[0]);
-            }
-          }
-        } else {
-          const imagesQuery = query(imageCollectionRef, orderBy('timestamp', 'desc'));
-          const querySnapshot = await getDocs(imagesQuery);
-          imageDocs = querySnapshot.docs;
-        }
-        
-        const downloadPromises = imageDocs.map(async (doc) => {
-          try {
-            const filePath = doc.data().filePath;
-            const userDefinedWandSpellPaths = doc.data().wandSpells.map(spell => spell.path);
-            const userDefinedTagPaths = doc.data().videoTag.map(tag => tag.path);
-            const checkSelectedSpells = (selectedSpells, userDefinedWandSpellPaths) => {
-              const selectedSpellPathArray = selectedSpells.map(spell => spell.path);
-              if (selectedSpellsMode === "OR") {
-                return selectedSpellPathArray.some(spell => userDefinedWandSpellPaths.includes(spell));
-              } else if (selectedSpellsMode === "AND") {
-                return selectedSpellPathArray.every(spell => userDefinedWandSpellPaths.includes(spell));
-              }
-              return false;
-            }
-            const checkVideoTag = (videoTag, userDefinedTagPaths) => {
-              const videoTagPathArray = videoTag.map(tag => tag.path);
-              if (videoTagMode === "OR") {
-                return videoTagPathArray.some(tag => userDefinedTagPaths.includes(tag));
-              } else if (videoTagMode === "AND") {
-                return videoTagPathArray.every(tag => userDefinedTagPaths.includes(tag));
-              }
-              return false;
-            }
-            // Check if all of the selectedSpells are part of the userDefinedWandSpellPaths URL
-            if ((selectedSpells.length === 0 || checkSelectedSpells(selectedSpells, userDefinedWandSpellPaths)) &&
-                (videoTag.length === 0 || checkVideoTag(videoTag, userDefinedTagPaths))) {
-              const storageRef = ref(storage, filePath); // use the full file path stored in the document
-              const url = await getDownloadURL(storageRef);
-              return {
-                url: url,
-                ...doc.data()
-              };
-            }
-          } catch (error) {
-            console.log("Error: ", error);
-          }
+      if (videoTagFilter && spellFilter) {
+        combinedFilter = `${videoTagFilter} AND ${spellFilter}`;
+      } else if (videoTagFilter) {
+        combinedFilter = videoTagFilter;
+      } else if (spellFilter) {
+        combinedFilter = spellFilter;
+      }
+
+      index.search('', {
+        filters: combinedFilter,
+        hitsPerPage: ITEMS_PER_PAGE,
+        page: currentPage
+      })
+      .then(async ({ hits, nbPages }) => {
+        console.log("hits: ", hits);
+
+        const downloadPromises = hits.map(async (hit) => {
+          const filePath = hit.filePath;
+          const storageRef = ref(storage, filePath); // use the full file path stored in the document
+          const url = await getDownloadURL(storageRef);
+          return {
+            url: url,
+            ...hit
+          };
         });
 
         const allImageUrls = await Promise.all(downloadPromises);
         const filteredImageUrls = allImageUrls.filter(url => url);
-        setAllImageDocDatas(filteredImageUrls);
-        setPageCount(Math.ceil(filteredImageUrls.length / ITEMS_PER_PAGE));
+        setImageDocDatas(filteredImageUrls);
+        setPageCount(nbPages);
         setLoading(false);
 
-
-        if (!firstRender) {
+        if (!firstRender && search) {
           // ここで Toast を表示します
           toast({
             title: "Search Complete",
@@ -140,18 +96,16 @@ const VideoCardList = ({videoCardMode, fetchMode, selectedSpells, selectedSpells
             position: "bottom-right",
           });
         }
-
         setFirstRender(false);
-      };
-    
-      fetchImages();
+      });
       setSearch(false);
+      setPageChange(false);
     }
-  }, [search]); // dependency on search
+  }, [search, pageChagne, currentPage]);
 
-  useEffect(() => {
-    setImageDocDatas(allImageDocDatas.slice(currentPage * ITEMS_PER_PAGE, (currentPage + 1) * ITEMS_PER_PAGE));
-  }, [allImageDocDatas, currentPage]);
+  // useEffect(() => {
+  //   setImageDocDatas(allImageDocDatas.slice(currentPage * ITEMS_PER_PAGE, (currentPage + 1) * ITEMS_PER_PAGE));
+  // }, [allImageDocDatas, currentPage]);
 
   const useCustomBreakpointsValue = () => {
     const [isLargerThan800] = useMediaQuery("(min-width: 800px)");
@@ -173,10 +127,10 @@ const VideoCardList = ({videoCardMode, fetchMode, selectedSpells, selectedSpells
 
   const handlePageClick = ({ selected }) => {
     setCurrentPage(selected);
+    setPageChange(true);
   };
 
   const handleDelete = async (imageDocData) => {
-    const userId = auth.currentUser.uid;
     const deleteWebmVideo = httpsCallable(functions, 'deleteWebmVideo');
     try {
       const response = await deleteWebmVideo({imageDocData: imageDocData});
@@ -187,34 +141,6 @@ const VideoCardList = ({videoCardMode, fetchMode, selectedSpells, selectedSpells
         console.error("Error removing document: ", response.data.error);
         throw new Error(errorMessage);
       }
-
-      // const likedByQuery = query(collection(db, 'users', userId, 'images', imageDocData.fileId, 'likedBy'));
-      // const likedBySnapshot = await getDocs(likedByQuery);
-
-      // const batch = writeBatch(db); // Use batch to perform multiple operations
-
-      // // For each user that liked the image, delete the image from their 'userLikedImages' collection
-      // likedBySnapshot.docs.forEach((docSnapshot) => {
-      //   const userLikedImageRef = doc(db, 'users', docSnapshot.id, 'userLikedImages', imageDocData.fileId);
-      //   batch.delete(userLikedImageRef);
-      // });
-
-      // // Finally, delete the documents from the 'likedBy' subcollection
-      // likedBySnapshot.docs.forEach((docSnapshot) => {
-      //   batch.delete(docSnapshot.ref);
-      // });
-
-      // // Commit the batch
-      // await batch.commit();
-
-      // const docRef = doc(db, 'users', userId, 'images', imageDocData.fileId);
-      // await deleteDoc(docRef);
-      // console.log("Document successfully deleted!");
-
-      // // Update the state to remove the deleted card
-      // const newImageDocDatas = imageDocDatas.filter(docData => docData.fileId !== imageDocData.fileId);
-      // setImageDocDatas(newImageDocDatas);
-
       // Show a success toast
       toast({
         title: "Success",
@@ -226,8 +152,6 @@ const VideoCardList = ({videoCardMode, fetchMode, selectedSpells, selectedSpells
       });
     } catch (error) {
       console.error("Error removing document: ", error);
-
-      // Optionally, you could show an error toast if the deletion failed
       toast({
         title: "Error",
         description: "Failed to delete.",

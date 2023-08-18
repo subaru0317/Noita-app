@@ -7,10 +7,10 @@
 .page-item {
   list-style: none;
   border: 1px solid #ddd;
-  padding: 5px 10px;
   margin: 0;
   cursor: pointer;
   border-radius: 0;
+  padding: 0;
 }
 
 .page-item:first-child {
@@ -32,4 +32,6 @@
 .page-link {
   text-decoration: none;
   color: inherit;
+  display: block;
+  padding: 5px;
 }

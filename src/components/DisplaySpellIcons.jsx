@@ -6,9 +6,9 @@ const DisplaySpellIcons = ({ spells }) => {
     <VStack alignItems="flex-start">
       <Flex wrap="wrap" gap={1}>
         <Text>Spell: </Text>
-        {spells.map(spell => {
+        {spells.map((spell, index) => {
           return (
-            <SpellIcon spell={spell} key={spell.id}  />
+            <SpellIcon spellName={spell.name} key={index}  />
           );
         })}
       </Flex>

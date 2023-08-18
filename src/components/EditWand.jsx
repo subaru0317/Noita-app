@@ -43,6 +43,8 @@ const SortableSpellWand = ({ wandSpells, setWandSpells }) => {
       transition
     };
 
+    
+
     let borderColor;
     switch (spell.type) {
       case 'projectile':

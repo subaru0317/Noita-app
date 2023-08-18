@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import VideoCard from "./VideoCard";
 import { Box, IconButton, VStack, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, Button } from "@chakra-ui/react";
 import { BiEditAlt, BiTrash } from "react-icons/bi";
-// import { auth } from "../firebase"
 
 const EditableVideoCard = ({imageDocData, onDelete}) => {
   const [isOpen, setIsOpen] = useState(false)

@@ -42,7 +42,7 @@ const SpellIconButton = memo(({spell, setSpells}) => {
   return (
     <IconButton
       _hover={{ bg: hoverColor }}
-      icon={<SpellIcon spell={spell} bg={bgColor}/>}
+      icon={<SpellIcon spellName={spell.name} bg={bgColor}/>}
       onClick={handleSpellButtonClick}
     />
   );

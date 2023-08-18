@@ -66,18 +66,21 @@ const ImageUploader = memo(({fileSelected, wandSpells, videoDescription, videoTi
           console.log("Gif to Webm!");
           const webmFilePath = response.data.filePath;
           
-          const webmFileRef = ref(storage, webmFilePath);
-          const webmFileURL = await getDownloadURL(webmFileRef);
+          // const webmFileRef = ref(storage, webmFilePath);
+          // const webmFileURL = await getDownloadURL(webmFileRef);
           
+          const videoTagNames = videoTag.map(tag => tag.name);
+          const wandSpellNames = wandSpells.map(spell => spell.name);
           const fileInfo = {
             userId: userId,
             fileId: newImageDocRef.id,
-            fileName: webmFilePath,
-            filePath: webmFileURL,
-            wandSpells: wandSpells,
+            // fileName: webmFilePath,
+            // filePath: webmFileURL,
+            filePath: webmFilePath,
+            wandSpells: wandSpellNames,
             description: videoDescription,
             videoTitle: videoTitle,
-            videoTag: videoTag,
+            videoTag: videoTagNames,
             likeCount: 0,
             timestamp: serverTimestamp(),
           };

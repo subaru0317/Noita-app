@@ -10,7 +10,7 @@ const SpellAddButton = memo(({ spell, onAddToBoard }) => {
   return (
     <IconButton
       aria-label="Add to board"
-      icon={<SpellIcon spell={spell} bg={bgColor} size="35px"/>}
+      icon={<SpellIcon spellName={spell.name} bg={bgColor} size="35px"/>}
       onClick={() => { if (onAddToBoard) onAddToBoard(spell) }}
       _hover={{ bg: hoverColor }}
       boxSize="35px"

@@ -1,7 +1,12 @@
 import { memo } from "react";
 import { Tag, TagLabel, TagLeftIcon, Tooltip, Box } from "@chakra-ui/react";
+import TagList from "./TagList";
 
-const VideoTagItem = memo(({ tag, isSelected = false, onClick = () => {}, withTooltip = true }) => {
+const VideoTagItem = memo(({ tagName, isSelected = false, onClick = () => {}, withTooltip = true }) => {
+  const findTagbyName = (name) => {
+    return TagList.find(tag => tag.name === name);
+  }
+  const tag = findTagbyName(tagName);
   const tagItem = (
     <Tag
       size="md"
