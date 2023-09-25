@@ -3,7 +3,7 @@ import { Flex, Box, Heading } from "@chakra-ui/react";
 import VideoCard from '../components/VideoCard';
 
 const DetailVideoCard = memo(({imageDocData}) => {
-  console.log("imageDocData", imageDocData);
+  // console.log("imageDocData", imageDocData);
   return (
     <Flex direction={{ base: "column", md: "row" }} align="start" justify="space-between" maxW="800px">
       {imageDocData && <VideoCard imageDocData={imageDocData} isLinkActive={false} />}

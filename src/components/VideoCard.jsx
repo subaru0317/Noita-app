@@ -2,13 +2,14 @@ import { useEffect, useState, useMemo, memo } from 'react';
 import { Link } from "react-router-dom";
 import { Box, Flex, Text, Wrap, WrapItem } from "@chakra-ui/react";
 import { auth, storage } from '../firebase';
-import { ref } from 'firebase/storage';
+import { ref, getDownloadURL } from 'firebase/storage';
 import { onAuthStateChanged } from "firebase/auth";
 import LikeButton from "./LikeButton";
 import SpellIcon from './SpellIcon';
 import VideoTagItem from "./VideoTagItem";
 
 const VideoCard = memo(({ imageDocData, isLinkActive = true }) => {
+  console.log("imageDocData: ", imageDocData);
   const date = new Date(imageDocData.timestamp);
 
   const year = date.getFullYear();
@@ -36,12 +37,30 @@ const VideoCard = memo(({ imageDocData, isLinkActive = true }) => {
     }
   } : {};
 
+  const [videoUrl, setVideoUrl] = useState(null);
+
+  useEffect(() => {
+    const videoRef = ref(storage, imageDocData.filePath);
+
+    // 動画ファイルのダウンロードURLを取得
+    getDownloadURL(videoRef)
+      .then((url) => {
+        setVideoUrl(url); // ダウンロードURLを設定
+      })
+      .catch((error) => {
+        console.error("動画のダウンロードに失敗しました．", error);
+      });
+  }, [imageDocData.filePath]);
+
   const videoDetailUrl = useMemo(() => `/list/${imageDocData.fileId}`, [imageDocData.fileId]);
-  console.log("imageDocData: ", imageDocData);
-  console.log("imageDocData.wandSpells: ", imageDocData.wandSpells);
+
   const cardContent = (
     <Box minW="382px" maxW="sm" borderWidth="1px" borderRadius="lg" overflow="hidden" mb={6} {...hoverAndClickStyles}>
-      <video src={imageDocData.url} alt="Video description" controls loop autoPlay muted/>
+      {videoUrl ? (
+        <video src={videoUrl} alt="Video description" controls loop autoPlay muted />
+      ) : (
+        <p>Loading video...</p>
+      )}
       <Box p="6">
         <Wrap spacing={0} justify="start">
           <Text ab='b'>
