@@ -10,7 +10,7 @@ const ffmpeg_static = require('ffmpeg-static');
 
 const bucket = admin.storage().bucket();
 
-exports.convertGifToWebm = functions.runWith({timeoutSeconds: 300}).https.onCall(async (data, context) => {
+exports.convertGifToWebm = functions.runWith({timeoutSeconds: 540}).https.onCall(async (data, context) => {
   const filePath = data.filePath;
   const fileName = path.basename(filePath);
   const userId = context.auth.uid; // Here you get the userId from the authenticated user

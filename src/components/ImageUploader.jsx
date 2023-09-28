@@ -62,7 +62,6 @@ const ImageUploader = memo(({fileSelected, wandSpells, videoDescription, videoTi
           // Cloud Functionの呼び出し
           const convertGifToWebm = httpsCallable(functions, 'convertGifToWebm');
           const response = await convertGifToWebm({ filePath: filePath });
-
           console.log("Gif to Webm!");
           const webmFilePath = response.data.filePath;
           
@@ -93,6 +92,7 @@ const ImageUploader = memo(({fileSelected, wandSpells, videoDescription, videoTi
           setUploadProgress(0);
           console.log("Upload File!");
         } catch (error) {
+          console.log("ここのエラーが発生！")
           setUploading(false);
           setUploadProgress(0);
           toast({
