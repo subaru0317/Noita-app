@@ -36,7 +36,7 @@ const VideoCardList = ({videoCardMode, fetchMode, selectedSpells, selectedSpells
   const [imageDocDatas, setImageDocDatas] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [pageCount, setPageCount] = useState(0);
-  const [pageChagne, setPageChange] = useState(false);
+  const [pageChange, setPageChange] = useState(false);
   const [loading, setLoading] = useState(true);
   const [firstRender, setFirstRender] = useState(true);
 
@@ -45,7 +45,7 @@ const VideoCardList = ({videoCardMode, fetchMode, selectedSpells, selectedSpells
   const toast = useToast();
 
   useEffect(() => {
-    if (search || pageChagne) {
+    if (search || pageChange) {
       const selectedVideoTagNames = videoTag.map(tag => tag.name);
       const videoTagFilter = selectedVideoTagNames.map(tagName => `videoTag:"${tagName}"`).join(` ${videoTagMode} `);
       const selectedSpellNames = selectedSpells.map(spell => spell.name);
@@ -101,7 +101,7 @@ const VideoCardList = ({videoCardMode, fetchMode, selectedSpells, selectedSpells
       setSearch(false);
       setPageChange(false);
     }
-  }, [search, pageChagne, currentPage]);
+  }, [search, pageChange, currentPage]);
 
   // useEffect(() => {
   //   setImageDocDatas(allImageDocDatas.slice(currentPage * ITEMS_PER_PAGE, (currentPage + 1) * ITEMS_PER_PAGE));

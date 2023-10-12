@@ -29,7 +29,7 @@ const VideoListPage = () => {
         <Heading as='h2' size='xl'> Favorite </Heading>
       </Box>
       <SpacingDivider />
-      <VStack mt={5} ml={5} align="start" spacing={4}>
+      {/* <VStack mt={5} ml={5} align="start" spacing={4}>
         <HStack>
           <Box flexShrink={0}>
             <FilterModal setSelectedSpells={setSelectedSpells} />
@@ -52,7 +52,7 @@ const VideoListPage = () => {
           <SearchButton setSearch={setSearch} />
         </Box>
       </VStack>
-      <SpacingDivider />
+      <SpacingDivider /> */}
       <VideoCardList
         videoCardMode={"normal"}
         fetchMode={"userLiked"}

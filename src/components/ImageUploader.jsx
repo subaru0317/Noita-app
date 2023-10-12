@@ -60,7 +60,7 @@ const ImageUploader = memo(({fileSelected, wandSpells, videoDescription, videoTi
           const filePath = 'images/' + fileName;
           console.log("Modal Open!");
           // Cloud Functionの呼び出し
-          const convertGifToWebm = httpsCallable(functions, 'convertGifToWebm');
+          const convertGifToWebm = httpsCallable(functions, 'convertGifToWebm', { timeout: 5400 * 1000 });
           const response = await convertGifToWebm({ filePath: filePath });
           console.log("Gif to Webm!");
           const webmFilePath = response.data.filePath;
