@@ -21,6 +21,7 @@
     "axios": "^1.4.0",
     "data-fns": "^1.1.0",
     "date-fns": "^2.30.0",
+    "dayjs": "^1.11.10",
     "firebase": "^9.23.0",
     "firebaseui": "^6.0.2",
     "polished": "^4.2.2",

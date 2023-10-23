@@ -60,7 +60,7 @@ const UserMenu = () => {
           _active={{ boxShadow: 'none' }}
         >
           <Flex alignItems="center">
-            <Avatar src={userData.userIcon} name={userData.userName} />
+            {/* <Avatar src={userData.userIcon} name={userData.userName} /> */}
             <Box width="4px" />
             <Text>{userData.userName}</Text>
           </Flex>
@@ -106,11 +106,11 @@ const UserMenu = () => {
   );
 }
 
-const getIconUrl = async () => {
-  const defaultIconRef = ref(storage, 'defaultIcons/DefaultUserIcon.webp');
-  const url = await getDownloadURL(defaultIconRef);
-  return url;
-};
+// const getIconUrl = async () => {
+//   const defaultIconRef = ref(storage, 'defaultIcons/DefaultUserIcon.webp');
+//   const url = await getDownloadURL(defaultIconRef);
+//   return url;
+// };
 
 const SignInButton = () => {
   const navigate = useNavigate();
@@ -123,12 +123,12 @@ const SignInButton = () => {
       if (!docSnap.exists()) {
         // User is signing in for the first time. 
         // Let's set their name and icon to the values from the provider
-        const defaultIconUrl = await getIconUrl();
-        auth.currentUser.photoURL = defaultIconUrl;
+        // const defaultIconUrl = await getIconUrl();
+        // auth.currentUser.photoURL = defaultIconUrl;
         await setDoc(userRef, {
           userId: user.uid,
           userName: user.displayName,
-          userIcon: defaultIconUrl
+          // userIcon: defaultIconUrl
         });
         // Navigate to the user's user page
         navigate(`/mypage/${user.uid}`);

@@ -4,45 +4,15 @@ import { Box, Flex, Text, Wrap, WrapItem } from '@chakra-ui/react';
 import { auth, storage } from '../firebase';
 import { ref, getDownloadURL } from 'firebase/storage';
 import { onAuthStateChanged } from 'firebase/auth';
+import dayjs from 'dayjs';
 import LikeButton from './LikeButton';
 import SpellIcon from './SpellIcon';
 import VideoTagItem from './VideoTagItem';
 
 const VideoCard = memo(({ imageDocData, isLinkActive = true }) => {
-  let dateString;
-  // ここがわけわからん
-  // 動画が，
-  // 一覧表示の画面のとき(isLinkActive = true)ではtoDate()するとError．new DateならOK
-  // 詳細表示の画面のとき(isLinkActive = false)ではnew DateするとError．toDate()ならOK
-  // isLinkActiveで分岐させたが，根本的な原因が不明．なんやこれ
-  // memoでDateオブジェクトが残ってたりするのか？わからーーーん
-  // こうすればとりあえず正しく日付が表示されるようになってのでヨシ！
-  if (isLinkActive) {
-    const date = new Date(imageDocData.timestamp);
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    
-    dateString = `${year}/${month}/${day}`;
-  } else {
-    const timestamp = imageDocData.timestamp;
-    const year = timestamp.toDate().getFullYear();
-    const month = String(timestamp.toDate().getMonth() + 1).padStart(2, '0');
-    const day = String(timestamp.toDate().getDate()).padStart(2, '0');
-
-    dateString = `${year}/${month}/${day}`;
-  }
-    
+  console.log("imageDocData: ", imageDocData);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setIsLoggedIn(!!user);
-    });
-
-    return () => unsubscribe();
-  }, []);
-
+  const [videoUrl, setVideoUrl] = useState(null);
   const hoverAndClickStyles = isLinkActive
     ? {
       transition: 'transform 0.3s, box-shadow 0.3s',
@@ -52,8 +22,14 @@ const VideoCard = memo(({ imageDocData, isLinkActive = true }) => {
       },
     }
     : {};
+  
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setIsLoggedIn(!!user);
+    });
 
-  const [videoUrl, setVideoUrl] = useState(null);
+    return () => unsubscribe();
+  }, []);
 
   useEffect(() => {
     const videoRef = ref(storage, imageDocData.filePath);
@@ -68,7 +44,7 @@ const VideoCard = memo(({ imageDocData, isLinkActive = true }) => {
   }, [imageDocData.filePath]);
 
   const videoDetailUrl = useMemo(() => `/list/${imageDocData.fileId}`, [imageDocData.fileId]);
-
+  const createDate = dayjs(imageDocData.created_at.toDate());
   const cardContent = (
     <Box minW="382px" maxW="sm" borderWidth="1px" borderRadius="lg" overflow="hidden" mb={6} {...hoverAndClickStyles}>
       {videoUrl ? (
@@ -95,7 +71,9 @@ const VideoCard = memo(({ imageDocData, isLinkActive = true }) => {
           ))}
         </Wrap>
         <Flex justifyContent="space-between" alignItems="center" mt="2">
-          <Text color="#747474">{dateString}</Text>
+          <time dateTime={createDate.format('YYYY-MM-DD')}>
+            {createDate.format('YYYY-MM-DD')}
+          </time>
           <LikeButton imageDocData={imageDocData} isLoggedIn={isLoggedIn} />
         </Flex>
       </Box>

@@ -1,8 +1,11 @@
 // 選択したパスからVideoCardをFetchする関数を作成する．
-import { storage } from '../firebase';
-import { ref, listAll, getDownloadURL } from 'firebase/storage';
+// userLikedImages -> images 情報を取得
+import { storage, db } from '../firebase';
+import { ref, getDownloadURL } from 'firebase/storage';
 import { Grid, GridItem, Spinner, Container, useMediaQuery, Box } from "@chakra-ui/react";
+import { collection, collectionGroup, getDocs, where, query } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import ReactPaginate from "react-paginate";
 import VideoCard from "./VideoCard";
 import "./Pagination.css";
@@ -18,8 +21,8 @@ import "./Pagination.css";
 //   wandSpells: Array() Object {id, name, path, type}
 // }
 
-const VideoCardList = ({videoIds}) => {
-  console.log("videoIds: ", videoIds);
+const FavoriteVideoCardList = () => {
+  const { userId } = useParams();
   const ITEMS_PER_PAGE = 24;
   const [imageDocDatas, setImageDocDatas] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
@@ -28,46 +31,42 @@ const VideoCardList = ({videoIds}) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const downloadVideo = async (videoId) => {
-      const videoRef = ref(storage, `images/${videoId}`)
+    const fetchData = async () => {
+      const querySnapshot = await getDocs(collection(db, "users", userId, "userLikedImages"));
+      const videoPaths = [];
+      for (const doc of querySnapshot.docs) {
+        const q = query(collectionGroup(db, 'images'), where('fileId', '==', doc.id));
+        const result = await getDocs(q);
+        result.forEach((doc) => {
+          videoPaths.push(doc.data().filePath);
+          setImageDocDatas([...imageDocDatas, doc.data()]);
+        });
+      }
+      await downloadVideos(videoPaths);
+    }
+    const downloadVideo = async (videoPath) => {
+      const videoRef = ref(storage, videoPath)
       try {
         const url = await getDownloadURL(videoRef);
         return url;
       } catch (error) {
-        console.error("Error downloading image", videoId, ":", error);
+        console.error("Error downloading image", videoPath, ":", error);
         return null;
       }
     }
-    const downloadVideos = async (videoIds) => {
-      const urls = await Promise.all(videoIds.map(downloadVideo));
-      console.log("urls: ", urls);
-      setImageDocDatas(urls.filter(url => url !== null));
-      setLoading(false);
+    const downloadVideos = async (videoPaths) => {
+      try {
+        const urls = await Promise.all(videoPaths.map(downloadVideo));
+        setLoading(false);
+        return urls;
+      } catch (error) {
+        console.error("Error downloading videos:", error);
+        setLoading(false);
+        return null;
+      }
     }
-    downloadVideos(videoIds)
+    fetchData();
   }, [])
-
-
-
-  // useEffect(() => {
-  //     const fetchVideo = async () => {
-  //       const storageRef = ref(storage, 'images/');
-  //       const listResult = await listAll(storageRef);
-  //       const filePromises = listResult.items.map(async (item) => {
-  //         const url = await getDownloadURL(item);
-  //         return {
-  //           url: url,
-  //         };
-  //       });
-  //       const downloadedFiles = await Promise.all(filePromises);
-  //       setImageDocDatas(downloadedFiles);
-  //       setPageCount(Math.ceil(downloadedFiles.length / ITEMS_PER_PAGE));
-  //       setLoading(false);
-  //     };
-
-  //     fetchVideo();
-  //   }, [])
-
 
   const useCustomBreakpointsValue = () => {
     const [isLargerThan800] = useMediaQuery("(min-width: 800px)");
@@ -136,4 +135,4 @@ const VideoCardList = ({videoIds}) => {
   );
 }
 
-export default VideoCardList;
+export default FavoriteVideoCardList;

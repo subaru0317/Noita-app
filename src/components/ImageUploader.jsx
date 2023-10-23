@@ -2,7 +2,7 @@ import { Button, useToast, CircularProgress, Modal, ModalOverlay, ModalContent, 
 import { useState, memo } from "react";
 import "./ImageUpload.css";
 import { storage, db, auth, functions } from "../firebase";
-import { ref, uploadBytesResumable, getDownloadURL, deleteObject } from "firebase/storage";
+import { ref, uploadBytesResumable, getDownloadURL, deleteObject, getMetadata } from "firebase/storage";
 import { collection, setDoc, serverTimestamp, doc } from "firebase/firestore";
 import { httpsCallable } from 'firebase/functions';
 
@@ -67,7 +67,7 @@ const ImageUploader = memo(({fileSelected, wandSpells, videoDescription, videoTi
           
           // const webmFileRef = ref(storage, webmFilePath);
           // const webmFileURL = await getDownloadURL(webmFileRef);
-          
+
           const videoTagNames = videoTag.map(tag => tag.name);
           const wandSpellNames = wandSpells.map(spell => spell.name);
           const fileInfo = {
@@ -81,7 +81,7 @@ const ImageUploader = memo(({fileSelected, wandSpells, videoDescription, videoTi
             videoTitle: videoTitle,
             videoTag: videoTagNames,
             likeCount: 0,
-            timestamp: serverTimestamp(),
+            created_at: new Date(),
           };
           
           console.log('Adding document to Firestore...');

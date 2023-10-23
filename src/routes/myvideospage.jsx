@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import VideoCardList from '../components/VideoCardList';
+import FilteredVideoCardList from '../components/FilteredVideoCardList';
 import FilterModal from '../components/FilterModal';
 import SpacingDivider from "../components/SpacingDivider";
 import SelectedVideoTag from "../components/SelectedVideoTag";
@@ -53,7 +53,7 @@ const VideoListPage = () => {
         </Box>
       </VStack>
       <SpacingDivider /> */}
-      <VideoCardList
+      <FilteredVideoCardList
         videoCardMode={"editable"}
         fetchMode={"userUploads"}
         selectedSpells={selectedSpells}
