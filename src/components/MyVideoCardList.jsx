@@ -30,7 +30,7 @@ const FavoriteVideoCardList = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const querySnapshot = await getDocs(collection(db, "users", userId, "userLikedImages"));
+      const querySnapshot = await getDocs(collection(db, "users", userId, "images"));
       const videoPaths = [];
       const newImageDocDatas = [];
       for (const doc of querySnapshot.docs) {
@@ -72,7 +72,7 @@ const FavoriteVideoCardList = () => {
     const [isLargerThan800] = useMediaQuery("(min-width: 800px)");
     const [isLargerThan1200] = useMediaQuery("(min-width: 1200px)");
     const [isLargerThan1600] = useMediaQuery("(min-width: 1600px)");
-  
+
     if (isLargerThan1600) {
       return "repeat(4, 1fr)";
     } else if (isLargerThan1200) {
@@ -83,7 +83,7 @@ const FavoriteVideoCardList = () => {
       return "repeat(1, 1fr)";
     }
   }
-  
+
   const gridTemplateColumns = useCustomBreakpointsValue();
 
   const handlePageClick = ({ selected }) => {
@@ -98,7 +98,7 @@ const FavoriteVideoCardList = () => {
         <Container centerContent>
           <Grid templateColumns={gridTemplateColumns} gap={6}>
             {imageDocDatas.length > 0 ? (
-              imageDocDatas.map((imageDocData, index) => 
+              imageDocDatas.map((imageDocData, index) =>
                 imageDocData && (
                   <GridItem key={index}>
                     <VideoCard imageDocData={imageDocData} />
