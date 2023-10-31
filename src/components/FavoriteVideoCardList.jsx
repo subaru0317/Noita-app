@@ -34,17 +34,20 @@ const FavoriteVideoCardList = () => {
     const fetchData = async () => {
       const querySnapshot = await getDocs(collection(db, "users", userId, "userLikedImages"));
       const videoPaths = [];
+      const newImageDocDatas = [];
       for (const doc of querySnapshot.docs) {
         const q = query(collectionGroup(db, 'images'), where('fileId', '==', doc.id));
         const result = await getDocs(q);
         result.forEach((doc) => {
           videoPaths.push(doc.data().filePath);
-          setImageDocDatas([...imageDocDatas, doc.data()]);
+          newImageDocDatas.push(doc.data());
         });
       }
+      setImageDocDatas((prevImageDocDatas) => [...newImageDocDatas]);
       await downloadVideos(videoPaths);
     }
     const downloadVideo = async (videoPath) => {
+      console.log("videoPath: ", videoPath);
       const videoRef = ref(storage, videoPath)
       try {
         const url = await getDownloadURL(videoRef);
@@ -55,8 +58,10 @@ const FavoriteVideoCardList = () => {
       }
     }
     const downloadVideos = async (videoPaths) => {
+      console.log("videoPaths: ", videoPaths);
       try {
         const urls = await Promise.all(videoPaths.map(downloadVideo));
+        console.log("urls: ", urls);
         setLoading(false);
         return urls;
       } catch (error) {

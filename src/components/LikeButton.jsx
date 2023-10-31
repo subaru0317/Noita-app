@@ -55,13 +55,16 @@ const handleLikeButtonClick = async (e) => {
 
   const docSnap = await getDoc(likedByRef);
   
+  console.log("docSnap.exists(): ", docSnap.exists());
   if (docSnap.exists()) {
+    // Uncaught (in promise) FirebaseError: Missing or insufficient permissions.
     setLiked(false);
     setLikeCount(likeCount - 1);
     await deleteDoc(likedByRef);
     await deleteDoc(userLikedImagesRef);  // ユーザーが「いいね」を取り消したときに、userLikedImagesコレクションから該当のドキュメントを削除します
     await updateDoc(imageRef, { likeCount: increment(-1) });
   } else {
+    // Uncaught (in promise) FirebaseError: Missing or insufficient permissions.
     setLiked(true);
     setLikeCount(likeCount + 1);
     await setDoc(likedByRef, { likedAt: serverTimestamp() }, { merge: true });

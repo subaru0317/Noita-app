@@ -10,7 +10,6 @@ import SpellIcon from './SpellIcon';
 import VideoTagItem from './VideoTagItem';
 
 const VideoCard = memo(({ imageDocData, isLinkActive = true }) => {
-  console.log("imageDocData: ", imageDocData);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [videoUrl, setVideoUrl] = useState(null);
   const hoverAndClickStyles = isLinkActive
