@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { ChakraProvider, extendTheme } from '@chakra-ui/react';
+import { ChakraProvider, extendTheme, Flex, Box } from '@chakra-ui/react';
 import ReactDOM from 'react-dom/client'
 import VideoCardListPage from './routes/videocardlistpage';
 import VideoDetailPage from "./routes/videodetailpage";
@@ -34,11 +34,13 @@ const theme = extendTheme({ colors })
 
 const PageFrame = () => {
   return (
-    <>
+    <Flex direction="column" minH="100vh">
       <Header />
-      <Outlet />
+      <Box flex="1">
+        <Outlet />
+      </Box>
       <Footer />
-    </>
+    </Flex>
   );
 }
 
