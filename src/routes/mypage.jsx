@@ -20,11 +20,11 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { BiUser, BiEditAlt, BiTrash } from "react-icons/bi";
-import { onAuthStateChanged, updateProfile, deleteUser } from "firebase/auth";
+import { onAuthStateChanged, updateProfile } from "firebase/auth";
 import { httpsCallable } from "firebase/functions";
 import SpacingDivider from "../components/SpacingDivider";
 import { auth, db, functions } from "../firebase";
-import { doc, updateDoc, deleteDoc } from "firebase/firestore";
+import { doc, updateDoc } from "firebase/firestore";
 
 const EditUserName = ({ newUserName, setNewUserName }) => (
   <VStack spacing={2}>
@@ -69,9 +69,9 @@ const EditProfile = ({ handleCancelClick, handleSaveClick, newUserName, setNewUs
 );
 
 const DisplayProfile = ({ currentUserName, handleEditClick }) => {
-  const handleDeleteUserClick = () => {
-
-  }
+  // const handleDeleteUserClick = () => {
+      // サーバサイドで実装すべき？
+  // }
   return (
     <>
       <Flex direction="column" align="center" p={6}>
@@ -87,7 +87,7 @@ const DisplayProfile = ({ currentUserName, handleEditClick }) => {
       <Box p={6}>
         <HStack spacing={3} justify="flex-end">
           <IconButton icon={<BiEditAlt />} onClick={handleEditClick} />
-          <IconButton icon={<BiTrash />} onClick={handleDeleteUserClick} />
+          {/* <IconButton icon={<BiTrash />} onClick={handleDeleteUserClick} /> */}
         </HStack>
       </Box>
     </>
