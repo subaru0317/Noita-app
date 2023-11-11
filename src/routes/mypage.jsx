@@ -20,7 +20,6 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { BiUser, BiEditAlt, BiTrash } from "react-icons/bi";
-import { useParams } from "react-router-dom";
 import { onAuthStateChanged, updateProfile, deleteUser } from "firebase/auth";
 import { httpsCallable } from "firebase/functions";
 import SpacingDivider from "../components/SpacingDivider";
@@ -47,10 +46,61 @@ const EditUserName = ({ newUserName, setNewUserName }) => (
   </VStack>
 );
 
-const EditProfile = ({ handleCancelClick, handleSaveClick }) => {
-  const { userId } = useParams();
-  const toast = useToast();
+const EditProfile = ({ handleCancelClick, handleSaveClick, newUserName, setNewUserName }) => (
+  <>
+    <Flex direction="column" align="center" p={6}>
+      <Box align="center">
+        <Avatar size="md" src={auth.currentUser.photoURL} />
+      </Box>
+      <Box mt={5}>
+        <EditUserName
+          newUserName={newUserName}
+          setNewUserName={setNewUserName}
+        />
+      </Box>
+    </Flex>
+    <Box p={6}>
+      <HStack spacing={3} justify="flex-end">
+        <Button size="sm" onClick={handleCancelClick}>Cancel</Button>
+        <Button size="sm" colorScheme="blue" onClick={handleSaveClick}>Save changes</Button>
+      </HStack>
+    </Box>
+  </>
+);
+
+const DisplayProfile = ({ currentUserName, handleEditClick }) => {
+  const handleDeleteUserClick = () => {
+
+  }
+  return (
+    <>
+      <Flex direction="column" align="center" p={6}>
+        <Box align="center">
+          <Avatar size="md" src={auth.currentUser.photoURL} />
+        </Box>
+        <Box mt={5}>
+          <Stack spacing={1}>
+            <Text fontSize="2xl">{currentUserName}</Text>
+          </Stack>
+        </Box>
+      </Flex>
+      <Box p={6}>
+        <HStack spacing={3} justify="flex-end">
+          <IconButton icon={<BiEditAlt />} onClick={handleEditClick} />
+          <IconButton icon={<BiTrash />} onClick={handleDeleteUserClick} />
+        </HStack>
+      </Box>
+    </>
+  );
+}
+
+const UserCard = ({ currentUserName, setCurrentUserName }) => {
+  const [isEditing, setIsEditing] = useState(false);
   const [newUserName, setNewUserName] = useState("")
+
+  const toast = useToast();
+  const handleEditClick = () => setIsEditing(true);
+  const handleCancelClick = () => setIsEditing(false);;
 
   const updateUserInfo = async () => {
     try {
@@ -74,10 +124,8 @@ const EditProfile = ({ handleCancelClick, handleSaveClick }) => {
           console.log(result.data.result); // "User comments updated successfully"
         });
       }
-
-      setIsEditing(false);
     } catch (error) {
-      console.error("Error updating user info:", error);
+      // console.error("Error updating user info:", error);
       toast({
         title: "Error updating user info.",
         description: error.message, // This displays the error message from Firebase
@@ -86,67 +134,14 @@ const EditProfile = ({ handleCancelClick, handleSaveClick }) => {
         isClosable: true,
         position: "bottom-right",
       });
-    } finally {
-      handleCancelClick(); // Call handleCancelClick to reset to the previous state
     }
   };
-  return (
-    <>
-      <Flex direction="column" align="center" p={6}>
-        <Box align="center">
-          <Avatar size="md" src={auth.currentUser.photoURL} />
-        </Box>
-        <Box mt={5}>
-          <EditUserName
-            newUserName={newUserName}
-            setNewUserName={setNewUserName}
-          />
-        </Box>
-      </Flex>
-      <Box p={6}>
-        <HStack spacing={3} justify="flex-end">
-          <Button size="sm" onClick={handleCancelClick}>Cancel</Button>
-          <Button size="sm" colorScheme="blue" onClick={updateUserInfo}>Save changes</Button>
-        </HStack>
-      </Box>
-    </>
-  );
-}
 
-const DisplayProfile = ({ currentUserName, handleEditClick }) => (
-  <>
-    <Flex direction="column" align="center" p={6}>
-      <Box align="center">
-        <Avatar size="md" src={auth.currentUser.photoURL} />
-      </Box>
-      <Box mt={5}>
-        <Stack spacing={1}>
-          <Text fontSize="2xl">{currentUserName}</Text>
-        </Stack>
-      </Box>
-    </Flex>
-    <Box p={6}>
-      <HStack spacing={3} justify="flex-end">
-        <IconButton icon={<BiEditAlt />} onClick={handleEditClick} />
-        {/* <IconButton icon={<BiTrash />} onClick={deleteUserClick} /> */}
-      </HStack>
-    </Box>
-  </>
-);
-
-const UserCard = ({ currentUserName, setCurrentUserName }) => {
-  const [isEditing, setIsEditing] = useState(false);
-
-  const handleEditClick = () => {
-    setIsEditing(true);
-  };
-
-  const handleCancelClick = () => {
+  const handleSaveClick = async () => {
+    await updateUserInfo();
+    setCurrentUserName(newUserName);
+    setNewUserName("");
     setIsEditing(false);
-  };
-
-  const handleSaveClick = () => {
-
   }
 
   return (
@@ -155,6 +150,8 @@ const UserCard = ({ currentUserName, setCurrentUserName }) => {
         <EditProfile
           handleCancelClick={handleCancelClick}
           handleSaveClick={handleSaveClick}
+          newUserName={newUserName}
+          setNewUserName={setNewUserName}
         />
       ) : (
         <DisplayProfile currentUserName={currentUserName} handleEditClick={handleEditClick} />
