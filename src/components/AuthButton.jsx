@@ -1,11 +1,10 @@
 import { useState, useEffect } from "react";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { doc, getDoc, onSnapshot, setDoc } from "firebase/firestore";
-import { ref, getDownloadURL } from "firebase/storage";
-import { auth, db, storage } from "../firebase";
+import { auth, db } from "../firebase";
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import { useAuthState } from "react-firebase-hooks/auth";
-import { Menu, MenuButton, MenuList, MenuItem, MenuDivider, Avatar, Button, Icon, Text, Flex, Box } from "@chakra-ui/react";
+import { Menu, MenuButton, MenuList, MenuItem, MenuDivider, Button, Icon, Text, Flex, Box } from "@chakra-ui/react";
 import { GiFairyWand } from "react-icons/gi";
 import { MdFavorite } from "react-icons/md";
 import { RiLogoutBoxRLine } from "react-icons/ri";

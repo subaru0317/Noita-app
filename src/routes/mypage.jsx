@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   Avatar,
   Box,
@@ -15,8 +15,6 @@ import {
   HStack,
   Tooltip,
   FormControl,
-  FormErrorMessage,
-  CircularProgress,
   useToast,
 } from "@chakra-ui/react";
 import { BiUser, BiEditAlt, BiTrash } from "react-icons/bi";
