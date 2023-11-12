@@ -1,13 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, lazy, Suspense } from 'react'
 import { ChakraProvider, extendTheme, Flex, Box } from '@chakra-ui/react';
 import ReactDOM from 'react-dom/client'
-import VideoCardListPage from './routes/videocardlistpage';
-import VideoDetailPage from "./routes/videodetailpage";
-import MyPage from './routes/mypage';
-import UploadVideoPage from './routes/uploadvideopage';
-import Favorite from './routes/favoritepage';
-import MyVideosPage from './routes/myvideospage';
-import ErrorPage from "./error-page";
 import Header from './components/Header';
 import Footer from './components/Footer';
 import {
@@ -32,12 +25,22 @@ const colors = {
 
 const theme = extendTheme({ colors })
 
+const VideoCardListPage = lazy(() => import('./routes/videocardlistpage'));
+const VideoDetailPage = lazy(() => import('./routes/videodetailpage'));
+const MyPage = lazy(() => import('./routes/mypage'));
+const UploadVideoPage = lazy(() => import('./routes/uploadvideopage'));
+const Favorite = lazy(() => import('./routes/favoritepage'));
+const MyVideosPage = lazy(() => import('./routes/myvideospage'));
+// const ErrorPage = lazy(() => import('./error-page'));
+
 const PageFrame = () => {
   return (
     <Flex direction="column" minH="100vh">
       <Header />
       <Box flex="1">
-        <Outlet />
+        <Suspense fallback={<div>Loading...</div>}>
+          <Outlet />
+        </Suspense>
       </Box>
       <Footer />
     </Flex>
