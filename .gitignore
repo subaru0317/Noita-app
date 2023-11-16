@@ -23,6 +23,8 @@ dist-ssr
 *.sln
 *.sw?
 
+# analyze
+stats.html
 
 # apiKey
 src/firebase.js

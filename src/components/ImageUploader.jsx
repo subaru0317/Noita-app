@@ -2,8 +2,8 @@ import { Button, useToast, CircularProgress, Modal, ModalOverlay, ModalContent, 
 import { useState, memo } from "react";
 import "./ImageUpload.css";
 import { storage, db, auth, functions } from "../firebase";
-import { ref, uploadBytesResumable, deleteObject } from "firebase/storage";
-import { collection, setDoc, doc } from "firebase/firestore";
+import { ref, uploadBytesResumable, deleteObject, getMetadata } from "firebase/storage";
+import { collection, setDoc, serverTimestamp, doc } from "firebase/firestore";
 import { httpsCallable } from 'firebase/functions';
 
 const ImageUploader = memo(({fileSelected, wandSpells, videoDescription, videoTitle, videoTag, setFileSelected, setWandSpells, setVideoDescription, setVideoTitle, setVideoTag, setPreviewSrc}) => {

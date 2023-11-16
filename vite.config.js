@@ -1,10 +1,29 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import { visualizer } from 'rollup-plugin-visualizer';
 
 // https://vitejs.dev/config/
-export default defineConfig({
-  plugins: [react()],
-})
+export default defineConfig(({ mode }) => {
+  return {
+    plugins: [
+      react(),
+      // Checker({ types: ['build'] }),
+    ],
+    build: {
+      rollupOptions: {
+        plugins: [
+          visualizer(),
+        ],
+        output: {
+          manualChunks: {
+            vendor: ['react', 'react-router-dom', 'react-dom', '@chakra-ui/icons', '@chakra-ui/react'],
+            editwand: ['@dnd-kit/core', '@dnd-kit/utilities', '@dnd-kit/sortable', 'uuid'],
+          },
+        },
+      },
+    },
+  };
+});
 
 // // export default defineConfig({
 // //   plugins: [
