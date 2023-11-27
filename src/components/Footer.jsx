@@ -1,4 +1,5 @@
 import { Box, Container, Flex, Link, Text } from '@chakra-ui/react';
+import BuyMeACoffeeButton from './BuyMeACoffeeButton';
 
 const Footer = () => {
   return (
@@ -13,14 +14,9 @@ const Footer = () => {
           </Box>
 
           <Box>
-            <Text mb="2">Follow us on:</Text>
+            <Text mb="2">Follow me:</Text>
             <Flex>
-              <Link mr="4" href="#" target="_blank" rel="noopener noreferrer">
-                Twitter
-              </Link>
-              <Link href="#" target="_blank" rel="noopener noreferrer">
-                Instagram
-              </Link>
+              <BuyMeACoffeeButton />
             </Flex>
           </Box>
         </Flex>
