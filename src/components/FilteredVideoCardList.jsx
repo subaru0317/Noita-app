@@ -1,12 +1,10 @@
-import { storage, functions } from '../firebase';
+import { storage } from '../firebase';
 import { ref, getDownloadURL } from 'firebase/storage';
 import { Grid, GridItem, Spinner, Container, useMediaQuery, useToast, Box } from "@chakra-ui/react";
 import { useEffect, useState } from 'react';
 import ReactPaginate from "react-paginate";
 import VideoCard from "./VideoCard";
-import EditableVideoCard from "./EditableVideoCard";
 import "./Pagination.css";
-import { httpsCallable } from 'firebase/functions';
 import algoliasearch from 'algoliasearch';
 import { Timestamp } from 'firebase/firestore'
 
@@ -21,17 +19,7 @@ import { Timestamp } from 'firebase/firestore'
 //   wandSpells: Array() Object {id, name, path, type}
 // }
 
-const DisplayCard = ({imageDocData, videoCardMode, onDelete}) => {
-  switch (videoCardMode) {
-    case "editable":
-      return (<EditableVideoCard imageDocData={imageDocData} onDelete={onDelete}/>);
-    case "normal":
-    default:
-      return (<VideoCard imageDocData={imageDocData} />);
-  }
-}
-
-const FilteredVideoCardList = ({videoCardMode, fetchMode, selectedSpells, selectedSpellsMode, videoTag, videoTagMode, search, setSearch}) => {
+const FilteredVideoCardList = ({selectedSpells, selectedSpellsMode, videoTag, videoTagMode, search, setSearch}) => {
   const ITEMS_PER_PAGE = 24;
   const [imageDocDatas, setImageDocDatas] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
@@ -67,17 +55,12 @@ const FilteredVideoCardList = ({videoCardMode, fetchMode, selectedSpells, select
         page: currentPage
       })
       .then(async ({ hits, nbPages }) => {
-        console.log("hits: ", hits);
-
         const downloadPromises = hits.map(async (hit) => {
           const filePath = hit.filePath;
           const storageRef = ref(storage, filePath); // use the full file path stored in the document
           const url = await getDownloadURL(storageRef);
-          console.log("hit.created_at: ", hit.created_at);
-          console.log("Timestamp.fromDate(new Date(hit.created_at)): ", Timestamp.fromDate(new Date(hit.created_at)));
           return {
             url: url,
-            // created_at: Timestamp.fromDate(new Date(hit.created_at)),
             ...hit
           };
         });
@@ -136,37 +119,6 @@ const FilteredVideoCardList = ({videoCardMode, fetchMode, selectedSpells, select
     setPageChange(true);
   };
 
-  const handleDelete = async (imageDocData) => {
-    const deleteWebmVideo = httpsCallable(functions, 'deleteWebmVideo');
-    try {
-      const response = await deleteWebmVideo({imageDocData: imageDocData});
-      if (response.data.result === 'success') {
-        console.log("File successfully deleted from Firebase Storage!");
-      } else {
-        const errorMessage = response.data.error.message || "Unknown error occurred";
-        console.error("Error removing document: ", response.data.error);
-        throw new Error(errorMessage);
-      }
-      toast({
-        title: "Success",
-        description: "Deleted!",
-        status: "success",
-        duration: 5000,
-        isClosable: true,
-        position: "bottom-right"
-      });
-    } catch (error) {
-      console.error("Error removing document: ", error);
-      toast({
-        title: "Error",
-        description: "Failed to delete.",
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-        position: "bottom-right"
-      });
-    }
-  }
   return (
     <>
       {loading ? (
@@ -178,7 +130,7 @@ const FilteredVideoCardList = ({videoCardMode, fetchMode, selectedSpells, select
               imageDocDatas.map((imageDocData, index) => 
                 imageDocData && (
                   <GridItem key={index}>
-                    <DisplayCard videoCardMode={videoCardMode} imageDocData={imageDocData} onDelete={handleDelete}/>
+                    <VideoCard imageDocData={imageDocData} />
                   </GridItem>
                 )
               )

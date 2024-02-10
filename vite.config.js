@@ -9,6 +9,17 @@ export default defineConfig(({ mode }) => {
       react(),
       // Checker({ types: ['build'] }),
     ],
+    server: {
+      // 以下のパラメータを指定しないとapp.css, app.jsのURLが0.0.0.0になってしまうため、明示的にlocalhostに変更
+      hmr: {
+        host: 'localhost'
+      },
+      // Windowsアプリでファイル編集した際に監視されない問題があるため、usePolling:trueにすることで監視を強制させる
+      // https://vitejs.dev/config/server-options.html#server-watch
+      watch: {
+        usePolling: true
+      }
+    },
     build: {
       rollupOptions: {
         plugins: [
@@ -24,92 +35,3 @@ export default defineConfig(({ mode }) => {
     },
   };
 });
-
-// // export default defineConfig({
-// //   plugins: [
-// //     react(),
-// //     {
-// //       name: "configure-response-headers",
-// //       configureServer: (server) => {
-// //         server.middlewares.use((_req, res, next) => {
-// //           const isFFmpegWasm = _req.originalUrl.includes('ffmpeg');
-// //           if (isFFmpegWasm) {
-// //             res.setHeader("Cross-Origin-Embedder-Policy", "require-corp");
-// //             res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
-// //           }
-// //           next();
-// //         });
-// //       },
-// //     },
-// //   ],
-// // })
-
-// import { defineConfig } from 'vite'
-// import react from '@vitejs/plugin-react'
-
-// export default defineConfig({
-//   plugins: [
-//     react(),
-//     {
-//       name: "configure-response-headers",
-//       configureServer: (server) => {
-//         server.middlewares.use((_req, res, next) => {
-//           res.setHeader("Cross-Origin-Embedder-Policy", "require-corp");
-//           res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
-//           next();
-//         });
-//       },
-//     },
-//   ],
-// });
-
-
-// import { defineConfig } from 'vite'
-// import react from '@vitejs/plugin-react'
-
-// export default defineConfig({
-//   plugins: [
-//     react(),
-//     {
-//       name: "configure-response-headers",
-//       configureServer: (server) => {
-//         server.middlewares.use((req, res, next) => {
-//           // リクエストが /uploadvideo ページにマッチした場合にだけヘッダを設定
-//           if (req.url.startsWith('/uploadvideo')) {
-//             res.setHeader("Cross-Origin-Embedder-Policy", "require-corp");
-//             res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
-//           }
-//           else {
-//             res.setHeader("Cross-Origin-Embedder-Policy", "unsafe-none");
-//             res.setHeader("Cross-Origin-Opener-Policy", "unsafe-none");
-//           }
-//           next();
-//         });
-//       },
-//     },
-//   ],
-// });
-
-
-
-// import { defineConfig } from 'vite'
-// import react from '@vitejs/plugin-react'
-
-// export default defineConfig({
-//   plugins: [
-//     react(),
-//     {
-//       name: "configure-response-headers",
-//       configureServer: (server) => {
-//         server.middlewares.use((req, res, next) => {
-//           // if (req.originalUrl.startsWith('/api/ffmpeg')) {
-//           if (req.originalUrl.startsWith('/api/ffmpeg')) {
-//             res.setHeader("Cross-Origin-Embedder-Policy", "require-corp");
-//             res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
-//           }
-//           next();
-//         });
-//       },
-//     },
-//   ],
-// });
