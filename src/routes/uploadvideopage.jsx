@@ -17,11 +17,9 @@ const UploadVideoPage = () => {
     videoDescription: '',
     wandSpells: null,
     // perks: null,
-    videoTag: null,
+    videoTag: [],
   });
-  const [videoDescription, setVideoDescription] = useState('');
   const [wandSpells, setWandSpells] = useState([]);
-  const [videoTag, setVideoTag] = useState([]);
   return (
     <>
       <Heading as='h2' size='xl'> Upload Video </Heading>
@@ -51,7 +49,7 @@ const UploadVideoPage = () => {
         formData={formData}
       />
       <Heading as='h4' size='md'> Tags </Heading>
-      <SelectedVideoTag videoTag={videoTag} setVideoTag={setVideoTag} />
+      <SelectedVideoTag setFormData={setFormData} formData={formData} />
       <Box my="4">
         <Heading as='h4' size='md'> Edit Wand </Heading>
         <List spacing={3} my={2}>
@@ -75,9 +73,7 @@ const UploadVideoPage = () => {
         formData={formData}
         setFormData={setFormData}
         wandSpells={wandSpells}
-        videoTag={videoTag}
         setWandSpells={setWandSpells}
-        setVideoTag={setVideoTag}
       />
     </>
   );
