@@ -1,12 +1,19 @@
 import { Input } from "@chakra-ui/react";
 
-const VideoTitleInput = ({setVideoTitle, videoTitle}) => {
+const VideoTitleInput = ({setFormData, formData}) => {
+  const handleVideoTitleChange = (e) => {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      videoTitle: e.target.value,
+    }));
+  };
+
   return (
     <Input
-      value={videoTitle}
-      onChange={(e) => setVideoTitle(e.target.value)}
+      value={formData.videoTitle}
+      onChange={handleVideoTitleChange}
       placeholder="Enter video title"
-      mb={2} 
+      mb={2}
       mt={4}
     />
   );

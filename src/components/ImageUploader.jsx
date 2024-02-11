@@ -6,7 +6,7 @@ import { ref, uploadBytesResumable, deleteObject, getMetadata } from "firebase/s
 import { collection, setDoc, serverTimestamp, doc } from "firebase/firestore";
 import { httpsCallable } from 'firebase/functions';
 
-const ImageUploader = memo(({formData, setFormData, wandSpells, videoDescription, videoTitle, videoTag, setWandSpells, setVideoDescription, setVideoTitle, setVideoTag}) => {
+const ImageUploader = memo(({formData, setFormData, wandSpells, videoDescription, videoTag, setWandSpells, setVideoDescription, setVideoTag}) => {
   const [isUploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
 
@@ -78,7 +78,7 @@ const ImageUploader = memo(({formData, setFormData, wandSpells, videoDescription
             filePath: webmFilePath,
             wandSpells: wandSpellNames,
             description: videoDescription,
-            videoTitle: videoTitle,
+            videoTitle: formData.videoTitle,
             videoTag: videoTagNames,
             likeCount: 0,
             created_at: new Date(),
@@ -114,8 +114,8 @@ const ImageUploader = memo(({formData, setFormData, wandSpells, videoDescription
       ...prevFormData,
       fileSelected: null,
       previewSrc: null,
+      videoTitle: '',
     }))
-    setVideoTitle('');
     setVideoDescription('');
     setWandSpells([]);
     setVideoTag([]);

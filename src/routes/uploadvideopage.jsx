@@ -19,10 +19,8 @@ const UploadVideoPage = () => {
     // perks: null,
     videoTag: null,
   });
-  const [videoTitle, setVideoTitle] = useState('');
   const [videoDescription, setVideoDescription] = useState('');
   const [wandSpells, setWandSpells] = useState([]);
-  // const [perks, setPerks] = useState([]);
   const [videoTag, setVideoTag] = useState([]);
   return (
     <>
@@ -45,8 +43,8 @@ const UploadVideoPage = () => {
       <SelectedFilePreview setFormData={setFormData} formData={formData} />
       <Heading as='h4' size='md'> Title & Description </Heading>
       <VideoTitleInput
-        setVideoTitle={setVideoTitle}
-        videoTitle={videoTitle}
+        setFormData={setFormData}
+        formData={formData}
       />
       <VideoDescriptionInput
         setVideoDescription={setVideoDescription}
@@ -78,11 +76,9 @@ const UploadVideoPage = () => {
         setFormData={setFormData}
         wandSpells={wandSpells}
         videoDescription={videoDescription}
-        videoTitle={videoTitle}
         videoTag={videoTag}
         setWandSpells={setWandSpells}
         setVideoDescription={setVideoDescription}
-        setVideoTitle={setVideoTitle}
         setVideoTag={setVideoTag}
       />
     </>
