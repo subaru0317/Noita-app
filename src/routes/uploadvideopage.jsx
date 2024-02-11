@@ -47,8 +47,8 @@ const UploadVideoPage = () => {
         formData={formData}
       />
       <VideoDescriptionInput
-        setVideoDescription={setVideoDescription}
-        videoDescription={videoDescription}
+        setFormData={setFormData}
+        formData={formData}
       />
       <Heading as='h4' size='md'> Tags </Heading>
       <SelectedVideoTag videoTag={videoTag} setVideoTag={setVideoTag} />
@@ -75,10 +75,8 @@ const UploadVideoPage = () => {
         formData={formData}
         setFormData={setFormData}
         wandSpells={wandSpells}
-        videoDescription={videoDescription}
         videoTag={videoTag}
         setWandSpells={setWandSpells}
-        setVideoDescription={setVideoDescription}
         setVideoTag={setVideoTag}
       />
     </>
