@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Text, Heading, Box, Alert, AlertIcon, List, ListItem, ListIcon } from "@chakra-ui/react";
 import { CheckCircleIcon } from "@chakra-ui/icons";
+import { useForm } from 'react-hook-form';
 import ImageUploader from '../components/ImageUploader';
 import EditWand from '../components/EditWand';
 import SelectedFilePreview from "../components/SelectedFilePreview";
@@ -15,12 +16,16 @@ const UploadVideoPage = () => {
     previewSrc: null,
     videoTitle: '',
     videoDescription: '',
-    wandSpells: null,
-    // perks: null,
-    videoTag: null,
+    videoTag: [],
   });
   const [wandSpells, setWandSpells] = useState([]);
-  const [videoTag, setVideoTag] = useState([]);
+
+  const handleSetVideoTag = (newVideoTag) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      videoTag: newVideoTag,
+    }));
+  };
 
   const LimitMessage = () => (
     <Box my="4">
@@ -69,7 +74,7 @@ const UploadVideoPage = () => {
       <VideoTitleInput setFormData={setFormData} formData={formData} />
       <VideoDescriptionInput setFormData={setFormData} formData={formData} />
       <Heading as='h4' size='md'> Tags </Heading>
-      <SelectedVideoTag videoTag={videoTag} setVideoTag={setVideoTag} />
+      <SelectedVideoTag videoTag={formData.videoTag} setVideoTag={handleSetVideoTag} />
       <HowToEditWand />
       <EditWand wandSpells={wandSpells} setWandSpells={setWandSpells}/>
       {/* <EditWand perks={perks} setPerks={setPerks} /> */}
@@ -77,9 +82,7 @@ const UploadVideoPage = () => {
         formData={formData}
         setFormData={setFormData}
         wandSpells={wandSpells}
-        videoTag={videoTag}
         setWandSpells={setWandSpells}
-        setVideoTag={setVideoTag}
       />
     </>
   );
