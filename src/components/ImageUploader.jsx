@@ -6,7 +6,6 @@ import { ref, uploadBytesResumable, deleteObject, getMetadata } from "firebase/s
 import { collection, setDoc, serverTimestamp, doc } from "firebase/firestore";
 import { httpsCallable } from 'firebase/functions';
 
-// const ImageUploader = memo(({fileSelected, wandSpells, videoDescription, videoTitle, videoTag, setFileSelected, setWandSpells, setVideoDescription, setVideoTitle, setVideoTag, setPreviewSrc}) => {
 const ImageUploader = memo(({formData, setFormData, wandSpells, videoDescription, videoTitle, videoTag, setWandSpells, setVideoDescription, setVideoTitle, setVideoTag}) => {
   const [isUploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -16,7 +15,6 @@ const ImageUploader = memo(({formData, setFormData, wandSpells, videoDescription
 
   const OnFileUploadToFirebase = async (e) => {
     if (!formData.fileSelected) {
-    // if (!fileSelected) {
       toast({
         title: "An error occurred.",
         description: "It looks like the video is not selected.",
@@ -112,7 +110,6 @@ const ImageUploader = memo(({formData, setFormData, wandSpells, videoDescription
   };
 
   const handleReset = () => {
-    // setFileSelected(null);
     setFormData(prevFormData => ({
       ...prevFormData,
       fileSelected: null,
