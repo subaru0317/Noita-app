@@ -1,6 +1,7 @@
 import { Textarea } from "@chakra-ui/react";
+import { memo } from 'react';
 
-const VideoDescriptionInput = ({setFormData, formData}) => {
+const VideoDescriptionInput = memo(({setFormData, formData}) => {
   const handleVideoDescriptionChange = (e) => {
     setFormData((prevFormData) => ({
       ...prevFormData,
@@ -18,6 +19,6 @@ const VideoDescriptionInput = ({setFormData, formData}) => {
       />
     </>
   )
-};
+});
 
 export default VideoDescriptionInput;

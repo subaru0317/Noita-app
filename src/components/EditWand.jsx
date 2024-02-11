@@ -166,7 +166,7 @@ const ResetButton = memo(({ setWandSpells }) => {
   );
 });
 
-const EditWand = ({ wandSpells, setWandSpells }) => {
+const EditWand = memo(({ wandSpells, setWandSpells }) => {
   return (
     <>
       <SpellSelector setWandSpells={setWandSpells} />
@@ -174,6 +174,6 @@ const EditWand = ({ wandSpells, setWandSpells }) => {
       <ResetButton setWandSpells={setWandSpells} />
     </>
   );
-};
+});
 
 export default EditWand;

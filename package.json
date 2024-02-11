@@ -24,12 +24,14 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-firebase-hooks": "^5.1.1",
+    "react-hook-form": "^7.50.1",
     "react-icons": "^4.8.0",
     "react-paginate": "^8.2.0",
     "react-router-dom": "^6.11.1",
     "uuid": "^9.0.0"
   },
   "devDependencies": {
+    "@types/bun": "latest",
     "@types/react": "^18.0.28",
     "@types/react-dom": "^18.0.11",
     "@vitejs/plugin-react": "^4.0.0",
@@ -40,8 +42,7 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.3.4",
     "rollup-plugin-visualizer": "^5.9.2",
-    "vite": "^4.5.0",
-    "@types/bun": "latest"
+    "vite": "^4.5.0"
   },
   "module": "index.ts",
   "peerDependencies": {

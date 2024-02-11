@@ -1,6 +1,7 @@
 import { Input } from "@chakra-ui/react";
+import { memo } from 'react';
 
-const VideoTitleInput = ({setFormData, formData}) => {
+const VideoTitleInput = memo(({setFormData, formData}) => {
   const handleVideoTitleChange = (e) => {
     setFormData((prevFormData) => ({
       ...prevFormData,
@@ -17,6 +18,6 @@ const VideoTitleInput = ({setFormData, formData}) => {
       mt={4}
     />
   );
-}
+});
 
 export default VideoTitleInput;

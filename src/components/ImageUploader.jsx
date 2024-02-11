@@ -6,7 +6,7 @@ import { ref, uploadBytesResumable, deleteObject, getMetadata } from "firebase/s
 import { collection, setDoc, serverTimestamp, doc } from "firebase/firestore";
 import { httpsCallable } from 'firebase/functions';
 
-const ImageUploader = memo(({formData, setFormData, wandSpells, setWandSpells}) => {
+const ImageUploader = memo(({formData, setFormData, wandSpells, videoTag, setWandSpells, setVideoTag}) => {
   const [isUploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
 
@@ -68,7 +68,7 @@ const ImageUploader = memo(({formData, setFormData, wandSpells, setWandSpells}) 
           // const webmFileRef = ref(storage, webmFilePath);
           // const webmFileURL = await getDownloadURL(webmFileRef);
 
-          const videoTagNames = formData.videoTag.map(tag => tag.name);
+          const videoTagNames = videoTag.map(tag => tag.name);
           const wandSpellNames = wandSpells.map(spell => spell.name);
           const fileInfo = {
             userId: userId,
@@ -116,9 +116,9 @@ const ImageUploader = memo(({formData, setFormData, wandSpells, setWandSpells}) 
       previewSrc: null,
       videoTitle: '',
       videoDescription: '',
-      videoTag: [],
     }))
     setWandSpells([]);
+    setVideoTag([]);
     onClose();
   }
   
