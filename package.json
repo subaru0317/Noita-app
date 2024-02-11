@@ -39,9 +39,6 @@
     "eslint-plugin-react": "^7.32.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.3.4",
-<<<<<<< HEAD
-    "rollup-plugin-visualizer": "^5.9.2"
-=======
     "rollup-plugin-visualizer": "^5.9.2",
     "vite": "^4.5.0",
     "@types/bun": "latest"
@@ -49,6 +46,5 @@
   "module": "index.ts",
   "peerDependencies": {
     "typescript": "^5.0.0"
->>>>>>> 05d217d32147f0c4afb4b23aefa8eb6e1c79318b
   }
 }

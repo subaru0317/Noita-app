@@ -10,8 +10,15 @@ import SpacingDivider from "../components/SpacingDivider";
 import SelectedVideoTag from "../components/SelectedVideoTag";
 
 const UploadVideoPage = () => {
-  const [fileSelected, setFileSelected] = useState(null);
-  const [previewSrc, setPreviewSrc] = useState(null);
+  const [formData, setFormData] = useState({
+    fileSelected: null,
+    previewSrc: null,
+    videoTitle: '',
+    videoDescription: '',
+    wandSpells: null,
+    // perks: null,
+    videoTag: null,
+  });
   const [videoTitle, setVideoTitle] = useState('');
   const [videoDescription, setVideoDescription] = useState('');
   const [wandSpells, setWandSpells] = useState([]);
@@ -35,7 +42,7 @@ const UploadVideoPage = () => {
           </Text>
         </Alert>
       </Box>
-      <SelectedFilePreview setFileSelected={setFileSelected} setPreviewSrc={setPreviewSrc} previewSrc={previewSrc} />
+      <SelectedFilePreview setFormData={setFormData} formData={formData} />
       <Heading as='h4' size='md'> Title & Description </Heading>
       <VideoTitleInput
         setVideoTitle={setVideoTitle}
@@ -67,17 +74,16 @@ const UploadVideoPage = () => {
       <EditWand wandSpells={wandSpells} setWandSpells={setWandSpells}/>
       {/* <EditWand perks={perks} setPerks={setPerks} /> */}
       <ImageUploader
-        fileSelected={fileSelected}
+        formData={formData}
+        setFormData={setFormData}
         wandSpells={wandSpells}
         videoDescription={videoDescription}
         videoTitle={videoTitle}
         videoTag={videoTag}
-        setFileSelected={setFileSelected}
         setWandSpells={setWandSpells}
         setVideoDescription={setVideoDescription}
         setVideoTitle={setVideoTitle}
         setVideoTag={setVideoTag}
-        setPreviewSrc={setPreviewSrc}
       />
     </>
   );

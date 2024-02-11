@@ -6,7 +6,8 @@ import { ref, uploadBytesResumable, deleteObject, getMetadata } from "firebase/s
 import { collection, setDoc, serverTimestamp, doc } from "firebase/firestore";
 import { httpsCallable } from 'firebase/functions';
 
-const ImageUploader = memo(({fileSelected, wandSpells, videoDescription, videoTitle, videoTag, setFileSelected, setWandSpells, setVideoDescription, setVideoTitle, setVideoTag, setPreviewSrc}) => {
+// const ImageUploader = memo(({fileSelected, wandSpells, videoDescription, videoTitle, videoTag, setFileSelected, setWandSpells, setVideoDescription, setVideoTitle, setVideoTag, setPreviewSrc}) => {
+const ImageUploader = memo(({formData, setFormData, wandSpells, videoDescription, videoTitle, videoTag, setWandSpells, setVideoDescription, setVideoTitle, setVideoTag}) => {
   const [isUploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
 
@@ -14,7 +15,8 @@ const ImageUploader = memo(({fileSelected, wandSpells, videoDescription, videoTi
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const OnFileUploadToFirebase = async (e) => {
-    if (!fileSelected) {
+    if (!formData.fileSelected) {
+    // if (!fileSelected) {
       toast({
         title: "An error occurred.",
         description: "It looks like the video is not selected.",
@@ -26,7 +28,7 @@ const ImageUploader = memo(({fileSelected, wandSpells, videoDescription, videoTi
       return;
     }
 
-    const file = fileSelected;
+    const file = formData.fileSelected;
     const fileName = Date.now() + "_" + file.name;
     const storageRef = ref(storage, "images/" + fileName);
     const userId = auth.currentUser.uid;
@@ -110,8 +112,12 @@ const ImageUploader = memo(({fileSelected, wandSpells, videoDescription, videoTi
   };
 
   const handleReset = () => {
-    setFileSelected(null);
-    setPreviewSrc(null);
+    // setFileSelected(null);
+    setFormData(prevFormData => ({
+      ...prevFormData,
+      fileSelected: null,
+      previewSrc: null,
+    }))
     setVideoTitle('');
     setVideoDescription('');
     setWandSpells([]);
