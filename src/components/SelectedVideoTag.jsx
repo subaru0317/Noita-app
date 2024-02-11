@@ -1,21 +1,19 @@
+import { memo } from 'react';
 import { Box } from "@chakra-ui/react";
 import VideoTagItem from "./VideoTagItem";
 import TagList from "./TagList";
 
-const SelectedVideoTag = ({ setFormData, formData }) => {
+const SelectedVideoTag = memo(({ videoTag, setVideoTag }) => {
   const handleTagClick = (clickedTag) => {
     let newVideoTag = [];
 
     for (let tag of TagList) {
-      if ((formData.videoTag.find(item => item.id === tag.id) && tag.id !== clickedTag.id) || (!formData.videoTag.find(item => item.id === tag.id) && tag.id === clickedTag.id)) {
+      if ((videoTag.find(item => item.id === tag.id) && tag.id !== clickedTag.id) || (!videoTag.find(item => item.id === tag.id) && tag.id === clickedTag.id)) {
         newVideoTag.push(tag);
       }
     }
 
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      videoTag: newVideoTag,
-    }))
+    setVideoTag(newVideoTag);
   };
 
   return (
@@ -25,13 +23,13 @@ const SelectedVideoTag = ({ setFormData, formData }) => {
           <VideoTagItem
             key={index}
             tagName={tag.name}
-            isSelected={!!formData.videoTag.find(item => item.id === tag.id)}
+            isSelected={!!videoTag.find(item => item.id === tag.id)}
             onClick={handleTagClick}
           />
         ))}
       </Box>
     </>
   );
-};
+});
 
 export default SelectedVideoTag;
