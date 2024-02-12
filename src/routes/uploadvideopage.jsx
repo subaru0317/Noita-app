@@ -16,7 +16,6 @@ import SelectedVideoTag from "../components/SelectedVideoTag";
 const UploadVideoPage = () => {
   const [formData, setFormData] = useState({
     fileSelected: null,
-    previewSrc: null,
     videoTitle: '',
     videoDescription: '',
     videoTag: [],
@@ -25,16 +24,23 @@ const UploadVideoPage = () => {
   const [wandSpells, setWandSpells] = useState([]);
   console.log("formData ", formData); // 👺
 
+  const handleFileSelected = (file) => {
+    setFormData((prev) => ({
+      ...prev,
+      fileSelected: file,
+    }))
+  }
+
   const handleSetVideoTag = (newVideoTag) => {
-    setFormData((prevData) => ({
-      ...prevData,
+    setFormData((prev) => ({
+      ...prev,
       videoTag: newVideoTag,
     }));
   };
 
   const handleReset = () => {
-    setFormData((prevFormData) => ({
-      ...prevFormData,
+    setFormData((prev) => ({
+      ...prev,
       wandSpells: [],
     }))
   }
@@ -101,7 +107,8 @@ const UploadVideoPage = () => {
         (In Windows, %UserProfile% would be "<strong>C:\Users\username</strong>"etc.)
       </Text>
       <LimitMessage />
-      <SelectedFilePreview setFormData={setFormData} formData={formData} />
+      {/* <SelectedFilePreview setFormData={setFormData} formData={formData} /> */}
+      <SelectedFilePreview handleFileSelected={handleFileSelected} />
       <Heading as='h4' size='md'> Title & Description </Heading>
       <VideoTitleInput setFormData={setFormData} formData={formData} />
       <VideoDescriptionInput setFormData={setFormData} formData={formData} />

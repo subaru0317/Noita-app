@@ -115,7 +115,6 @@ const ImageUploader = memo(({ formData, setFormData, wandSpells, setWandSpells }
     setFormData(prevFormData => ({
       ...prevFormData,
       fileSelected: null,
-      previewSrc: null,
       videoTitle: '',
       videoDescription: '',
       videoTag: [],
