@@ -20,7 +20,7 @@ const VideoCard = memo(({ imageDocData, isLinkActive = true }) => {
       },
     }
     : {};
-  
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setIsLoggedIn(!!user);
@@ -42,7 +42,7 @@ const VideoCard = memo(({ imageDocData, isLinkActive = true }) => {
   }, [imageDocData.filePath]);
 
   const videoDetailUrl = useMemo(() => `/list/${imageDocData.fileId}`, [imageDocData.fileId]);
-  const createDate = dayjs(imageDocData.created_at.toDate());
+  const createDate = imageDocData.created_at.toDate().toLocaleDateString();
   const cardContent = (
     <Box minW="382px" maxW="sm" borderWidth="1px" borderRadius="lg" overflow="hidden" mb={6} {...hoverAndClickStyles}>
       {videoUrl ? (
@@ -69,8 +69,8 @@ const VideoCard = memo(({ imageDocData, isLinkActive = true }) => {
           ))}
         </Wrap>
         <Flex justifyContent="space-between" alignItems="center" mt="2">
-          <time dateTime={createDate.format('YYYY-MM-DD')}>
-            {createDate.format('YYYY-MM-DD')}
+          <time dateTime={createDate}>
+            {createDate}
           </time>
           <LikeButton imageDocData={imageDocData} isLoggedIn={isLoggedIn} />
         </Flex>
