@@ -19,7 +19,7 @@ const UploadVideoPage = () => {
     videoTitle: '',
     videoDescription: '',
     videoTag: [],
-    wandSpells: [],
+    // wandSpells: [],
   });
   const [wandSpells, setWandSpells] = useState([]);
   console.log("formData ", formData); // 👺
@@ -31,6 +31,13 @@ const UploadVideoPage = () => {
     }))
   }
 
+  const handleVideoTitleInput = (title) => {
+    setFormData((prev) => ({
+      ...prev,
+      videoTitle: title,
+    }))
+  }
+
   const handleSetVideoTag = (newVideoTag) => {
     setFormData((prev) => ({
       ...prev,
@@ -38,32 +45,32 @@ const UploadVideoPage = () => {
     }));
   };
 
-  const handleReset = () => {
-    setFormData((prev) => ({
-      ...prev,
-      wandSpells: [],
-    }))
-  }
+  // const handleReset = () => {
+  //   setFormData((prev) => ({
+  //     ...prev,
+  //     wandSpells: [],
+  //   }))
+  // }
 
-  const handleSpellSelect = (newWandSpell) => {
-    setFormData((prevFormData) => {
-      if (prevFormData.wandSpells.length < 26) {
-        // 同じスペルを選択したときにidが被ってWarningが出る。対策として、uuidを使用。
-        const cloneSpell = { ...newWandSpell, id: uuidv4() };
-        const updatedWandSpells = [...prevFormData.wandSpells, cloneSpell];
-        return {
-          ...prevFormData,
-          wandSpells: updatedWandSpells,
-        };
-      } else {
-        return prevFormData;
-      }
-    })
-  }
+  // const handleSpellSelect = (newWandSpell) => {
+  //   setFormData((prevFormData) => {
+  //     if (prevFormData.wandSpells.length < 26) {
+  //       // 同じスペルを選択したときにidが被ってWarningが出る。対策として、uuidを使用。
+  //       const cloneSpell = { ...newWandSpell, id: uuidv4() };
+  //       const updatedWandSpells = [...prevFormData.wandSpells, cloneSpell];
+  //       return {
+  //         ...prevFormData,
+  //         wandSpells: updatedWandSpells,
+  //       };
+  //     } else {
+  //       return prevFormData;
+  //     }
+  //   })
+  // }
 
-  const handleSortSpells = () => {
+  // const handleSortSpells = () => {
 
-  }
+  // }
 
   const LimitMessage = () => (
     <Box my="4">
@@ -107,10 +114,10 @@ const UploadVideoPage = () => {
         (In Windows, %UserProfile% would be "<strong>C:\Users\username</strong>"etc.)
       </Text>
       <LimitMessage />
-      {/* <SelectedFilePreview setFormData={setFormData} formData={formData} /> */}
       <SelectedFilePreview handleFileSelected={handleFileSelected} />
       <Heading as='h4' size='md'> Title & Description </Heading>
-      <VideoTitleInput setFormData={setFormData} formData={formData} />
+      {/* <VideoTitleInput setFormData={setFormData} formData={formData} /> */}
+      <VideoTitleInput handleVideoTitleInput={handleVideoTitleInput} />
       <VideoDescriptionInput setFormData={setFormData} formData={formData} />
       <Heading as='h4' size='md'> Tags </Heading>
       <SelectedVideoTag videoTag={formData.videoTag} setVideoTag={handleSetVideoTag} />
