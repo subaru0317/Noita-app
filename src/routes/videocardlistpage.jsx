@@ -50,8 +50,6 @@ const VideoListPage = () => {
       </VStack>
       <SpacingDivider />
       <FilteredVideoCardList
-        videoCardMode={"normal"}
-        fetchMode={"allImages"}
         selectedSpells={selectedSpells}
         selectedSpellsMode={selectedSpellsMode}
         videoTag={videoTag}

@@ -90,6 +90,39 @@ const FavoriteVideoCardList = () => {
     setCurrentPage(selected);
     setPageChange(true);
   };
+
+  const handleDelete = async (imageDocData) => {
+    const deleteWebmVideo = httpsCallable(functions, 'deleteWebmVideo');
+    try {
+      const response = await deleteWebmVideo({ imageDocData: imageDocData });
+      if (response.data.result === 'success') {
+        console.log("File successfully deleted from Firebase Storage!");
+      } else {
+        const errorMessage = response.data.error.message || "Unknown error occurred";
+        console.error("Error removing document: ", response.data.error);
+        throw new Error(errorMessage);
+      }
+      toast({
+        title: "Success",
+        description: "Deleted!",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom-right"
+      });
+    } catch (error) {
+      console.error("Error removing document: ", error);
+      toast({
+        title: "Error",
+        description: "Failed to delete.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom-right"
+      });
+    }
+  }
+
   return (
     <>
       {loading ? (

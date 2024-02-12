@@ -20,7 +20,7 @@ const VideoCard = memo(({ imageDocData, isLinkActive = true }) => {
       },
     }
     : {};
-
+  
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setIsLoggedIn(!!user);
