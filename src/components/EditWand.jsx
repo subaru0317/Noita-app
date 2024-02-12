@@ -5,8 +5,8 @@ import SpellList from "./SpellList";
 import "./App.css";
 import { Button, Image, Box, IconButton } from "@chakra-ui/react";
 import { CloseIcon } from '@chakra-ui/icons';
-import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
-import { arrayMove, SortableContext, sortableKeyboardCoordinates, rectSortingStrategy, useSortable } from "@dnd-kit/sortable";
+import { DndContext } from "@dnd-kit/core";
+import { arrayMove, SortableContext, useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
 const SpellSelector = ({ setWandSpells }) => {
@@ -35,15 +35,43 @@ const SpellSelector = ({ setWandSpells }) => {
 }
 
 const SortableSpellWand = ({ wandSpells, setWandSpells }) => {
-  const SortableSpell = ({ id, spell }) => {
-    const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id });
+  const [sticky, setSticky] = useState(false);
+
+  const handleDragEnd = (event) => {
+    // active --- ドラッグしたアイテム
+    // over   --- ドロップ地点に存在したアイテム
+    const { active, over } = event;
+    
+    if (active.id !== over.id) {
+      const oldIndex = wandSpells.findIndex(({ id }) => id === active.id);
+      const newIndex = wandSpells.findIndex(({ id }) => id === over.id);
+      setWandSpells(arrayMove(wandSpells, oldIndex, newIndex));
+    }
+  };
+
+  const removeSpell = (id) => {
+    setWandSpells(wandSpells.filter(spell => spell.id !== id));
+  }
+
+  useEffect(() => {
+    const checkScrollTop = () => {
+      const scrollTop = window.pageYOffset;
+      setSticky(scrollTop > 1500)
+    };
+
+    window.addEventListener('scroll', checkScrollTop);
+    return () => {
+      window.removeEventListener('scroll', checkScrollTop);
+    };
+  }, [sticky]);
+
+  const SortableSpell = ({ spell }) => {
+    const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: spell.id });
 
     const style = {
       transform: CSS.Transform.toString(transform),
       transition
     };
-
-    
 
     let borderColor;
     switch (spell.type) {
@@ -97,56 +125,18 @@ const SortableSpellWand = ({ wandSpells, setWandSpells }) => {
           width="10px"
           aria-label="Remove"
           icon={<CloseIcon />}
-          onClick={() => removeSpell(id)}
+          onClick={() => removeSpell(spell.id)}
         />
       </Box>
     );
   }
 
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  );
-
-  const handleDragEnd = useCallback((event) => {
-    const { active, over } = event;
-
-    if (active.id !== over.id) {
-      const oldIndex = wandSpells.findIndex(({ id }) => id === active.id);
-      const newIndex = wandSpells.findIndex(({ id }) => id === over.id);
-      setWandSpells(arrayMove(wandSpells, oldIndex, newIndex));
-    }
-  }, [wandSpells, setWandSpells]);
-
-  const removeSpell = (id) => {
-    setWandSpells(wandSpells.filter(spell => spell.id !== id));
-  }
-
-  const [sticky, setSticky] = useState(false);
-
-  useEffect(() => {
-    const checkScrollTop = () => {
-      if (!sticky && window.pageYOffset > 1500){  // 200px以上スクロールしたら
-        setSticky(true);
-      } else if (sticky && window.pageYOffset <= 1500){  // 200px以下に戻ったら
-        setSticky(false);
-      }
-    };
-
-    window.addEventListener('scroll', checkScrollTop);
-    return () => {
-      window.removeEventListener('scroll', checkScrollTop);
-    };
-  }, [sticky]);
-
   return (
-    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-      <SortableContext items={wandSpells.map(({ id }) => id)} strategy={rectSortingStrategy}>
+    <DndContext onDragEnd={handleDragEnd}>
+      <SortableContext items={wandSpells}>
         <div className={sticky ? "SortableSpellWand sticky" : "SortableSpellWand"}>
           {wandSpells.map((spell) => (
-            <SortableSpell key={spell.id} id={spell.id} spell={spell} />
+            <SortableSpell key={spell.id} spell={spell} />
           ))}
         </div>
       </SortableContext>
