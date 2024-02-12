@@ -1,3 +1,4 @@
+// ImageUploader.jsx
 import { Button, useToast, CircularProgress, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, useDisclosure } from "@chakra-ui/react";
 import { useState, memo } from "react";
 import "./ImageUpload.css";
@@ -6,7 +7,7 @@ import { ref, uploadBytesResumable, deleteObject, getMetadata } from "firebase/s
 import { collection, setDoc, serverTimestamp, doc } from "firebase/firestore";
 import { httpsCallable } from 'firebase/functions';
 
-const ImageUploader = memo(({fileSelected, wandSpells, videoDescription, videoTitle, videoTag, setFileSelected, setWandSpells, setVideoDescription, setVideoTitle, setVideoTag, setPreviewSrc}) => {
+const ImageUploader = memo(({ formData, setFormData, wandSpells, setWandSpells }) => {
   const [isUploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
 
@@ -14,7 +15,7 @@ const ImageUploader = memo(({fileSelected, wandSpells, videoDescription, videoTi
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const OnFileUploadToFirebase = async (e) => {
-    if (!fileSelected) {
+    if (!formData.fileSelected) {
       toast({
         title: "An error occurred.",
         description: "It looks like the video is not selected.",
@@ -26,7 +27,7 @@ const ImageUploader = memo(({fileSelected, wandSpells, videoDescription, videoTi
       return;
     }
 
-    const file = fileSelected;
+    const file = formData.fileSelected;
     const fileName = Date.now() + "_" + file.name;
     const storageRef = ref(storage, "images/" + fileName);
     const userId = auth.currentUser.uid;
@@ -36,10 +37,10 @@ const ImageUploader = memo(({fileSelected, wandSpells, videoDescription, videoTi
     const uploadImage = uploadBytesResumable(storageRef, file);
 
     uploadImage.on("state_changed", (snapshot) => {
-        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        setUploadProgress(progress);
-        setUploading(true);
-      },
+      const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+      setUploadProgress(progress);
+      setUploading(true);
+    },
       (error) => {
         console.log(error);
         setUploading(false);
@@ -64,11 +65,12 @@ const ImageUploader = memo(({fileSelected, wandSpells, videoDescription, videoTi
           const response = await convertGifToWebm({ filePath: filePath });
           console.log("Gif to Webm!");
           const webmFilePath = response.data.filePath;
-          
+
           // const webmFileRef = ref(storage, webmFilePath);
           // const webmFileURL = await getDownloadURL(webmFileRef);
 
-          const videoTagNames = videoTag.map(tag => tag.name);
+          const videoTagNames = formData.videoTag.map(tag => tag.name);
+          // const wandSpellNames = formData.wandSpells.map(spell => spell.name);
           const wandSpellNames = wandSpells.map(spell => spell.name);
           const fileInfo = {
             userId: userId,
@@ -77,18 +79,18 @@ const ImageUploader = memo(({fileSelected, wandSpells, videoDescription, videoTi
             // filePath: webmFileURL,
             filePath: webmFilePath,
             wandSpells: wandSpellNames,
-            description: videoDescription,
-            videoTitle: videoTitle,
+            description: formData.videoDescription,
+            videoTitle: formData.videoTitle,
             videoTag: videoTagNames,
             likeCount: 0,
             created_at: new Date(),
           };
-          
+
           console.log('Adding document to Firestore...');
           await setDoc(newImageDocRef, fileInfo);
 
           // Delete the original gif file
-          await deleteObject(storageRef); 
+          await deleteObject(storageRef);
           setUploadProgress(0);
           console.log("Upload File!");
         } catch (error) {
@@ -110,15 +112,19 @@ const ImageUploader = memo(({fileSelected, wandSpells, videoDescription, videoTi
   };
 
   const handleReset = () => {
-    setFileSelected(null);
-    setPreviewSrc(null);
-    setVideoTitle('');
-    setVideoDescription('');
+    setFormData(prevFormData => ({
+      ...prevFormData,
+      fileSelected: null,
+      previewSrc: null,
+      videoTitle: '',
+      videoDescription: '',
+      videoTag: [],
+      // wandSpells: [],
+    }))
     setWandSpells([]);
-    setVideoTag([]);
     onClose();
   }
-  
+
   return (
     <div className="outerBox">
       <Button colorScheme='teal' variant='solid' onClick={OnFileUploadToFirebase} isLoading={isUploading}>

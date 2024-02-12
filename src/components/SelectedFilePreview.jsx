@@ -1,15 +1,17 @@
+// SelectedFilePreview.jsx
 import { Image } from "@chakra-ui/react";
-import { useState, memo } from "react";
 
-const SelectedFilePreview = memo(({ setFileSelected, setPreviewSrc, previewSrc }) => {
+const SelectedFilePreview = ({ setFormData, formData }) => {
   const previewFile = (e) => {
     const file = e.target.files[0];
-    setFileSelected(file);
+    setFormData((state) => ({ ...state, fileSelected: file }))
     const reader = new FileReader();
 
     reader.addEventListener("load", () => {
-      // 画像ファイルをbase64文字列に変換
-      setPreviewSrc(reader.result);
+      setFormData(prevFormData => ({
+        ...prevFormData,
+        previewSrc: reader.result
+      }))
     }, false);
 
     if (file) {
@@ -20,10 +22,9 @@ const SelectedFilePreview = memo(({ setFileSelected, setPreviewSrc, previewSrc }
   return (
     <>
       <input type="file" onChange={previewFile} accept=".gif" />
-      <Image src={previewSrc} width="480px" height="270px"/>
-      
+      <Image src={formData.previewSrc} width="480px" height="270px" />
     </>
   )
-});
+};
 
 export default SelectedFilePreview;
