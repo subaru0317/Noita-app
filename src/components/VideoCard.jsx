@@ -4,7 +4,6 @@ import { Box, Flex, Text, Wrap, WrapItem } from '@chakra-ui/react';
 import { auth, storage } from '../firebase';
 import { ref, getDownloadURL } from 'firebase/storage';
 import { onAuthStateChanged } from 'firebase/auth';
-import dayjs from 'dayjs';
 import LikeButton from './LikeButton';
 import SpellIcon from './SpellIcon';
 import VideoTagItem from './VideoTagItem';
