@@ -1,9 +1,8 @@
-import { memo } from 'react';
 import { Box } from "@chakra-ui/react";
 import VideoTagItem from "./VideoTagItem";
 import TagList from "./TagList";
 
-const SelectedVideoTag = memo(({ videoTag, setVideoTag }) => {
+const SelectedVideoTag = ({ videoTag, handleVideoTagSelect }) => {
   const handleTagClick = (clickedTag) => {
     let newVideoTag = [];
 
@@ -13,7 +12,7 @@ const SelectedVideoTag = memo(({ videoTag, setVideoTag }) => {
       }
     }
 
-    setVideoTag(newVideoTag);
+    handleVideoTagSelect(newVideoTag);
   };
 
   return (
@@ -24,12 +23,12 @@ const SelectedVideoTag = memo(({ videoTag, setVideoTag }) => {
             key={index}
             tagName={tag.name}
             isSelected={!!videoTag.find(item => item.id === tag.id)}
-            onClick={handleTagClick}
+            onClick={() => handleTagClick(tag)}
           />
         ))}
       </Box>
     </>
   );
-});
+};
 
 export default SelectedVideoTag;

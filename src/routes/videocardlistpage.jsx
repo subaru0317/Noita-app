@@ -23,6 +23,8 @@ const VideoListPage = () => {
     }
   }, [firstRender]);
 
+  const handleVideoTagSelect = (tags) => setVideoTag(tags);
+
   return (
     <>
       <VStack mt={5} ml={5} align="start" spacing={4}>
@@ -40,7 +42,7 @@ const VideoListPage = () => {
             <Text>Tags: </Text>
           </Box>
           <VStack align="left" flexGrow={1}>
-            <SelectedVideoTag videoTag={videoTag} setVideoTag={setVideoTag} />
+            <SelectedVideoTag videoTag={videoTag} handleVideoTagSelect={handleVideoTagSelect} />
             <ModeSelector mode={videoTagMode} setMode={setVideoTagMode} description={"tags"}/>
           </VStack>
         </HStack>

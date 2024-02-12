@@ -43,6 +43,13 @@ const UploadVideoPage = () => {
     }))
   }
 
+  const handleVideoTagSelect = (tags) => {
+    setFormData((prev) => ({
+      ...prev,
+      videoTag: tags,
+    }))
+  }
+
   const handleSetVideoTag = (newVideoTag) => {
     setFormData((prev) => ({
       ...prev,
@@ -124,7 +131,8 @@ const UploadVideoPage = () => {
       <VideoTitleInput handleVideoTitleInput={handleVideoTitleInput} />
       <VideoDescriptionInput handleVideoDescriptionInput={handleVideoDescriptionInput} />
       <Heading as='h4' size='md'> Tags </Heading>
-      <SelectedVideoTag videoTag={formData.videoTag} setVideoTag={handleSetVideoTag} />
+      {/* <SelectedVideoTag videoTag={formData.videoTag} setVideoTag={handleSetVideoTag} /> */}
+      <SelectedVideoTag videoTag={formData.videoTag} handleVideoTagSelect={handleVideoTagSelect} />
       <HowToEditWand />
       {/* <EditWand wandSpells={formData.wandSpells} setWandSpells={handleSpellSelect} handleReset={handleReset} handleSpellSelect={handleSpellSelect} handleSortSpells={handleSortSpells} /> */}
       {/* <EditWand perks={perks} setPerks={setPerks} /> */}
