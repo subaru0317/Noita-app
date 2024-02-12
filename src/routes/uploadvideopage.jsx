@@ -1,5 +1,3 @@
-// uploadvideopage.jsx
-
 import { useState } from "react";
 import { Text, Heading, Box, Alert, AlertIcon, List, ListItem, ListIcon } from "@chakra-ui/react";
 import { CheckCircleIcon } from "@chakra-ui/icons";
@@ -35,6 +33,13 @@ const UploadVideoPage = () => {
     setFormData((prev) => ({
       ...prev,
       videoTitle: title,
+    }))
+  }
+
+  const handleVideoDescriptionInput = (description) => {
+    setFormData((prev) => ({
+      ...prev,
+      videoDescription: description,
     }))
   }
 
@@ -116,9 +121,8 @@ const UploadVideoPage = () => {
       <LimitMessage />
       <SelectedFilePreview handleFileSelected={handleFileSelected} />
       <Heading as='h4' size='md'> Title & Description </Heading>
-      {/* <VideoTitleInput setFormData={setFormData} formData={formData} /> */}
       <VideoTitleInput handleVideoTitleInput={handleVideoTitleInput} />
-      <VideoDescriptionInput setFormData={setFormData} formData={formData} />
+      <VideoDescriptionInput handleVideoDescriptionInput={handleVideoDescriptionInput} />
       <Heading as='h4' size='md'> Tags </Heading>
       <SelectedVideoTag videoTag={formData.videoTag} setVideoTag={handleSetVideoTag} />
       <HowToEditWand />
